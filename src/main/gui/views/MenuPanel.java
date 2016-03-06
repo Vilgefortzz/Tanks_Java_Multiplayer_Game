@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016.
+ * Made by Grzegorz Klimek
+ */
+
 package main.gui.views;
 
 import javax.imageio.ImageIO;
