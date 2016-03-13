@@ -38,8 +38,8 @@ Harmonogram:
 
 [1.3] Wygenerowanie mapy oraz stworzenie modelu czo³gu
 
-	-> stworzenie mapy przy pomocy odpowiedniej klasy
-	-> stworzenie czo³gu przy pomocy odpowiedniej klasy
+	-> stworzenie mapy przy pomocy odpowiedniej klasy (klasa MapPanel)
+	-> stworzenie czo³gu przy pomocy odpowiedniej klasy (klasa Tank)
 	-> sterowanie czo³giem
 
 [1.4] Stworzenie dodatkowych okien interfejsu
@@ -48,7 +48,7 @@ Harmonogram:
 
 [1.5] Wygl¹d i zachowanie przeciwnych czo³gów
 
-	-> nad wrogim czo³giem wyœwietlany jest pasek zdrowia, który maleje przy otrzymywaniu obra¿eñ
+	-> mechanika zwi¹zana z otrzymywanymi obra¿eniami
 	-> zachowanie czo³gów - utrata zdrowia, sprawdzanie czy zosta³ zniszczony, jeœli tak to usuwanie go z mapy
 
 ---------------------------------------------------------------------------------------------------------------------

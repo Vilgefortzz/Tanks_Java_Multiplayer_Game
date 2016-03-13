@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016.
- * Made by Grzegorz Klimek
+ * @gklimek
  */
 
 package main;
@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class App {
     public static void main(String[] args) {
-        Runnable doStart = () -> new GUI();
+        Runnable doStart = GUI::new;
         SwingUtilities.invokeLater(doStart);
     }
 }
