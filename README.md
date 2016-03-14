@@ -1,8 +1,8 @@
 TANKS - MULTIPLAYER
--------------------
+---------------------------------------------------------------------------------------------------------------------
 
 Autor: Grzegorz Klimek Gr. Lab. 4 rok II IS WIMIiP
---------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------
 
 Opis projektu: 
 
@@ -66,14 +66,7 @@ Harmonogram:
 		2) Stefan
 		...
 
-[2.2] Zapis do pliku statystyk konkretnego gracza
-	
-	-> forma listy:
-
-		Moje Statystyki:
-		GRACZ: login
-		Liczba zniszczonych czołgów: ...
-		Zostałeś zniszczony : ... razy
+[2.2] Wczytywanie muzyki w tle, oraz dźwięków gry
 		
 [2.3] Plik z logami klienta (klient)
 
@@ -97,9 +90,9 @@ Harmonogram:
 
 [4] Bazy danych: JDBC dla: MySQL
 
-[4.1] Podstawowa konfiguracja JBDC
+[4.1] Zaprojektowanie bazy danych użytkowników, połączenie z bazą za pomocą JDBC
 
-[4.2] Obsługa bazy danych (aplikacja serwera)
+[4.2] Obsługa bazy danych
 
 	-> łączenie z bazą danych
 	-> tworzenie tabel
@@ -107,7 +100,7 @@ Harmonogram:
 	-> wczytywanie danych z bazy do listy
 	-> zamykanie połączenia
 
-[4.3] Utworzenie klasy DataToBase (aplikacja serwera)
+[4.3] Utworzenie klasy DataToBase
 
 	-> zbiór zmiennych przechowujących dane do zapisu/odczytu z bazy danych
 	-> zbiór funkcji wczytujących wartości (get)
@@ -138,7 +131,7 @@ Harmonogram:
 
 ---------------------------------------------------------------------------------------------------------------------
 
-[6] Zaproponowane przez studenta
+[6]. Zaproponowane przez studenta
 
 [6.1] Wzorzec projektowy - singleton
 

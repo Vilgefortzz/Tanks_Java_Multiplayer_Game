@@ -66,14 +66,7 @@ Harmonogram:
 		2) Stefan
 		...
 
-[2.2] Zapis do pliku statystyk konkretnego gracza
-	
-	-> forma listy:
-
-		Moje Statystyki:
-		GRACZ: login
-		Liczba zniszczonych czo³gów: ...
-		Zosta³eœ zniszczony : ... razy
+[2.2] Wczytywanie muzyki w tle, oraz dŸwiêków gry
 		
 [2.3] Plik z logami klienta (klient)
 
@@ -97,9 +90,9 @@ Harmonogram:
 
 4. Bazy danych: JDBC dla: MySQL
 
-[4.1] Podstawowa konfiguracja JBDC
+[4.1] Zaprojektowanie bazy danych u¿ytkowników, po³¹czenie z baz¹ za pomoc¹ JDBC
 
-[4.2] Obs³uga bazy danych (aplikacja serwera)
+[4.2] Obs³uga bazy danych
 
 	-> ³¹czenie z baz¹ danych
 	-> tworzenie tabel
@@ -107,7 +100,7 @@ Harmonogram:
 	-> wczytywanie danych z bazy do listy
 	-> zamykanie po³¹czenia
 
-[4.3] Utworzenie klasy DataToBase (aplikacja serwera)
+[4.3] Utworzenie klasy DataToBase
 
 	-> zbiór zmiennych przechowuj¹cych dane do zapisu/odczytu z bazy danych
 	-> zbiór funkcji wczytuj¹cych wartoœci (get)
