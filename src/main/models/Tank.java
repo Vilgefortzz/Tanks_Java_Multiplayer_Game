@@ -5,60 +5,25 @@
 
 package main.models;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.Random;
+import java.util.ArrayList;
 
-public class Tank{
-
-    private int sizeX;
-    private int sizeY;
+public class Tank extends Sprite{
 
     private int dx;
     private int dy;
-    private int x;
-    private int y;
-    private Image image;
+    private ArrayList missiles;
 
-    public Tank() { init(); }
+    public Tank() {
+        super();
+        init();
+    }
 
     private void init() {
 
-        checkResolution();
-
-        image = (new ImageIcon(getClass().getResource("/main/resources/tank.png"))).getImage();
-
-
-        if (sizeX == 1920) {
-            if (sizeY == 1080){
-
-                x = new Random().nextInt(1921);
-                y = new Random().nextInt(1081);
-                }
-            }
-
-        else if (sizeX == 1366) {
-            if (sizeY == 768){
-
-                x = new Random().nextInt(1367);
-                y = new Random().nextInt(769);
-                }
-            }
-
-        else{
-            System.out.println("Zla rozdzielczosc ekranu. Dostepne sa 1366x768 lub 1920x1080");
-            System.exit(0);
-        }
-
-
-    }
-
-    private void checkResolution(){
-
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        sizeX = (int) tk.getScreenSize().getWidth();
-        sizeY = (int) tk.getScreenSize().getHeight();
+        missiles = new ArrayList();
+        loadImage("tank.png");
+        getImageDimensions();
     }
 
     public void move() {
@@ -66,21 +31,21 @@ public class Tank{
         y += dy;
     }
 
-    public int getX() {
-        return x;
+    public ArrayList getMissiles() {
+        return missiles;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public Image getImage() {
-        return image;
+    public void shoot() {
+        missiles.add(new Missile(x + width, y + height/2));
     }
 
     public void keyPressed(KeyEvent e) {
 
         int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_L){
+            shoot();
+        }
 
         if (key == KeyEvent.VK_S) {
             dy = 1;

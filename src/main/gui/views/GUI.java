@@ -494,6 +494,10 @@ public class GUI extends JFrame {
                 mapPanel.add(boxMainBar, BorderLayout.NORTH);
                 mapPanel.requestFocusInWindow();
 
+
+
+
+
                 backBtnToMainMenu.addActionListener(e2 -> {
 
                     mapPanel.setVisible(false);

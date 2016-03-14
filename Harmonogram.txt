@@ -30,17 +30,19 @@ Harmonogram:
 
 [1.2] Tworzenie GUI + oprogramowanie przycisków
 
-	-> utworzenie menu g³ównego aplikacji
-	-> stworzenie buttonów, napisów, buttonów wyboru
-	-> ustawienie g³ównych opcji okna
+	-> utworzenie menu g³ównego aplikacji wraz z menu pobocznymi
+	-> stworzenie buttonów, napisów, buttonów wyboru, textfieldów
 	-> dzia³anie bez koniecznoœci otwierania nowych okien - wszystko w jednym oknie
-	-> dodanie akcji do przycisków po klikniêciu mysz¹ - dotyczy menu
+	-> dodanie akcji do przycisków po klikniêciu mysz¹
 
-[1.3] Wygenerowanie mapy oraz stworzenie modelu czo³gu
+[1.3] Wygenerowanie mapy oraz stworzenie modelu czo³gu + oprogramowanie go
 
 	-> stworzenie mapy przy pomocy odpowiedniej klasy (klasa MapPanel)
+	-> dodanie belki na górze mapy z informacj¹ o aktualnym ¿yciu, iloœci zniszczonych czo³gów i bycia zniszczonym
 	-> stworzenie czo³gu przy pomocy odpowiedniej klasy (klasa Tank)
-	-> sterowanie czo³giem
+	-> losowe generowanie czo³gu na mapie
+	-> sterowanie czo³giem - reakcja na klawisze
+	-> strzelanie czo³giem
 
 [1.4] Stworzenie dodatkowych okien interfejsu
 
@@ -48,6 +50,8 @@ Harmonogram:
 
 [1.5] Wygl¹d i zachowanie przeciwnych czo³gów
 
+    -> prawid³owe zachowanie siê czo³gu czyli obracanie siê (animacja), kierunek strza³u
+    -> poprawna fizyka gry
 	-> mechanika zwi¹zana z otrzymywanymi obra¿eniami
 	-> zachowanie czo³gów - utrata zdrowia, sprawdzanie czy zosta³ zniszczony, jeœli tak to usuwanie go z mapy
 
@@ -55,23 +59,25 @@ Harmonogram:
 
 2. Zapis i odczyt plików
 
-[2.1] Zapis do pliku wszystkich zarejestrowanych u¿ytkowników w formie listy
+[2.1] Zapis do pliku wszystkich zarejestrowanych u¿ytkowników
 	
 	-> forma listy:
+
 		LICZBA GRACZY: ...
 		1) Greg
 		2) Stefan
 		...
 
-[2.2] Zapis do pliku statystyk konkretnego gracza z danego dnia, kiedy gra³
+[2.2] Zapis do pliku statystyk konkretnego gracza
 	
 	-> forma listy:
-		Statystyki z dnia 08.09.2016
+
+		Moje Statystyki:
 		GRACZ: login
 		Liczba zniszczonych czo³gów: ...
 		Zosta³eœ zniszczony : ... razy
 		
-[2.3] Plik z logami na klient (klient)
+[2.3] Plik z logami klienta (klient)
 
 [2.4] Plik z logami serwera (serwer)
 
@@ -104,6 +110,7 @@ Harmonogram:
 	-> zamykanie po³¹czenia
 
 [4.3] Utworzenie klasy DataToBase (aplikacja serwera)
+
 	-> zbiór zmiennych przechowuj¹cych dane do zapisu/odczytu z bazy danych
 	-> zbiór funkcji wczytuj¹cych wartoœci (get)
 	-> zbiór funkcji wstawiaj¹cych wartoœci (set)

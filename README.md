@@ -1,7 +1,10 @@
-# TanksProject
+Tanks - multiplayer
+
+---------------------------------------------------------------------------------------------------------------------
 
 Autor: Grzegorz Klimek Gr. Lab. 4 rok II IS WIMIiP
---------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------
 
 Opis projektu: 
 
@@ -27,17 +30,19 @@ Harmonogram:
 
 [1.2] Tworzenie GUI + oprogramowanie przycisków
 
-	-> utworzenie menu głównego aplikacji
-	-> stworzenie buttonów, napisów, buttonów wyboru
-	-> ustawienie głównych opcji okna
+	-> utworzenie menu głównego aplikacji wraz z menu pobocznymi
+	-> stworzenie buttonów, napisów, buttonów wyboru, textfieldów
 	-> działanie bez konieczności otwierania nowych okien - wszystko w jednym oknie
-	-> dodanie akcji do przycisków po kliknięciu myszą - dotyczy menu
+	-> dodanie akcji do przycisków po kliknięciu myszą
 
-[1.3] Wygenerowanie mapy oraz stworzenie modelu czołgu
+[1.3] Wygenerowanie mapy oraz stworzenie modelu czołgu + oprogramowanie go
 
-	-> stworzenie mapy przy pomocy odpowiedniej klasy
-	-> stworzenie czołgu przy pomocy odpowiedniej klasy
-	-> sterowanie czołgiem
+	-> stworzenie mapy przy pomocy odpowiedniej klasy (klasa MapPanel)
+	-> dodanie belki na górze mapy z informacją o aktualnym życiu, ilości zniszczonych czołgów i bycia zniszczonym
+	-> stworzenie czołgu przy pomocy odpowiedniej klasy (klasa Tank)
+	-> losowe generowanie czołgu na mapie
+	-> sterowanie czołgiem - reakcja na klawisze
+	-> strzelanie czołgiem
 
 [1.4] Stworzenie dodatkowych okien interfejsu
 
@@ -45,30 +50,34 @@ Harmonogram:
 
 [1.5] Wygląd i zachowanie przeciwnych czołgów
 
-	-> nad wrogim czołgiem wyświetlany jest pasek zdrowia, który maleje przy otrzymywaniu obrażeń
+    -> prawidłowe zachowanie się czołgu czyli obracanie się (animacja), kierunek strzału
+    -> poprawna fizyka gry
+	-> mechanika związana z otrzymywanymi obrażeniami
 	-> zachowanie czołgów - utrata zdrowia, sprawdzanie czy został zniszczony, jeśli tak to usuwanie go z mapy
 
 ---------------------------------------------------------------------------------------------------------------------
 
 [2] Zapis i odczyt plików
 
-[2.1] Zapis do pliku wszystkich zarejestrowanych użytkowników w formie listy
+[2.1] Zapis do pliku wszystkich zarejestrowanych użytkowników
 	
 	-> forma listy:
+
 		LICZBA GRACZY: ...
 		1) Greg
 		2) Stefan
 		...
 
-[2.2] Zapis do pliku statystyk konkretnego gracza z danego dnia, kiedy grał
+[2.2] Zapis do pliku statystyk konkretnego gracza
 	
 	-> forma listy:
-		Statystyki z dnia 08.09.2016
+
+		Moje Statystyki:
 		GRACZ: login
 		Liczba zniszczonych czołgów: ...
 		Zostałeś zniszczony : ... razy
 		
-[2.3] Plik z logami na klient (klient)
+[2.3] Plik z logami klienta (klient)
 
 [2.4] Plik z logami serwera (serwer)
 
@@ -101,6 +110,7 @@ Harmonogram:
 	-> zamykanie połączenia
 
 [4.3] Utworzenie klasy DataToBase (aplikacja serwera)
+
 	-> zbiór zmiennych przechowujących dane do zapisu/odczytu z bazy danych
 	-> zbiór funkcji wczytujących wartości (get)
 	-> zbiór funkcji wstawiających wartości (set)
