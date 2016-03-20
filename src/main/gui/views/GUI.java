@@ -14,8 +14,8 @@ public class GUI extends JFrame {
 
     // Rozmiar okna
 
-    private int sizeX;
-    private int sizeY;
+    private final int sizeX = 1366;
+    private final int sizeY = 768;
 
     private MenuPanel menuPanel;
     private MapPanel mapPanel;
@@ -38,11 +38,6 @@ public class GUI extends JFrame {
     private JButton signInBtn;
     private JButton statusBtn;
     private JButton backBtn1;
-
-    private JLabel hp;
-    private JLabel destroyedByYou;
-    private JLabel beDestroyed;
-    private JButton backBtnToMainMenu;
 
     private JLabel registration;
     private JLabel loginWriteReg;
@@ -78,15 +73,12 @@ public class GUI extends JFrame {
         setLookAndFeel("Nimbus"); // wygląd przycisków
         init();
 
-        checkResolution();
-
         // Ustawienie ikonki aplikacji
 
         setSize(sizeX, sizeY);
         setResizable(false);
         setTitle("Tanks - Multiplayer by GK");
         setLocationRelativeTo(null);
-        //setUndecorated(true); // full screen
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -107,7 +99,6 @@ public class GUI extends JFrame {
 
         Box boxMenu = createMenu();
         Box boxStartMenu = createStartMenu();
-        Box boxMainBar = createMainBar();
         Box boxSignUpMenu = createSignUpMenu();
         Box boxSignInMenu = createSignInMenu();
         Box boxStatusMenu = createStatusMenu();
@@ -121,7 +112,7 @@ public class GUI extends JFrame {
 
         // Akcje dla przycisków dla menu głównego
 
-        createActions(boxMenu, boxStartMenu, boxMainBar, boxSignUpMenu, boxSignInMenu, boxStatusMenu,
+        createActions(boxMenu, boxStartMenu, boxSignUpMenu, boxSignInMenu, boxStatusMenu,
                       boxOptionsMenu, boxStatsMenu, boxHelpMenu);
     }
 
@@ -138,13 +129,6 @@ public class GUI extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void checkResolution(){
-
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        sizeX = (int) tk.getScreenSize().getWidth();
-        sizeY = (int) tk.getScreenSize().getHeight();
     }
 
     private Box createMenu() {
@@ -254,36 +238,6 @@ public class GUI extends JFrame {
         box.add(Box.createVerticalStrut(6));
         backBtn1 = backButton();
         box.add(backBtn1);
-
-        return box;
-    }
-
-    private Box createMainBar(){
-        Box box = Box.createHorizontalBox();
-
-        hp = new JLabel(new ImageIcon(getClass().getResource("/main/resources/heart.png")));
-        box.add(hp);
-
-        // TODO Wyświetlanie życia
-
-        box.add(Box.createHorizontalStrut(90));
-        destroyedByYou = new JLabel(new ImageIcon(getClass().getResource("/main/resources/explosion.png")));
-        box.add(destroyedByYou);
-
-        // TODO Wyświetlanie zniszczonych czołgów
-
-        box.add(Box.createHorizontalStrut(90));
-        beDestroyed = new JLabel(new ImageIcon(getClass().getResource("/main/resources/skull.png")));
-        box.add(beDestroyed);
-
-        // TODO Wyświetlanie ilości respawnów
-
-        box.add(Box.createHorizontalStrut(1000));
-        backBtnToMainMenu = new JButton("Main Menu");
-        backBtnToMainMenu.setForeground(Color.WHITE);
-        backBtnToMainMenu.setBackground(Color.BLACK);
-        backBtnToMainMenu.setFont(new Font("Arial", Font.BOLD, 10));
-        box.add(backBtnToMainMenu);
 
         return box;
     }
@@ -471,7 +425,7 @@ public class GUI extends JFrame {
         return box;
     }
 
-    private void createActions(Box boxMenu, Box boxStartMenu, Box boxMainBar, Box boxSignUpMenu, Box boxSignInMenu, Box boxStatusMenu,
+    private void createActions(Box boxMenu, Box boxStartMenu, Box boxSignUpMenu, Box boxSignInMenu, Box boxStatusMenu,
                                Box boxOptionsMenu, Box boxStatsMenu, Box boxHelpMenu){
 
         startBtn.addActionListener(e -> {
@@ -491,14 +445,13 @@ public class GUI extends JFrame {
 
                 mapPanel = new MapPanel();
                 add(mapPanel);
-                mapPanel.add(boxMainBar, BorderLayout.NORTH);
                 mapPanel.requestFocusInWindow();
 
 
 
 
 
-                backBtnToMainMenu.addActionListener(e2 -> {
+               /* backBtnToMainMenu.addActionListener(e2 -> {
 
                     mapPanel.setVisible(false);
                     mapPanel.removeAll();
@@ -509,6 +462,7 @@ public class GUI extends JFrame {
                     boxMenu.setVisible(true);
                     menuPanel.setVisible(true);
                 });
+                */
             });
 
             signUpBtn.addActionListener(e3 -> {

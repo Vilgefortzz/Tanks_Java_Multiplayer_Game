@@ -10,7 +10,7 @@ Projekt ten przewiduje stworzenie gry, w której użytkownicy będą się rejest
 podając tzw. nick gracza. Później muszą się zalogować - bez tego niemożliwe jest dołączenie do gry.
 Statystyki wszystkich zarejestrowanych użytkowników będą dostępne w menu.
 Następnie taki użytkownik może wejść do gry dostając do dyspozycji czołg wygenerowany na mapie. 
-Gracz porusza się czołgiem a jego zadanie polega na zniszczeniu wrogich czołgów(innych graczy, którzy 
+Gracz porusza się czołgiem a jego zadanie polega na zniszczeniu wrogich czołgów (innych graczy, którzy
 połączą sie z serwerem i wejdą do gry).
 
 ---------------------------------------------------------------------------------------------------------------------
@@ -35,20 +35,23 @@ Harmonogram:
 
 [1.3] Wygenerowanie mapy oraz stworzenie modelu czołgu + oprogramowanie go
 
-	-> stworzenie mapy przy pomocy odpowiedniej klasy (klasa MapPanel)
+	-> stworzenie mapy (tylko tło) przy pomocy odpowiedniej klasy (klasa MapPanel)
 	-> dodanie belki na górze mapy z informacją o aktualnym życiu, ilości zniszczonych czołgów i bycia zniszczonym
 	-> stworzenie czołgu przy pomocy odpowiedniej klasy (klasa Tank)
-	-> losowe generowanie czołgu na mapie
 	-> sterowanie czołgiem - reakcja na klawisze
-	-> strzelanie czołgiem
+	-> strzelanie czołgiem - w jednym kierunku
 
 [1.4] Stworzenie dodatkowych okien interfejsu
 
 	-> utworzenie interfejsu serwera
 
-[1.5] Wygląd i zachowanie przeciwnych czołgów
+[1.5] Animacje czołgów
 
     -> prawidłowe zachowanie się czołgu czyli obracanie się (animacja), kierunek strzału
+    -> losowe generowanie czołgu na mapie
+
+[1.6] Rozgrywka ( otrzymywanie obrażeń, strata zdrowia, usuwanie z mapy )
+
     -> poprawna fizyka gry
 	-> mechanika związana z otrzymywanymi obrażeniami
 	-> zachowanie czołgów - utrata zdrowia, sprawdzanie czy został zniszczony, jeśli tak to usuwanie go z mapy
@@ -57,57 +60,48 @@ Harmonogram:
 
 [2] Zapis i odczyt plików
 
-[2.1] Zapis do pliku wszystkich zarejestrowanych użytkowników
-	
-	-> forma listy:
+[2.1] Zapisywanie i odpisywanie konfiguracji
 
-		LICZBA GRACZY: ...
-		1) Greg
-		2) Stefan
-		...
+    -> na jakim porcie jest rozgrywka, ile czołgów, użytkownik który łączy sie na serwerze
+    -> konfiguracja serwera i klienta
 
-[2.2] Wczytywanie muzyki w tle, oraz dźwięków gry
+[2.2] Wczytywanie mapy
 		
-[2.3] Plik z logami klienta (klient)
+[2.3] Plik z logami klienta i serwera (klasa do obsługi logów z przed 2 tygodni np.)
 
-[2.4] Plik z logami serwera (serwer)
+[2.4] Zapis i wczytywanie stanu gry
 
 ---------------------------------------------------------------------------------------------------------------------
 
 [3] Współbieżność: wątki, operacje atomowe, itp.
 
-[3.1] Utworzenie głównego wątku programu
+[3.1] Mechanizm bezpiecznego rozgłaszania komunikatów między użytkownikami
 
-	-> obsługa zapisu do pliku
+[3.2] Ruch gracza + kolizje (wątek animacji)
 
-[3.2] Utworzenie wątku liczącego zniszczone czołgi i bycie zniszczonym
+[3.4] Utworzenie wątku serwera(akceptujący) + wątki dla każdego klienta + mechanizm bezpiecznego zatrzymywania wątku(join, flagi podtrzymujące)
 
-[3.3] Ruch gracza + kolizje
-
-[3.4] Utworzenie wątku serwera
+[3.5] Wątek do każdego klienta (synchronizowanie obiektów i bezpieczne przerwania)
 
 ---------------------------------------------------------------------------------------------------------------------
 
 [4] Bazy danych: JDBC dla: MySQL
 
-[4.1] Zaprojektowanie bazy danych użytkowników, połączenie z bazą za pomocą JDBC
+[4.1] Zaprojektowanie bazy danych użytkowników, połączenie z bazą za pomocą JDBC(min. 3 tabele)
 
-[4.2] Obsługa bazy danych
+    -> łączenie z bazą danych
+    -> wstawianie danych do bazy
+    -> wczytywanie danych z bazy do listy
+    -> zamykanie połączenia
 
-	-> łączenie z bazą danych
-	-> tworzenie tabel
-	-> wstawianie danych do bazy
-	-> wczytywanie danych z bazy do listy
-	-> zamykanie połączenia
+[4.2] Mechanizm walidacji (regexy - java regexy + siła hasła)
 
-[4.3] Utworzenie klasy DataToBase
+[4.3] Logika autoryzacji
 
-	-> zbiór zmiennych przechowujących dane do zapisu/odczytu z bazy danych
-	-> zbiór funkcji wczytujących wartości (get)
-	-> zbiór funkcji wstawiających wartości (set)
-	-> funkcja wyświetlająca
+    -> logowanie
+    -> rejestracja
 
-[4.4] Aktualizowanie bazy danych
+[4.4] Mechanizm obsługi statystyk (raport - w ciągu ostatniego miesiąca jakiś tam uzytkownik miał jakieś tam statystyki)
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -125,27 +119,23 @@ Harmonogram:
 	-> wysyłanie komunikatów do serwera i oczekiwanie na odpowiednią odpowiedź w zależności od wysłanej flagi.
 	-> wykonanie odpowiedniej operacji w zależności od wysłanej informacji zwrotnej od serwera.
 
-[5.3] Ustawienie połączenia wielu klientów poprzez serwer
+[5.3] Ustawienie połączenia wielu klientów poprzez serwer??
 
-[5.4] Połączenie za pomocą adresu IP
+[5.4] Protokół komunikacji DataInputStream, DataOutputStream
 
 ---------------------------------------------------------------------------------------------------------------------
 
-[6]. Zaproponowane przez studenta
+[6] Zaproponowane przez studenta
 
-[6.1] Wzorzec projektowy - singleton
+[6.1] Logika rozgrywki, kolizje, timer będzie używał wątku animacji
+
+[6.2] Tryb teamMatch + obsługa pocisków
 
 [6.2] Grafika
 
 	-> dodanie odpowiednich grafik związanych z tematyką gry
 	-> utworzenie przejrzystego menu głównego aplikacji
 	-> zmiana stylu buttonów na przyjemny dla wzroku
-	
-[6.3] Język interfejsu
-
-	-> zmiana języka w grze (Angielski lub Polski) wybierane w menu głównym w opcjach gry
-
-[6.4] Połączenie z zewnętrzną bazą danych
 
 ---------------------------------------------------------------------------------------------------------------------
 

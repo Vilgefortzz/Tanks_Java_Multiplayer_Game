@@ -20,7 +20,7 @@ public class MapPanel extends JPanel implements ActionListener{
 
     private Timer timer;
     private Tank tank;
-    private final int DELAY = 8;
+    private final int DELAY = 5;
 
     public MapPanel() {
         init();
@@ -34,6 +34,7 @@ public class MapPanel extends JPanel implements ActionListener{
         setDoubleBuffered(true);
 
         tank = new Tank();
+
         timer = new Timer(DELAY, this);
         timer.start();
     }
@@ -41,8 +42,20 @@ public class MapPanel extends JPanel implements ActionListener{
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        drawMenuBar(g);
         doDrawing(g);
         Toolkit.getDefaultToolkit().sync();
+    }
+
+    private void drawMenuBar(Graphics g){
+        g.setColor(new Color(0,0,0, 1));
+        g.drawRect(0,0, 200, 30);
+        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/heart.png")).getImage(), 0, 0, this);
+        // TODO Wyświetlanie życia
+        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/explosion.png")).getImage(), 80, 0, this);
+        // TODO Wyświetlanie zniszczonych czołgów
+        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/skull.png")).getImage(), 160, 0, this);
+        // TODO Wyświetlanie ilości respawnów
     }
 
     private void doDrawing(Graphics g) {
@@ -50,13 +63,11 @@ public class MapPanel extends JPanel implements ActionListener{
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(tank.getImage(), tank.getX(), tank.getY(), this);
 
-        ArrayList ms = tank.getMissiles();
+        ArrayList<Missile> ms = tank.getMissiles();
 
         for (int i = 0; i < ms.size(); i++) {
-            Missile m = (Missile) ms.get(i);
-            g2d.drawImage(m.getImage(), m.getX(),
-                    m.getY(), this);
-
+            g2d.drawImage(ms.get(i).getImage(), ms.get(i).getX(),
+                    ms.get(i).getY(), this);
         }
     }
 
@@ -69,15 +80,13 @@ public class MapPanel extends JPanel implements ActionListener{
 
     private void updateMissiles() {
 
-        ArrayList ms = tank.getMissiles();
+        ArrayList<Missile> ms = tank.getMissiles();
 
         for (int i = 0; i < ms.size(); i++) {
 
-            Missile m = (Missile) ms.get(i);
+            if (ms.get(i).isVisible()) {
 
-            if (m.isVisible()) {
-
-                m.move();
+                ms.get(i).move();
             } else {
 
                 ms.remove(i);
