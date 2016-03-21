@@ -5,6 +5,8 @@
 
 package main.models;
 
+import main.gui.views.GUI;
+
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -29,14 +31,14 @@ public class Tank extends Sprite{
     private void init() {
 
         missiles = new ArrayList<>();
-        loadImage("Tank_Right.gif");
+        loadImage("Tank_Right.png");
         getImageDimensions();
         randomGenerate();    // ustawia pozycję czołgu generowaną losowo
     }
 
     public void loadImage(String imageName) {
 
-        image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/" + imageName)).getImage();
+        image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/team_orange/" + imageName)).getImage();
     }
 
     public void move() {
@@ -50,11 +52,11 @@ public class Tank extends Sprite{
     }
 
     public void shootUP(){
-        missiles.add(new Missile(x + width/2 - 7, y - 5));
+        missiles.add(new Missile(x + width/2 - 17, y - 4));
     }
 
     public void shootDown(){
-        missiles.add(new Missile(x + width/2 - 7, y + height));
+        missiles.add(new Missile(x + width/2 - 17, y + height + 18));
     }
 
     public void shootRight() {
@@ -70,39 +72,31 @@ public class Tank extends Sprite{
         int key = e.getKeyCode();
         pressed.add(e.getKeyChar()); // dodajemy klawisz naciśnięty
 
-            if (key == KeyEvent.VK_L) {
-
-                if (tankOrientation == 4){
-                    shootDown();
-                    missiles.get(missiles.size()-1).loadImage("Missile_Down.gif");
-                    missiles.get(missiles.size() - 1).setMissileOrientation(4);
-                }
-
-                else if (tankOrientation == 2){
-                    shootUP();
-                    missiles.get(missiles.size()-1).loadImage("Missile_Up.gif");
-                    missiles.get(missiles.size() - 1).setMissileOrientation(2);
-                }
-
-                else if (tankOrientation == 3){
-                    shootLeft();
-                    missiles.get(missiles.size()-1).loadImage("Missile_Left.gif");
-                    missiles.get(missiles.size() - 1).setMissileOrientation(3);
-                }
-
-                else if (tankOrientation == 1){
+            if (key == KeyEvent.VK_L) if (tankOrientation == 4) {
+                shootDown();
+                missiles.get(missiles.size() - 1).loadImage("Missile_Down.gif");
+                missiles.get(missiles.size() - 1).setMissileOrientation(4);
+            } else if (tankOrientation == 2) {
+                shootUP();
+                missiles.get(missiles.size() - 1).loadImage("Missile_Up.gif");
+                missiles.get(missiles.size() - 1).setMissileOrientation(2);
+            } else if (tankOrientation == 3) {
+                shootLeft();
+                missiles.get(missiles.size() - 1).loadImage("Missile_Left.gif");
+                missiles.get(missiles.size() - 1).setMissileOrientation(3);
+            } else {
+                if (tankOrientation == 1) {
                     shootRight();
-                    missiles.get(missiles.size()-1).loadImage("Missile_Right");
+                    missiles.get(missiles.size() - 1).loadImage("Missile_Right");
                     missiles.get(missiles.size() - 1).setMissileOrientation(1);
                 }
-
             }
 
             if (pressed.size() == 1) {
 
                 if (key == KeyEvent.VK_S) {
 
-                    loadImage("Tank_Down.gif");
+                    loadImage("Tank_Down.png");
                     dy = 1;
                     tankOrientation = 4;
 
@@ -110,14 +104,14 @@ public class Tank extends Sprite{
 
                 if (key == KeyEvent.VK_A) {
 
-                    loadImage("Tank_Left.gif");
+                    loadImage("Tank_Left.png");
                     dx = -1;
                     tankOrientation = 3;
                 }
 
                 if (key == KeyEvent.VK_W) {
 
-                    loadImage("Tank_Up.gif");
+                    loadImage("Tank_Up.png");
                     dy = -1;
                     tankOrientation = 2;
 
@@ -125,7 +119,7 @@ public class Tank extends Sprite{
 
                 if (key == KeyEvent.VK_D) {
 
-                    loadImage("Tank_Right.gif");
+                    loadImage("Tank_Right.png");
                     dx = 1;
                     tankOrientation = 1;
                 }
@@ -157,7 +151,7 @@ public class Tank extends Sprite{
 
     private void randomGenerate(){
 
-        x = new Random().nextInt(sizeX - width);
-        y = new Random().nextInt(sizeY - height);
+        x = new Random().nextInt(GUI.sizeX - width);
+        y = new Random().nextInt(GUI.sizeY - height);
     }
 }

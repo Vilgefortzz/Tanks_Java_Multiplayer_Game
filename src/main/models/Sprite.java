@@ -9,11 +9,6 @@ import java.awt.*;
 
 public class Sprite {
 
-    // Rozdzielczość ekranu
-
-    protected final int sizeX = 1366;
-    protected final int sizeY = 768;
-
     // Parametry
 
     protected int x;

@@ -5,110 +5,53 @@
 
 package main.gui.views;
 
-import main.models.Missile;
-import main.models.Tank;
+import main.io.MapReader;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
-public class MapPanel extends JPanel implements ActionListener{
+public class MapPanel extends JPanel{
 
-    private Timer timer;
-    private Tank tank;
-    private final int DELAY = 5;
+    private ControlingPanel controlingPanel;
+    private MapReader map;
+    private int spaceWidth = 0;
+    private int spaceHeight = 0;
 
     public MapPanel() {
         init();
     }
 
-    private void init() {
-
-        addKeyListener(new TAdapter());
-        setFocusable(true);
-        setBackground(Color.LIGHT_GRAY);
-        setDoubleBuffered(true);
-
-        tank = new Tank();
-
-        timer = new Timer(DELAY, this);
-        timer.start();
+    private void init(){
+        map = new MapReader("mapDeathMatch.txt");
+        repaint();
     }
 
     @Override
     public void paintComponent(Graphics g) {
+
         super.paintComponent(g);
-        drawMenuBar(g);
-        doDrawing(g);
+        drawMap(g);
         Toolkit.getDefaultToolkit().sync();
     }
 
-    private void drawMenuBar(Graphics g){
-        g.setColor(new Color(0,0,0, 1));
-        g.drawRect(0,0, 200, 30);
-        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/heart.png")).getImage(), 0, 0, this);
-        // TODO Wyświetlanie życia
-        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/explosion.png")).getImage(), 80, 0, this);
-        // TODO Wyświetlanie zniszczonych czołgów
-        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/skull.png")).getImage(), 160, 0, this);
-        // TODO Wyświetlanie ilości respawnów
-    }
+    private void drawMap(Graphics g){
 
-    private void doDrawing(Graphics g) {
+        String [][] fields = map.getFieldsArray();
 
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(tank.getImage(), tank.getX(), tank.getY(), this);
-
-        ArrayList<Missile> ms = tank.getMissiles();
-
-        for (int i = 0; i < ms.size(); i++) {
-            g2d.drawImage(ms.get(i).getImage(), ms.get(i).getX(),
-                    ms.get(i).getY(), this);
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        updateMissiles();
-        updateTank();
-        repaint();
-    }
-
-    private void updateMissiles() {
-
-        ArrayList<Missile> ms = tank.getMissiles();
-
-        for (int i = 0; i < ms.size(); i++) {
-
-            if (ms.get(i).isVisible()) {
-
-                ms.get(i).move();
-            } else {
-
-                ms.remove(i);
+        for (int i=0;i<15;i++){
+            for (int j=0;j<27;j++){
+                if ("W".equals(fields[i][j])){
+                    g.drawImage(new ImageIcon(getClass().getResource("/main/resources/sprites/walls/wall.png")).getImage(), spaceWidth, spaceHeight, this);
+                    System.out.println("Wchodze");
+                }
+                else if ("G".equals(fields[i][j])){
+                    g.drawImage(new ImageIcon(getClass().getResource("/main/resources/sprites/ground/ground.png")).getImage(), spaceWidth, spaceHeight, this);
+                    System.out.println("Wchodze");
+                }
+                spaceWidth += 50;
             }
-        }
-    }
-
-    private void updateTank() {
-
-        tank.move();
-    }
-
-    private class TAdapter extends KeyAdapter {
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            tank.keyReleased(e);
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            tank.keyPressed(e);
+            spaceWidth = 0;
+            spaceHeight += 50;
         }
     }
 }

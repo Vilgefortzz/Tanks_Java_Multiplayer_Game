@@ -14,8 +14,8 @@ public class GUI extends JFrame {
 
     // Rozmiar okna
 
-    private final int sizeX = 1366;
-    private final int sizeY = 768;
+    public static final int sizeX = 1350;
+    public static final int sizeY = 750;
 
     private MenuPanel menuPanel;
     private MapPanel mapPanel;
@@ -80,6 +80,8 @@ public class GUI extends JFrame {
         setTitle("Tanks - Multiplayer by GK");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        repaint();
+        validate();
         setVisible(true);
 
         try {
@@ -444,8 +446,11 @@ public class GUI extends JFrame {
                 remove(menuPanel);
 
                 mapPanel = new MapPanel();
+                ControlingPanel controlingPanel = new ControlingPanel();
                 add(mapPanel);
-                mapPanel.requestFocusInWindow();
+                //add(controlingPanel);
+
+                controlingPanel.requestFocusInWindow();
 
 
 
@@ -453,9 +458,9 @@ public class GUI extends JFrame {
 
                /* backBtnToMainMenu.addActionListener(e2 -> {
 
-                    mapPanel.setVisible(false);
-                    mapPanel.removeAll();
-                    remove(mapPanel);
+                    controlingPanel.setVisible(false);
+                    controlingPanel.removeAll();
+                    remove(controlingPanel);
 
                     add(menuPanel);
                     menuPanel.add(boxMenu);

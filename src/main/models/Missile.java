@@ -5,6 +5,8 @@
 
 package main.models;
 
+import main.gui.views.GUI;
+
 import javax.swing.*;
 
 public class Missile extends Sprite{
@@ -50,10 +52,10 @@ public class Missile extends Sprite{
             y += MISSILE_SPEED;
         }
 
-        if (x > sizeX || x < 0) {
+        if (x > GUI.sizeX || x < 0) {
             vis = false;
         }
-        if (y > sizeY || y < 0){
+        if (y > GUI.sizeY || y < 0){
             vis = false;
         }
     }
