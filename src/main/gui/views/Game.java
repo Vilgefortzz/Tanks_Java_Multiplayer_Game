@@ -16,13 +16,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class ControlingPanel extends JPanel implements ActionListener{
+public class Game extends JPanel implements Runnable{
 
-    private Timer timer;
     private final int DELAY = 5;
+    private Thread animation;
     private Tank tank;
 
-    public ControlingPanel() {
+    public Game() {
         init();
     }
 
@@ -34,9 +34,6 @@ public class ControlingPanel extends JPanel implements ActionListener{
         setDoubleBuffered(true);
 
         tank = new Tank();
-
-        timer = new Timer(DELAY, this);
-        timer.start();
     }
 
     @Override
@@ -73,13 +70,6 @@ public class ControlingPanel extends JPanel implements ActionListener{
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        updateMissiles();
-        updateTank();
-        repaint();
-    }
-
     private void updateMissiles() {
 
         ArrayList<Missile> ms = tank.getMissiles();
@@ -99,6 +89,45 @@ public class ControlingPanel extends JPanel implements ActionListener{
     private void updateTank() {
 
         tank.move();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+
+        animation = new Thread(this);
+        animation.start();
+    }
+
+    @Override
+    public void run() {
+
+        long beforeTime, timeDiff, sleep;
+
+        beforeTime = System.currentTimeMillis();
+
+        while (true) {
+
+            updateTank();
+            updateMissiles();
+
+            repaint();
+
+            timeDiff = System.currentTimeMillis() - beforeTime;
+            sleep = DELAY - timeDiff;
+
+            if (sleep < 0) {
+                sleep = 2;
+            }
+
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted: " + e.getMessage());
+            }
+
+            beforeTime = System.currentTimeMillis();
+        }
     }
 
     private class TAdapter extends KeyAdapter {

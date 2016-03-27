@@ -19,6 +19,8 @@ public class MenuPanel extends JPanel {
 
     private void init() {
 
+        setPreferredSize(new Dimension(GUI.sizeX,GUI.sizeY));
+
         try {
             backgroundImg = ImageIO.read(getClass().getResource("/main/resources/tanks1366x768.jpg"));
         }  catch (IOException e) {

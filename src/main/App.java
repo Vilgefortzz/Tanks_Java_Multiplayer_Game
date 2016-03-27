@@ -8,12 +8,16 @@ package main;
 import main.gui.views.GUI;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 public class App {
     public static void main(String[] args) {
-        Runnable doStart = GUI::new;
-        SwingUtilities.invokeLater(doStart);
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new GUI();
+            }
+        });
     }
 }
-

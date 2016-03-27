@@ -13,10 +13,11 @@ public class Sprite {
 
     protected int x;
     protected int y;
+    protected boolean vis;
+
+    protected Image image;
     protected int width;
     protected int height;
-    protected boolean vis;
-    protected Image image;
 
     public Sprite() {
 
@@ -52,15 +53,11 @@ public class Sprite {
         return vis;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
     public void setVisible(Boolean visible) {
         vis = visible;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
     }
 }

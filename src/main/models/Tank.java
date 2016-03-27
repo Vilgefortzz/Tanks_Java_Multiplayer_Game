@@ -20,7 +20,6 @@ public class Tank extends Sprite{
     private double dy;
     private ArrayList<Missile> missiles;
     private int tankOrientation = 1;
-    private final Set<Character> pressed = new HashSet<>();
 
     public Tank() {
 
@@ -36,7 +35,7 @@ public class Tank extends Sprite{
         randomGenerate();    // ustawia pozycję czołgu generowaną losowo
     }
 
-    public void loadImage(String imageName) {
+    private void loadImage(String imageName) {
 
         image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/team_orange/" + imageName)).getImage();
     }
@@ -45,32 +44,36 @@ public class Tank extends Sprite{
 
         x += dx;
         y += dy;
+
+        if ( x < 0)
+            x = 0;
+        if ( y < 0)
+            y = 0;
     }
 
     public ArrayList<Missile> getMissiles() {
         return missiles;
     }
 
-    public void shootUP(){
+    private void shootUP(){
         missiles.add(new Missile(x + width/2 - 17, y - 4));
     }
 
-    public void shootDown(){
+    private void shootDown(){
         missiles.add(new Missile(x + width/2 - 17, y + height + 18));
     }
 
-    public void shootRight() {
+    private void shootRight() {
         missiles.add(new Missile(x + width, y + height/2 - 4));
     }
 
-    public void shootLeft(){
+    private void shootLeft(){
         missiles.add(new Missile(x - 8, y + height/2 - 4));
     }
 
     public void keyPressed(KeyEvent e) {
 
         int key = e.getKeyCode();
-        pressed.add(e.getKeyChar()); // dodajemy klawisz naciśnięty
 
             if (key == KeyEvent.VK_L) if (tankOrientation == 4) {
                 shootDown();
@@ -91,8 +94,6 @@ public class Tank extends Sprite{
                     missiles.get(missiles.size() - 1).setMissileOrientation(1);
                 }
             }
-
-            if (pressed.size() == 1) {
 
                 if (key == KeyEvent.VK_S) {
 
@@ -123,13 +124,11 @@ public class Tank extends Sprite{
                     dx = 1;
                     tankOrientation = 1;
                 }
-            }
     }
 
     public void keyReleased(KeyEvent e) {
 
         int key = e.getKeyCode();
-        pressed.remove(e.getKeyChar());
 
         if (key == KeyEvent.VK_W) {
             dy = 0;

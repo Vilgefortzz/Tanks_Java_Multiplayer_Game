@@ -14,11 +14,10 @@ public class GUI extends JFrame {
 
     // Rozmiar okna
 
-    public static final int sizeX = 1350;
-    public static final int sizeY = 750;
+    public static final int sizeX = 1366;
+    public static final int sizeY = 768;
 
     private MenuPanel menuPanel;
-    private MapPanel mapPanel;
 
     // przyciski do menu głównego
 
@@ -73,29 +72,25 @@ public class GUI extends JFrame {
         setLookAndFeel("Nimbus"); // wygląd przycisków
         init();
 
-        // Ustawienie ikonki aplikacji
 
-        setSize(sizeX, sizeY);
-        setResizable(false);
         setTitle("Tanks - Multiplayer by GK");
+        setResizable(false);
+        pack();
+
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        repaint();
-        validate();
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
+
+        // Ustawienie ikonki aplikacji
 
         try {
             setIconImage(ImageIO.read(getClass().getResource("/main/resources/tank_icon.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void init() {
-
-        menuPanel = new MenuPanel();
-        add(menuPanel);
 
         // Stworzenie odpowiednich boxów dla wszystkich sekcji
 
@@ -110,7 +105,9 @@ public class GUI extends JFrame {
 
         // Rozpoczęcie (menu główne)
 
+        menuPanel = new MenuPanel();
         menuPanel.add(boxMenu);
+        add(menuPanel);
 
         // Akcje dla przycisków dla menu głównego
 
@@ -118,7 +115,7 @@ public class GUI extends JFrame {
                       boxOptionsMenu, boxStatsMenu, boxHelpMenu);
     }
 
-    // Funkcja ustawia wygląd przycisków oraz innych elementów
+    // Ta metoda ustawia wygląd przycisków oraz innych elementów
 
     private void setLookAndFeel(String lookAndFeel) {
         try {
@@ -445,12 +442,9 @@ public class GUI extends JFrame {
                 menuPanel.setVisible(false);
                 remove(menuPanel);
 
-                mapPanel = new MapPanel();
-                ControlingPanel controlingPanel = new ControlingPanel();
-                add(mapPanel);
-                //add(controlingPanel);
-
-                controlingPanel.requestFocusInWindow();
+                Game game = new Game();
+                add(game);
+                game.requestFocusInWindow();
 
 
 
@@ -458,9 +452,9 @@ public class GUI extends JFrame {
 
                /* backBtnToMainMenu.addActionListener(e2 -> {
 
-                    controlingPanel.setVisible(false);
-                    controlingPanel.removeAll();
-                    remove(controlingPanel);
+                    game.setVisible(false);
+                    game.removeAll();
+                    remove(game);
 
                     add(menuPanel);
                     menuPanel.add(boxMenu);

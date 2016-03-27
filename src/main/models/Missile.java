@@ -11,7 +11,7 @@ import javax.swing.*;
 
 public class Missile extends Sprite{
 
-    private final int MISSILE_SPEED = 7;
+    private final int MISSILE_SPEED = 8;
     private int missileOrientation = 1;
 
     public Missile(int x, int y) {
@@ -24,7 +24,7 @@ public class Missile extends Sprite{
         getImageDimensions();
     }
 
-    public void loadImage(String imageName) {
+    void loadImage(String imageName) {
 
         image = new ImageIcon(getClass().getResource("/main/resources/sprites/missiles/" + imageName)).getImage();
     }
@@ -33,7 +33,7 @@ public class Missile extends Sprite{
         return missileOrientation;
     }
 
-    public void setMissileOrientation(int missileOrientation) {
+    void setMissileOrientation(int missileOrientation) {
         this.missileOrientation = missileOrientation;
     }
 
