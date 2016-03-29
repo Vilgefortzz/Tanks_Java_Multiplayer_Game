@@ -10,29 +10,33 @@ import main.gui.views.GUI;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 public class Tank extends Sprite{
 
+    private int hp;
     private double dx;
     private double dy;
     private ArrayList<Missile> missiles;
-    private int tankOrientation = 1;
+    private int tankOrientation;
 
-    public Tank() {
+    public Tank(int x, int y) {
 
-        super();
+        super(x, y);
         init();
     }
 
     private void init() {
 
+        hp = 100;
         missiles = new ArrayList<>();
         loadImage("Tank_Right.png");
         getImageDimensions();
-        randomGenerate();    // ustawia pozycję czołgu generowaną losowo
+        tankOrientation = 1;
+    }
+
+    public int getHp() {
+        return hp;
     }
 
     private void loadImage(String imageName) {
@@ -45,10 +49,14 @@ public class Tank extends Sprite{
         x += dx;
         y += dy;
 
-        if ( x < 0)
+        if ( x < 0 )
             x = 0;
+        if (x + width > GUI.sizeX)
+            x = GUI.sizeX - width;
         if ( y < 0)
             y = 0;
+        if ( y + height > GUI.sizeY)
+            y = GUI.sizeY - height;
     }
 
     public ArrayList<Missile> getMissiles() {
@@ -56,19 +64,19 @@ public class Tank extends Sprite{
     }
 
     private void shootUP(){
-        missiles.add(new Missile(x + width/2 - 17, y - 4));
+        missiles.add(new Missile(x + width/2 - 5, y - 5));
     }
 
     private void shootDown(){
-        missiles.add(new Missile(x + width/2 - 17, y + height + 18));
+        missiles.add(new Missile(x + width/2 - 5, y + height + 2));
     }
 
     private void shootRight() {
-        missiles.add(new Missile(x + width, y + height/2 - 4));
+        missiles.add(new Missile(x + width, y + height/2 - 5));
     }
 
     private void shootLeft(){
-        missiles.add(new Missile(x - 8, y + height/2 - 4));
+        missiles.add(new Missile(x - 10, y + height/2 - 4));
     }
 
     public void keyPressed(KeyEvent e) {
@@ -98,14 +106,16 @@ public class Tank extends Sprite{
                 if (key == KeyEvent.VK_S) {
 
                     loadImage("Tank_Down.png");
+                    getImageDimensions();
                     dy = 1;
                     tankOrientation = 4;
-
+                    hp--;
                 }
 
                 if (key == KeyEvent.VK_A) {
 
                     loadImage("Tank_Left.png");
+                    getImageDimensions();
                     dx = -1;
                     tankOrientation = 3;
                 }
@@ -113,6 +123,7 @@ public class Tank extends Sprite{
                 if (key == KeyEvent.VK_W) {
 
                     loadImage("Tank_Up.png");
+                    getImageDimensions();
                     dy = -1;
                     tankOrientation = 2;
 
@@ -121,9 +132,15 @@ public class Tank extends Sprite{
                 if (key == KeyEvent.VK_D) {
 
                     loadImage("Tank_Right.png");
+                    getImageDimensions();
                     dx = 1;
                     tankOrientation = 1;
                 }
+
+                if (key == KeyEvent.VK_ESCAPE) {
+
+                    System.exit(0);
+                 }
     }
 
     public void keyReleased(KeyEvent e) {
@@ -146,11 +163,5 @@ public class Tank extends Sprite{
             dy = 0;
         }
 
-    }
-
-    private void randomGenerate(){
-
-        x = new Random().nextInt(GUI.sizeX - width);
-        y = new Random().nextInt(GUI.sizeY - height);
     }
 }

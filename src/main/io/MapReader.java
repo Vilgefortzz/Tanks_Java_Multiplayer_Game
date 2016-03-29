@@ -9,10 +9,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MapReader {
 
-    private String [][] fieldsArray;
+    private ArrayList<String> lines;
 
     public MapReader(String mapFile) {
 
@@ -23,33 +24,22 @@ public class MapReader {
         }
     }
 
-    public String[][] getFieldsArray() {
-        return fieldsArray;
+    public ArrayList<String> getLines() {
+        return lines;
     }
 
-    private void readFile(String file) throws IOException{
+    private void readFile(String filename) throws IOException {
 
-        fieldsArray = new String[15][27];
-        String[] withoutSpaces;
+        lines = new ArrayList<>();
 
         String filePath = new File("").getAbsolutePath();
 
-        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath + "/src/main/resources/maps/" + file))){
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath + "/src/main/resources/maps/" + filename))) {
 
-            /* odczytywanie lini tekstu */
+            do {
+                lines.add(bufferedReader.readLine());
 
-            String textLine;
-            int i=0;
-
-           do {
-                textLine = bufferedReader.readLine();
-                withoutSpaces = textLine.split(" ");
-
-                    for (int j = 0; j < 27; j++) {
-                        fieldsArray[i][j] = withoutSpaces[j];
-                    }
-                i++;
-                } while(bufferedReader.ready());
+            } while (bufferedReader.ready());
         }
     }
 }

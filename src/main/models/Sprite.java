@@ -9,6 +9,8 @@ import java.awt.*;
 
 public class Sprite {
 
+    private final int SPACE = 32;
+
     // Parametry
 
     protected int x;
@@ -24,10 +26,10 @@ public class Sprite {
         vis = true;
     }
 
-    public Sprite(double x, double y) {
+    public Sprite(int x, int y) {
 
-        this.x = (int) x;
-        this.y = (int) y;
+        this.x =  x;
+        this.y = y;
         vis = true;
     }
 
@@ -35,6 +37,14 @@ public class Sprite {
 
         width = image.getWidth(null);
         height = image.getHeight(null);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public Image getImage() {
@@ -49,6 +59,14 @@ public class Sprite {
         return y;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public boolean isVisible() {
         return vis;
     }
@@ -59,5 +77,37 @@ public class Sprite {
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
+    }
+
+    public boolean isLeftCollision(Sprite sprite) {
+        if ((x - SPACE) == sprite.x && y == sprite.y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isRightCollision(Sprite sprite) {
+        if ((x + SPACE) == sprite.x && y == sprite.y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isTopCollision(Sprite sprite) {
+        if ((y - SPACE) == sprite.y && x == sprite.x) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isBottomCollision(Sprite sprite) {
+        if ((y + SPACE) == sprite.y && x == sprite.x) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

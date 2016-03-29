@@ -11,8 +11,9 @@ import javax.swing.*;
 
 public class Missile extends Sprite{
 
+    private int damage;
     private final int MISSILE_SPEED = 8;
-    private int missileOrientation = 1;
+    private int missileOrientation;
 
     public Missile(int x, int y) {
         super(x, y);
@@ -20,8 +21,15 @@ public class Missile extends Sprite{
     }
 
     private void init(){
+
+        damage = 1;
         loadImage("Missile_Right.gif");
         getImageDimensions();
+        missileOrientation = 1;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     void loadImage(String imageName) {

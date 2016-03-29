@@ -8,9 +8,11 @@ package main.gui.views;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class GUI extends JFrame {
+public class GUI extends JFrame implements ActionListener{
 
     // Rozmiar okna
 
@@ -18,6 +20,7 @@ public class GUI extends JFrame {
     public static final int sizeY = 768;
 
     private MenuPanel menuPanel;
+    private Game gamePanel;
 
     // przyciski do menu głównego
 
@@ -67,11 +70,21 @@ public class GUI extends JFrame {
     private JLabel helpText;
     private JButton backBtn7;
 
+    // Boxy czyli odpowiednie sekcje w menu
+
+    private Box boxMenu;
+    private Box boxStartMenu;
+    private Box boxSignUpMenu;
+    private Box boxSignInMenu;
+    private  Box boxStatusMenu;
+    private  Box boxOptionsMenu;
+    private Box boxStatsMenu;
+    private Box boxHelpMenu;
+
     public GUI(){
 
         setLookAndFeel("Nimbus"); // wygląd przycisków
         init();
-
 
         setTitle("Tanks - Multiplayer by GK");
         setResizable(false);
@@ -94,25 +107,39 @@ public class GUI extends JFrame {
 
         // Stworzenie odpowiednich boxów dla wszystkich sekcji
 
-        Box boxMenu = createMenu();
-        Box boxStartMenu = createStartMenu();
-        Box boxSignUpMenu = createSignUpMenu();
-        Box boxSignInMenu = createSignInMenu();
-        Box boxStatusMenu = createStatusMenu();
-        Box boxOptionsMenu = createOptionsMenu();
-        Box boxStatsMenu = createStatsMenu();
-        Box boxHelpMenu = createHelpMenu();
+        boxMenu = createMenu();
+        boxStartMenu = createStartMenu();
+        boxSignUpMenu = createSignUpMenu();
+        boxSignInMenu = createSignInMenu();
+        boxStatusMenu = createStatusMenu();
+        boxOptionsMenu = createOptionsMenu();
+        boxStatsMenu = createStatsMenu();
+        boxHelpMenu = createHelpMenu();
+
+        // Dodanie akcji do buttonów
+
+        startBtn.addActionListener(this);
+        playBtn.addActionListener(this);
+        signUpBtn.addActionListener(this);
+        signInBtn.addActionListener(this);
+        statusBtn.addActionListener(this);
+        optionsBtn.addActionListener(this);
+        statsBtn.addActionListener(this);
+        helpBtn.addActionListener(this);
+        exitBtn.addActionListener(this);
+        backBtn1.addActionListener(this);
+        backBtn2.addActionListener(this);
+        backBtn3.addActionListener(this);
+        backBtn4.addActionListener(this);
+        backBtn5.addActionListener(this);
+        backBtn6.addActionListener(this);
+        backBtn7.addActionListener(this);
 
         // Rozpoczęcie (menu główne)
 
         menuPanel = new MenuPanel();
         menuPanel.add(boxMenu);
         add(menuPanel);
-
-        // Akcje dla przycisków dla menu głównego
-
-        createActions(boxMenu, boxStartMenu, boxSignUpMenu, boxSignInMenu, boxStatusMenu,
-                      boxOptionsMenu, boxStatsMenu, boxHelpMenu);
     }
 
     // Ta metoda ustawia wygląd przycisków oraz innych elementów
@@ -424,141 +451,6 @@ public class GUI extends JFrame {
         return box;
     }
 
-    private void createActions(Box boxMenu, Box boxStartMenu, Box boxSignUpMenu, Box boxSignInMenu, Box boxStatusMenu,
-                               Box boxOptionsMenu, Box boxStatsMenu, Box boxHelpMenu){
-
-        startBtn.addActionListener(e -> {
-            boxMenu.setVisible(false);
-            menuPanel.remove(boxMenu);
-            menuPanel.add(boxStartMenu);
-            boxStartMenu.setVisible(true);
-
-            playBtn.addActionListener(e1 -> {
-
-                /* TODO Jeżeli niezalogowany to komunikat, że nie może wejść do gry i zostaje w menu. Jeśli zalogowany to wchodzi */
-
-                boxStartMenu.setVisible(false);
-                menuPanel.remove(boxStartMenu);
-                menuPanel.setVisible(false);
-                remove(menuPanel);
-
-                Game game = new Game();
-                add(game);
-                game.requestFocusInWindow();
-
-
-
-
-
-               /* backBtnToMainMenu.addActionListener(e2 -> {
-
-                    game.setVisible(false);
-                    game.removeAll();
-                    remove(game);
-
-                    add(menuPanel);
-                    menuPanel.add(boxMenu);
-                    boxMenu.setVisible(true);
-                    menuPanel.setVisible(true);
-                });
-                */
-            });
-
-            signUpBtn.addActionListener(e3 -> {
-                boxStartMenu.setVisible(false);
-                menuPanel.remove(boxStartMenu);
-                menuPanel.add(boxSignUpMenu);
-                boxSignUpMenu.setVisible(true);
-
-                backBtn2.addActionListener(e4 -> {
-                    boxSignUpMenu.setVisible(false);
-                    menuPanel.remove(boxSignUpMenu);
-                    menuPanel.add(boxStartMenu);
-                    boxStartMenu.setVisible(true);
-                });
-            });
-
-            signInBtn.addActionListener(e4 -> {
-                boxStartMenu.setVisible(false);
-                menuPanel.remove(boxStartMenu);
-                menuPanel.add(boxSignInMenu);
-                boxSignInMenu.setVisible(true);
-
-                backBtn3.addActionListener(e5 -> {
-                    boxSignInMenu.setVisible(false);
-                    menuPanel.remove(boxSignInMenu);
-                    menuPanel.add(boxStartMenu);
-                    boxStartMenu.setVisible(true);
-                });
-            });
-
-            statusBtn.addActionListener(e6 -> {
-                boxStartMenu.setVisible(false);
-                menuPanel.remove(boxStartMenu);
-                menuPanel.add(boxStatusMenu);
-                boxStatusMenu.setVisible(true);
-
-                backBtn4.addActionListener(e7 -> {
-                    boxStatusMenu.setVisible(false);
-                    menuPanel.remove(boxStatusMenu);
-                    menuPanel.add(boxStartMenu);
-                    boxStartMenu.setVisible(true);
-                });
-            });
-
-            backBtn1.addActionListener(e8 -> {
-                boxStartMenu.setVisible(false);
-                menuPanel.remove(boxStartMenu);
-                menuPanel.add(boxMenu);
-                boxMenu.setVisible(true);
-            });
-        });
-
-        optionsBtn.addActionListener(e -> {
-            boxMenu.setVisible(false);
-            menuPanel.remove(boxMenu);
-            menuPanel.add(boxOptionsMenu);
-            boxOptionsMenu.setVisible(true);
-
-            backBtn5.addActionListener(e3 -> {
-                boxOptionsMenu.setVisible(false);
-                menuPanel.remove(boxOptionsMenu);
-                menuPanel.add(boxMenu);
-                boxMenu.setVisible(true);
-            });
-        });
-
-        statsBtn.addActionListener(e -> {
-            boxMenu.setVisible(false);
-            menuPanel.remove(boxMenu);
-            menuPanel.add(boxStatsMenu);
-            boxStatsMenu.setVisible(true);
-
-            backBtn6.addActionListener(e1 -> {
-                boxStatsMenu.setVisible(false);
-                menuPanel.remove(boxStatsMenu);
-                menuPanel.add(boxMenu);
-                boxMenu.setVisible(true);
-            });
-        });
-
-        helpBtn.addActionListener(e -> {
-            boxMenu.setVisible(false);
-            menuPanel.remove(boxMenu);
-            menuPanel.add(boxHelpMenu);
-            boxHelpMenu.setVisible(true);
-
-            backBtn7.addActionListener(e1 -> {
-                boxHelpMenu.setVisible(false);
-                menuPanel.remove(boxHelpMenu);
-                menuPanel.add(boxMenu);
-                boxMenu.setVisible(true);
-            });
-        });
-
-        exitBtn.addActionListener(e -> System.exit(0));
-    }
-
     private JButton backButton(){
         JButton backBtn = new JButton("Back");
         backBtn.setForeground(Color.WHITE);
@@ -567,5 +459,136 @@ public class GUI extends JFrame {
         return  backBtn;
     }
 
-}
+    @Override
+    public void actionPerformed(ActionEvent e){
 
+        if (e.getSource() == startBtn){
+
+            boxMenu.setVisible(false);
+            menuPanel.remove(boxMenu);
+            menuPanel.add(boxStartMenu);
+            boxStartMenu.setVisible(true);
+        }
+
+        if (e.getSource() == playBtn){
+
+            /* TODO Jeżeli niezalogowany to komunikat, że nie może wejść do gry i zostaje w menu. Jeśli zalogowany to wchodzi */
+
+            boxStartMenu.setVisible(false);
+            menuPanel.remove(boxStartMenu);
+            menuPanel.setVisible(false);
+            remove(menuPanel);
+
+            gamePanel = new Game();
+            add(gamePanel);
+            gamePanel.requestFocusInWindow();
+        }
+
+        if (e.getSource() == signUpBtn){
+
+            boxStartMenu.setVisible(false);
+            menuPanel.remove(boxStartMenu);
+            menuPanel.add(boxSignUpMenu);
+            boxSignUpMenu.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn2){
+
+            boxSignUpMenu.setVisible(false);
+            menuPanel.remove(boxSignUpMenu);
+            menuPanel.add(boxStartMenu);
+            boxStartMenu.setVisible(true);
+        }
+
+        if (e.getSource() == signInBtn){
+
+            boxStartMenu.setVisible(false);
+            menuPanel.remove(boxStartMenu);
+            menuPanel.add(boxSignInMenu);
+            boxSignInMenu.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn3){
+
+            boxSignInMenu.setVisible(false);
+            menuPanel.remove(boxSignInMenu);
+            menuPanel.add(boxStartMenu);
+            boxStartMenu.setVisible(true);
+        }
+
+        if (e.getSource() == statusBtn){
+
+            boxStartMenu.setVisible(false);
+            menuPanel.remove(boxStartMenu);
+            menuPanel.add(boxStatusMenu);
+            boxStatusMenu.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn4){
+
+            boxStatusMenu.setVisible(false);
+            menuPanel.remove(boxStatusMenu);
+            menuPanel.add(boxStartMenu);
+            boxStartMenu.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn1){
+            boxStartMenu.setVisible(false);
+            menuPanel.remove(boxStartMenu);
+            menuPanel.add(boxMenu);
+            boxMenu.setVisible(true);
+        }
+
+        if (e.getSource() == optionsBtn){
+
+            boxMenu.setVisible(false);
+            menuPanel.remove(boxMenu);
+            menuPanel.add(boxOptionsMenu);
+            boxOptionsMenu.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn5){
+
+            boxOptionsMenu.setVisible(false);
+            menuPanel.remove(boxOptionsMenu);
+            menuPanel.add(boxMenu);
+            boxMenu.setVisible(true);
+        }
+
+        if (e.getSource() == statsBtn){
+
+            boxMenu.setVisible(false);
+            menuPanel.remove(boxMenu);
+            menuPanel.add(boxStatsMenu);
+            boxStatsMenu.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn6){
+
+            boxStatsMenu.setVisible(false);
+            menuPanel.remove(boxStatsMenu);
+            menuPanel.add(boxMenu);
+            boxMenu.setVisible(true);
+        }
+
+        if (e.getSource() == helpBtn){
+
+            boxMenu.setVisible(false);
+            menuPanel.remove(boxMenu);
+            menuPanel.add(boxHelpMenu);
+            boxHelpMenu.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn7){
+
+            boxHelpMenu.setVisible(false);
+            menuPanel.remove(boxHelpMenu);
+            menuPanel.add(boxMenu);
+            boxMenu.setVisible(true);
+        }
+
+        if (e.getSource() == exitBtn){
+            System.exit(0);
+        }
+    }
+}

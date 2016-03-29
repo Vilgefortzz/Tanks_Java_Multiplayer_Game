@@ -5,22 +5,32 @@
 
 package main.gui.views;
 
+import main.io.MapReader;
 import main.models.Missile;
+import main.models.Sprite;
 import main.models.Tank;
+import main.models.Wall;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Game extends JPanel implements Runnable{
+public class Game extends JPanel implements KeyListener, Runnable{
 
     private final int DELAY = 5;
     private Thread animation;
+
+    private int spaceWallWidth = 0;
+    private int spaceWallHeight = 0;
+
+    private final int SPACE = 24; // rozmiar obrazka
+
+    private ArrayList walls = new ArrayList();
+
+    private MapReader map;
     private Tank tank;
+
 
     public Game() {
         init();
@@ -28,46 +38,82 @@ public class Game extends JPanel implements Runnable{
 
     private void init() {
 
-        addKeyListener(new TAdapter());
+        addKeyListener(this);
         setFocusable(true);
-        setBackground(Color.LIGHT_GRAY);
+        setBackground(new Color(112, 113, 76));
         setDoubleBuffered(true);
-
-        tank = new Tank();
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
+    private void initWorld() {
 
-        super.paintComponent(g);
+        tank = new Tank(200, 400);
+        map = new MapReader("mapDeathMatch.txt");
 
-        drawMenuBar(g);
-        doDrawing(g);
-        Toolkit.getDefaultToolkit().sync();
+        Wall wall;
+        ArrayList<String> lines = map.getLines();
+
+        for (int i = 0; i < lines.size(); i++) {
+            for (int j=0; j < lines.get(i).length(); j++){
+                char c = lines.get(i).charAt(j);
+
+                if (c == '-') {
+                    spaceWallWidth += SPACE;
+
+                }
+
+                if (c == 'W') {
+                    wall = new Wall(spaceWallWidth, spaceWallHeight);
+                    walls.add(wall);
+                    spaceWallWidth += SPACE;
+                }
+            }
+            spaceWallWidth = 0;
+            spaceWallHeight += SPACE;
+        }
     }
 
-    private void drawMenuBar(Graphics g){
-        g.setColor(new Color(0,0,0, 1));
-        g.drawRect(0,0, 200, 30);
-        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/heart.png")).getImage(), 0, 0, this);
-        // TODO Wyświetlanie życia
-        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/explosion.png")).getImage(), 80, 0, this);
-        // TODO Wyświetlanie zniszczonych czołgów
-        g.drawImage(new ImageIcon(getClass().getResource("/main/resources/skull.png")).getImage(), 160, 0, this);
-        // TODO Wyświetlanie ilości respawnów
-    }
+    public void buildWorld(Graphics2D g2d) {
 
-    private void doDrawing(Graphics g) {
+        for (int i=0;i < walls.size();i++){
 
-        Graphics2D g2d = (Graphics2D) g;
+            Wall wall = (Wall) walls.get(i);
+            g2d.drawImage(wall.getImage(), wall.getX(), wall.getY(), this);
+        }
+
         g2d.drawImage(tank.getImage(), tank.getX(), tank.getY(), this);
 
         ArrayList<Missile> ms = tank.getMissiles();
 
-        for (int i = 0; i < ms.size(); i++) {
-            g2d.drawImage(ms.get(i).getImage(), ms.get(i).getX(),
-                    ms.get(i).getY(), this);
+        for (int j = 0; j < ms.size(); j++) {
+            g2d.drawImage(ms.get(j).getImage(), ms.get(j).getX(),
+                    ms.get(j).getY(), this);
         }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+
+        super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        buildWorld(g2d);
+        drawMenuBar(g2d);
+        Toolkit.getDefaultToolkit().sync();
+    }
+
+    private void drawMenuBar(Graphics2D g2d){
+
+        g2d.drawImage(new ImageIcon(getClass().getResource("/main/resources/heart.png")).getImage(), 0, 0, this);
+        g2d.setColor(new Color(182, 14, 14));
+        g2d.setFont(new Font("Arial", Font.BOLD, 17));
+        g2d.drawString(String.valueOf(tank.getHp()), 24, 16);
+
+        g2d.drawImage(new ImageIcon(getClass().getResource("/main/resources/explosion.png")).getImage(), 60, 0, this);
+        // TODO Wyświetlanie zniszczonych czołgów
+        g2d.drawImage(new ImageIcon(getClass().getResource("/main/resources/skull.png")).getImage(), 120, 0, this);
+        // TODO Wyświetlanie ilości respawnów
     }
 
     private void updateMissiles() {
@@ -106,6 +152,8 @@ public class Game extends JPanel implements Runnable{
 
         beforeTime = System.currentTimeMillis();
 
+        initWorld();
+
         while (true) {
 
             updateTank();
@@ -130,16 +178,18 @@ public class Game extends JPanel implements Runnable{
         }
     }
 
-    private class TAdapter extends KeyAdapter {
+    @Override
+    public void keyTyped(KeyEvent e) {
 
-        @Override
-        public void keyReleased(KeyEvent e) {
-            tank.keyReleased(e);
-        }
+    }
 
-        @Override
-        public void keyPressed(KeyEvent e) {
-            tank.keyPressed(e);
-        }
+    @Override
+    public void keyPressed(KeyEvent e) {
+        tank.keyPressed(e);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        tank.keyReleased(e);
     }
 }
