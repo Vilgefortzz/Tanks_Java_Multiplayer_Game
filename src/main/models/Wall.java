@@ -9,6 +9,7 @@ public class Wall extends Sprite{
 
         super(x, y);
         loadImage("brick1.png");
+        getImageDimensions();
     }
 
     private void loadImage(String imageName) {

@@ -285,6 +285,7 @@ public class GUI extends JFrame implements ActionListener{
 
         box.add(Box.createVerticalStrut(0));
         loginReg = new JTextField();
+        loginReg.setEditable(true);
         loginReg.setToolTipText("Image login just as you wish");
         loginReg.setMaximumSize(new Dimension(300, 30));
 
@@ -300,11 +301,19 @@ public class GUI extends JFrame implements ActionListener{
 
         box.add(Box.createVerticalStrut(0));
         passwordReg = new JPasswordField();
+        passwordReg.setEditable(true);
         passwordReg.setToolTipText("Image your password - try choose not easy one");
         passwordReg.setMaximumSize(new Dimension(300, 30));
         box.add(passwordReg);
 
-        box.add(Box.createVerticalStrut(20));
+        box.add(Box.createVerticalStrut(10));
+        JButton registerBtn = new JButton("Sign up");
+        registerBtn.setForeground(Color.RED);
+        registerBtn.setBackground(Color.BLACK);
+        registerBtn.setFont(new Font("Times New Roman", Font.ITALIC, 20));
+        box.add(registerBtn);
+
+        box.add(Box.createVerticalStrut(30));
         backBtn2 = backButton();
         box.add(backBtn2);
 
@@ -344,7 +353,14 @@ public class GUI extends JFrame implements ActionListener{
         passwordLog.setMaximumSize(new Dimension(300, 30));
         box.add(passwordLog);
 
-        box.add(Box.createVerticalStrut(20));
+        box.add(Box.createVerticalStrut(10));
+        JButton loginBtn = new JButton("Sign in");
+        loginBtn.setForeground(Color.RED);
+        loginBtn.setBackground(Color.BLACK);
+        loginBtn.setFont(new Font("Times New Roman", Font.ITALIC, 20));
+        box.add(loginBtn);
+
+        box.add(Box.createVerticalStrut(30));
         backBtn3 = backButton();
         box.add(backBtn3);
 
@@ -490,6 +506,8 @@ public class GUI extends JFrame implements ActionListener{
             menuPanel.remove(boxStartMenu);
             menuPanel.add(boxSignUpMenu);
             boxSignUpMenu.setVisible(true);
+
+            // JOptionPane.showMessageDialog(null, "HELLO");
         }
 
         if (e.getSource() == backBtn2){

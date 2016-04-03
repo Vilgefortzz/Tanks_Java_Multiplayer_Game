@@ -5,22 +5,24 @@
 
 package main.models;
 
-import main.gui.views.GUI;
-
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Tank extends Sprite{
+public class Player extends Sprite implements Runnable{
+
+    private Thread t = new Thread(this); // czołg jest wątkiem
+    private final int DELAY = 6;
 
     private int hp;
-    private double dx;
-    private double dy;
+    private int dx;
+    private int dy;
     private ArrayList<Missile> missiles;
     private int tankOrientation;
 
-    public Tank(int x, int y) {
+    public Player(int x, int y) {
 
         super(x, y);
         init();
@@ -33,30 +35,27 @@ public class Tank extends Sprite{
         loadImage("Tank_Right.png");
         getImageDimensions();
         tankOrientation = 1;
+
+        //t.start(); // startujemy wątek
     }
 
     public int getHp() {
         return hp;
     }
 
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
     private void loadImage(String imageName) {
 
-        image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/team_orange/" + imageName)).getImage();
+        image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/team_purple/" + imageName)).getImage();
     }
 
     public void move() {
 
         x += dx;
         y += dy;
-
-        if ( x < 0 )
-            x = 0;
-        if (x + width > GUI.sizeX)
-            x = GUI.sizeX - width;
-        if ( y < 0)
-            y = 0;
-        if ( y + height > GUI.sizeY)
-            y = GUI.sizeY - height;
     }
 
     public ArrayList<Missile> getMissiles() {
@@ -76,7 +75,7 @@ public class Tank extends Sprite{
     }
 
     private void shootLeft(){
-        missiles.add(new Missile(x - 10, y + height/2 - 4));
+        missiles.add(new Missile(x - 10, y + height/2 - 5));
     }
 
     public void keyPressed(KeyEvent e) {
@@ -98,49 +97,47 @@ public class Tank extends Sprite{
             } else {
                 if (tankOrientation == 1) {
                     shootRight();
-                    missiles.get(missiles.size() - 1).loadImage("Missile_Right");
+                    missiles.get(missiles.size() - 1).loadImage("Missile_Right.gif");
                     missiles.get(missiles.size() - 1).setMissileOrientation(1);
                 }
             }
 
-                if (key == KeyEvent.VK_S) {
+            else if (key == KeyEvent.VK_S) {
 
                     loadImage("Tank_Down.png");
                     getImageDimensions();
                     dy = 1;
                     tankOrientation = 4;
-                    hp--;
-                }
+            }
 
-                if (key == KeyEvent.VK_A) {
+            else if (key == KeyEvent.VK_A) {
 
                     loadImage("Tank_Left.png");
                     getImageDimensions();
                     dx = -1;
                     tankOrientation = 3;
-                }
+            }
 
-                if (key == KeyEvent.VK_W) {
+            else if (key == KeyEvent.VK_W) {
 
                     loadImage("Tank_Up.png");
                     getImageDimensions();
                     dy = -1;
                     tankOrientation = 2;
+            }
 
-                }
-
-                if (key == KeyEvent.VK_D) {
+            else if (key == KeyEvent.VK_D) {
 
                     loadImage("Tank_Right.png");
                     getImageDimensions();
                     dx = 1;
                     tankOrientation = 1;
-                }
+            }
 
-                if (key == KeyEvent.VK_ESCAPE) {
+            else if (key == KeyEvent.VK_ESCAPE) {
 
-                    System.exit(0);
-                 }
+                System.exit(0);
+            }
     }
 
     public void keyReleased(KeyEvent e) {
@@ -163,5 +160,37 @@ public class Tank extends Sprite{
             dy = 0;
         }
 
+    }
+
+    public void restorePreviousPosition(){
+
+        x = x - dx;
+        y = y - dy;
+    }
+
+    @Override
+    public void run() {
+
+        long beforeTime, timeDiff, sleep;
+
+        beforeTime = System.currentTimeMillis();
+
+        while (true) {
+
+            timeDiff = System.currentTimeMillis() - beforeTime;
+            sleep = DELAY - timeDiff;
+
+            if (sleep < 0) {
+                sleep = 2;
+            }
+
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted: " + e.getMessage());
+            }
+
+            beforeTime = System.currentTimeMillis();
+        }
     }
 }

@@ -59,12 +59,5 @@ public class Missile extends Sprite{
         else if (missileOrientation == 4){
             y += MISSILE_SPEED;
         }
-
-        if (x > GUI.sizeX || x < 0) {
-            vis = false;
-        }
-        if (y > GUI.sizeY || y < 0){
-            vis = false;
-        }
     }
 }
