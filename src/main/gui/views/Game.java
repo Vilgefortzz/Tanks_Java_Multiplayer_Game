@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Game extends JPanel implements KeyListener, Runnable{
 
@@ -22,6 +23,8 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
     private int spaceWallWidth = 0;
     private int spaceWallHeight = 0;
+
+    private boolean initialized = false;
 
     private final int SPACE = 24; // rozmiar ściany - obrazka
 
@@ -47,13 +50,13 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
     private void initWorld() {
 
-        players = new ArrayList<>();
+        /*
+        Zczytanie mapy oraz dodanie ścian do listy
+         */
 
-        players.add(new Player(200, 400));
-        players.add(new Player(800, 300));
-
-        walls = new ArrayList<>();
         map = new MapReader("mapDeathMatch.txt");
+        walls = new ArrayList<>();
+
 
         ArrayList<String> lines = map.getLines();
 
@@ -75,6 +78,50 @@ public class Game extends JPanel implements KeyListener, Runnable{
             spaceWallWidth = 0;
             spaceWallHeight += SPACE;
         }
+
+        /*
+        Stworzenie graczy
+         */
+
+        players = new ArrayList<>();
+
+        /*
+        2 graczy
+         */
+
+        players.add(new Player());
+        players.add(new Player());
+
+        boolean isIntersection;
+
+        // Losowe generowanie na mapie czołgów
+
+        for (int i=0;i<players.size();i++){
+
+            while (!players.get(i).isRandomCreated()){
+
+                isIntersection = false;
+
+                players.get(i).setX(new Random().nextInt(1330 - players.get(i).getWidth()));
+                players.get(i).setY(new Random().nextInt(740 - players.get(i).getHeight()));
+                System.out.println(players.get(i).getX());
+                System.out.println(players.get(i).getY());
+
+                for (int j=0;j<walls.size();j++){
+
+                    if (players.get(i).getBounds().intersects(walls.get(j).getBounds())){
+                        isIntersection = true;
+                        break;
+                    }
+                }
+
+                if (!isIntersection){
+                    players.get(i).setRandomCreated(true);
+                }
+            }
+        }
+
+        initialized = true;
     }
 
     @Override
@@ -96,7 +143,7 @@ public class Game extends JPanel implements KeyListener, Runnable{
         g2d.setColor(new Color(182, 14, 14));
         g2d.setFont(new Font("Arial", Font.BOLD, 17));
 
-        /* Narazie może wygrać tylko pierwszy czołg - w innym przpyadku program się zawiesza z powodu
+        /* Narazie może wygrać tylko pierwszy czołg - w innym przypadku program się zawiesza z powodu
            wyświetlania paska życia dla pierwszego czołgu na sztywno
          */
 
@@ -121,22 +168,25 @@ public class Game extends JPanel implements KeyListener, Runnable{
             g2d.drawImage(walls.get(i).getImage(), walls.get(i).getX(), walls.get(i).getY(), this);
         }
 
-        // Obiekty, które mogą być niszczone - czołgi(gracze)
+        if (initialized){
 
-        for (int i=0;i<players.size();i++) {
+            // Obiekty, które mogą być niszczone - czołgi(gracze)
 
-            g2d.drawImage(players.get(i).getImage(), players.get(i).getX(), players.get(i).getY(), this);
-        }
+            for (int i=0;i<players.size();i++) {
 
-        // Rysowanie pocisków, jeżeli gracz żyje to rysuje
+                g2d.drawImage(players.get(i).getImage(), players.get(i).getX(), players.get(i).getY(), this);
+            }
 
-        for (int i=0;i<players.size();i++){
+            // Rysowanie pocisków, jeżeli gracz żyje to rysuje
 
-            for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
+            for (int i=0;i<players.size();i++){
 
-                if (players.get(i).getMissiles().get(j).isVisible()){
-                    g2d.drawImage(players.get(i).getMissiles().get(j).getImage(), players.get(i).getMissiles().get(j).getX(),
-                            players.get(i).getMissiles().get(j).getY(), this);
+                for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
+
+                    if (players.get(i).getMissiles().get(j).isVisible()){
+                        g2d.drawImage(players.get(i).getMissiles().get(j).getImage(), players.get(i).getMissiles().get(j).getX(),
+                                players.get(i).getMissiles().get(j).getY(), this);
+                    }
                 }
             }
         }
@@ -299,9 +349,5 @@ public class Game extends JPanel implements KeyListener, Runnable{
     public void keyReleased(KeyEvent e) {
         for (int i=0;i<players.size();i++)
             players.get(i).keyReleased(e);
-    }
-
-    public ArrayList<Wall> getWalls() {
-        return walls;
     }
 }

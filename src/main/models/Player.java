@@ -8,19 +8,25 @@ package main.models;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Player extends Sprite implements Runnable{
 
     private Thread t = new Thread(this); // czołg jest wątkiem
     private final int DELAY = 6;
 
+    private boolean randomCreated = false;
+
     private int hp;
     private int dx;
     private int dy;
     private ArrayList<Missile> missiles;
     private int tankOrientation;
+
+    public Player(){
+
+        super();
+        init();
+    }
 
     public Player(int x, int y) {
 
@@ -37,6 +43,14 @@ public class Player extends Sprite implements Runnable{
         tankOrientation = 1;
 
         //t.start(); // startujemy wątek
+    }
+
+    public boolean isRandomCreated() {
+        return randomCreated;
+    }
+
+    public void setRandomCreated(boolean randomCreated) {
+        this.randomCreated = randomCreated;
     }
 
     public int getHp() {

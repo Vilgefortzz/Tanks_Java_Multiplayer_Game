@@ -19,7 +19,7 @@ public class Sprite {
     protected int width;
     protected int height;
 
-    public Sprite() {
+    public Sprite(){
 
         vis = true;
     }
@@ -49,12 +49,28 @@ public class Sprite {
         return y;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public boolean isVisible() {
         return vis;
     }
 
     public void setVisible(Boolean visible) {
         vis = visible;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public Rectangle getBounds() {
