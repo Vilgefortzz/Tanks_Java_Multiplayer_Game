@@ -7,7 +7,7 @@ package main.models;
 
 import java.awt.*;
 
-public class Sprite {
+public class Sprite{
 
     // Parametry
 
@@ -26,7 +26,7 @@ public class Sprite {
 
     public Sprite(int x, int y) {
 
-        this.x =  x;
+        this.x = x;
         this.y = y;
         vis = true;
     }

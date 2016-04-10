@@ -11,16 +11,22 @@ import java.util.ArrayList;
 
 public class Player extends Sprite implements Runnable{
 
-    private Thread t = new Thread(this); // czołg jest wątkiem
-    private final int DELAY = 6;
+    private int id;
+    private String name;
 
     private boolean randomCreated = false;
 
     private int hp;
     private int dx;
     private int dy;
-    private ArrayList<Missile> missiles;
+    private ArrayList<Missile> missiles = null;
     private int tankOrientation;
+
+    //private Thread t = new Thread(this); // czołg jest wątkiem
+
+    private long updated = 0;
+    private long delay = 1;
+
 
     public Player(){
 
@@ -45,6 +51,18 @@ public class Player extends Sprite implements Runnable{
         //t.start(); // startujemy wątek
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ArrayList<Missile> getMissiles() {
+        return missiles;
+    }
+
     public boolean isRandomCreated() {
         return randomCreated;
     }
@@ -66,14 +84,10 @@ public class Player extends Sprite implements Runnable{
         image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/team_purple/" + imageName)).getImage();
     }
 
-    public void move() {
+    private void move() {
 
         x += dx;
         y += dy;
-    }
-
-    public ArrayList<Missile> getMissiles() {
-        return missiles;
     }
 
     private void shootUP(){
@@ -176,6 +190,23 @@ public class Player extends Sprite implements Runnable{
 
     }
 
+    public void updateMissiles() {
+
+        for (int i = 0; i < missiles.size(); i++) {
+
+            if (missiles.get(i).isVisible()){
+
+                missiles.get(i).move();
+            }
+            else
+               missiles.remove(i);
+        }
+    }
+    public void updateTank() {
+
+            move();
+    }
+
     public void restorePreviousPosition(){
 
         x = x - dx;
@@ -192,7 +223,7 @@ public class Player extends Sprite implements Runnable{
         while (true) {
 
             timeDiff = System.currentTimeMillis() - beforeTime;
-            sleep = DELAY - timeDiff;
+            sleep = delay - timeDiff;
 
             if (sleep < 0) {
                 sleep = 2;

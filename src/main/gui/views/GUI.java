@@ -14,10 +14,14 @@ import java.io.IOException;
 
 public class GUI extends JFrame implements ActionListener{
 
+    private static final long serialVersionUID = -2697372672378215128L;
+
     // Rozmiar okna
 
     public static final int sizeX = 1366;
     public static final int sizeY = 768;
+
+    // Panele 1) menu główne + poboczne 2) właściwa gra
 
     private MenuPanel menuPanel;
     private Game gamePanel;
@@ -83,12 +87,14 @@ public class GUI extends JFrame implements ActionListener{
 
     public GUI(){
 
+        super("Tanks - Multiplayer by GK");
+        setSize(sizeX, sizeY);
+        setResizable(false);
+
         setLookAndFeel("Nimbus"); // wygląd przycisków
         init();
 
-        setTitle("Tanks - Multiplayer by GK");
-        setResizable(false);
-        pack();
+
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

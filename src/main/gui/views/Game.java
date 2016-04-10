@@ -6,20 +6,20 @@
 package main.gui.views;
 
 import main.io.MapReader;
-import main.models.Missile;
 import main.models.Player;
 import main.models.Wall;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Game extends JPanel implements KeyListener, Runnable{
+public class Game extends JPanel implements Runnable, KeyListener{
 
     private final int DELAY = 6;
-    private Thread animation;
+    private Thread animation = null;
 
     private int spaceWallWidth = 0;
     private int spaceWallHeight = 0;
@@ -28,10 +28,10 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
     private final int SPACE = 24; // rozmiar ściany - obrazka
 
-    private ArrayList<Wall> walls;
-    private ArrayList<Player> players;
+    private ArrayList<Wall> walls = null;
+    private ArrayList<Player> players = null;
 
-    private MapReader map;
+    private MapReader map = null;
 
     public Game() {
         init();
@@ -56,7 +56,6 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
         map = new MapReader("mapDeathMatch.txt");
         walls = new ArrayList<>();
-
 
         ArrayList<String> lines = map.getLines();
 
@@ -184,33 +183,13 @@ public class Game extends JPanel implements KeyListener, Runnable{
                 for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
 
                     if (players.get(i).getMissiles().get(j).isVisible()){
+
                         g2d.drawImage(players.get(i).getMissiles().get(j).getImage(), players.get(i).getMissiles().get(j).getX(),
                                 players.get(i).getMissiles().get(j).getY(), this);
                     }
                 }
             }
         }
-    }
-
-    private void updateMissiles() {
-
-        for (int i=0;i<players.size();i++) {
-
-            for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
-
-                if (players.get(i).getMissiles().get(j).isVisible()){
-
-                    players.get(i).getMissiles().get(j).move();
-                }
-                else
-                    players.get(i).getMissiles().remove(j);
-            }
-        }
-    }
-    private void updateTank() {
-
-        for (int i=0; i<players.size();i++)
-            players.get(i).move();
     }
 
     private void checkCollisions() {
@@ -271,7 +250,6 @@ public class Game extends JPanel implements KeyListener, Runnable{
                 }
             }
 
-
             // Sprawdzanie kolizji pocisków ze ścianami - tu jest wszystko dobrze i optymalnie
 
             for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
@@ -282,11 +260,6 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
                         players.get(i).getMissiles().get(j).setVisible(false);
                     }
-                }
-
-                if (players.get(i).getMissiles().get(j).getBounds().intersects(players.get(i).getBounds())){
-
-                    players.get(i).getMissiles().get(j).setVisible(false);
                 }
             }
         }
@@ -309,8 +282,11 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
         while (true) {
 
-            updateTank();
-            updateMissiles();
+            for (int i=0;i<players.size();i++){
+
+                players.get(i).updateTank();
+                players.get(i).updateMissiles();
+            }
 
             checkCollisions();
 
@@ -341,13 +317,16 @@ public class Game extends JPanel implements KeyListener, Runnable{
     @Override
     public void keyPressed(KeyEvent e) {
 
-        for (int i=0;i<players.size();i++)
+        for (int i=0;i<players.size();i++){
             players.get(i).keyPressed(e);
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        for (int i=0;i<players.size();i++)
+
+        for (int i=0;i<players.size();i++){
             players.get(i).keyReleased(e);
+        }
     }
 }

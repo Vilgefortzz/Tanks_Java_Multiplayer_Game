@@ -5,14 +5,12 @@
 
 package main.models;
 
-import main.gui.views.GUI;
-
 import javax.swing.*;
 
 public class Missile extends Sprite{
 
     private int damage;
-    private final int MISSILE_SPEED = 8;
+    private final int MISSILE_SPEED = 9;
     private int missileOrientation;
 
     public Missile(int x, int y) {

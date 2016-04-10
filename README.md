@@ -1,8 +1,8 @@
-TANKS - MULTIPLAYER
+**TANKS - MULTIPLAYER**
 ---------------------------------------------------------------------------------------------------------------------
 
-Autor: Grzegorz Klimek Gr. Lab. 4 rok II IS WIMIiP
----------------------------------------------------------------------------------------------------------------------
+_Autor: Grzegorz Klimek Gr. Lab. 4 rok II IS WIMIiP_
+--------------------------------------------------
 
 Opis projektu: 
 
@@ -13,31 +13,31 @@ Następnie taki użytkownik może wejść do gry dostając do dyspozycji czołg 
 Gracz porusza się czołgiem a jego zadanie polega na zniszczeniu wrogich czołgów (innych graczy, którzy
 połączą sie z serwerem i wejdą do gry).
 
----------------------------------------------------------------------------------------------------------------------
+---------------------------------------
 
-Harmonogram:
+**_Harmonogram:_**
 
 
 [1] Okienka tworzone przy pomocy biblioteki graficznej Swing
 
-[1.1] Stworzenie klasy obsługującej główne okno programu (klasa GUI)
+[1.1] ~~Stworzenie klasy obsługującej główne okno programu (klasa GUI)~~ [ 08.03.16 ]
 
 	-> stworzenie okna, odpowiednie ustawienie go na ekranie, nazwanie itp.
 	-> stworzenie panelu odpowiedzialnego za ustawienie tła aplikacji (klasa MyPanel)
 	-> ustawienie icona okna aplikacji
 
-[1.2] Tworzenie GUI + oprogramowanie przycisków
+[1.2] ~~Tworzenie GUI + oprogramowanie przycisków~~ [ 08.03.16 ]
 
 	-> utworzenie menu głównego aplikacji wraz z menu pobocznymi
 	-> stworzenie buttonów, napisów, buttonów wyboru, textfieldów
 	-> działanie bez konieczności otwierania nowych okien - wszystko w jednym oknie
 	-> dodanie akcji do przycisków po kliknięciu myszą
 
-[1.3] Wygenerowanie mapy oraz stworzenie modelu czołgu + oprogramowanie go
+[1.3] ~~Wygenerowanie mapy oraz stworzenie modelu czołgu + oprogramowanie go~~ [ 15.03.16 ]
 
 	-> stworzenie mapy (tylko tło) przy pomocy odpowiedniej klasy (klasa MapPanel)
 	-> dodanie belki na górze mapy z informacją o aktualnym życiu, ilości zniszczonych czołgów i bycia zniszczonym
-	-> stworzenie czołgu przy pomocy odpowiedniej klasy (klasa Tank)
+	-> stworzenie czołgu przy pomocy odpowiedniej klasy (klasa Player)
 	-> sterowanie czołgiem - reakcja na klawisze
 	-> strzelanie czołgiem - w jednym kierunku
 
@@ -45,12 +45,12 @@ Harmonogram:
 
 	-> utworzenie interfejsu serwera
 
-[1.5] Animacje czołgów
+[1.5] ~~Animacje czołgów~~ [ 22.03.16 ]
 
     -> prawidłowe zachowanie się czołgu czyli obracanie się (animacja), kierunek strzału
     -> losowe generowanie czołgu na mapie
 
-[1.6] Rozgrywka ( otrzymywanie obrażeń, strata zdrowia, usuwanie z mapy )
+[1.6] ~~Rozgrywka ( otrzymywanie obrażeń, strata zdrowia, usuwanie z mapy )~~ [ 05.04.16 ]
 
     -> poprawna fizyka gry
 	-> mechanika związana z otrzymywanymi obrażeniami
@@ -65,7 +65,7 @@ Harmonogram:
     -> na jakim porcie jest rozgrywka, ile czołgów, użytkownik który łączy sie na serwerze
     -> konfiguracja serwera i klienta
 
-[2.2] Wczytywanie mapy
+[2.2] ~~Wczytywanie mapy~~ [ 22.03.16 ]
 		
 [2.3] Plik z logami klienta i serwera (klasa do obsługi logów z przed 2 tygodni np.)
 
@@ -77,7 +77,7 @@ Harmonogram:
 
 [3.1] Mechanizm bezpiecznego rozgłaszania komunikatów między użytkownikami
 
-[3.2] Ruch gracza + kolizje (wątek animacji)
+[3.2] ~~Ruch gracza + kolizje (wątek animacji)~~ [ 05.04.16 ]
 
 [3.4] Utworzenie wątku serwera(akceptujący) + wątki dla każdego klienta + mechanizm bezpiecznego zatrzymywania wątku(join, flagi podtrzymujące)
 
@@ -131,7 +131,7 @@ Harmonogram:
 
 [6.2] Tryb teamMatch + obsługa pocisków
 
-[6.2] Grafika
+[6.2] ~~Grafika~~ [ 15.03.16 ]
 
 	-> dodanie odpowiednich grafik związanych z tematyką gry
 	-> utworzenie przejrzystego menu głównego aplikacji
