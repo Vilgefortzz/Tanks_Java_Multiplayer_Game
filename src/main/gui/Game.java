@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package main.gui.views;
+package main.gui;
 
 import main.io.MapReader;
 import main.models.Player;
@@ -14,9 +14,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Game extends JPanel implements Runnable, KeyListener{
+public class Game extends JPanel implements Runnable, KeyListener, FrontEnd{
 
     private final int DELAY = 6;
     private Thread animation = null;
@@ -24,12 +25,11 @@ public class Game extends JPanel implements Runnable, KeyListener{
     private int spaceWallWidth = 0;
     private int spaceWallHeight = 0;
 
-    private boolean initialized = false;
-
     private final int SPACE = 24; // rozmiar ściany - obrazka
 
-    private ArrayList<Wall> walls = null;
-    private ArrayList<Player> players = null;
+    public static ArrayList<Wall> walls = null; // statyczna lista ścian - potrzebna przy badaniu kolizji
+
+    private Map<Integer, Player> players; // lista playerów w postaci mapy < klucz , obiekt >
 
     private MapReader map = null;
 
@@ -44,24 +44,34 @@ public class Game extends JPanel implements Runnable, KeyListener{
 
         initWorld();
 
-        setBackground(new Color(112, 113, 76));
+        setBackground(new Color(113, 99, 96));
         setDoubleBuffered(true);
     }
 
     private void initWorld() {
 
         /*
-        Zczytanie mapy oraz dodanie ścian do listy
+        Stworzenie mapy oraz ścian
          */
 
         map = new MapReader("mapDeathMatch.txt");
         walls = new ArrayList<>();
 
+        /*
+        Stworzenie graczy
+         */
+
+        players = new HashMap<>();
+
+        /*
+        Zczytanie mapy do walls
+         */
+
         ArrayList<String> lines = map.getLines();
 
-        for (int i = 0; i < lines.size(); i++) {
-            for (int j=0; j < lines.get(i).length(); j++){
-                char c = lines.get(i).charAt(j);
+        for (String line : lines) {
+            for (int j = 0; j < line.length(); j++) {
+                char c = line.charAt(j);
 
                 if (c == '-') {
                     spaceWallWidth += SPACE;
@@ -79,48 +89,18 @@ public class Game extends JPanel implements Runnable, KeyListener{
         }
 
         /*
-        Stworzenie graczy
-         */
-
-        players = new ArrayList<>();
-
-        /*
         2 graczy
          */
 
-        players.add(new Player());
-        players.add(new Player());
+        players.put(1, new Player(1, "Grzes"));
+        players.put(2, new Player(2, "Krzys"));
 
-        boolean isIntersection;
+        /*
+        Startowanie wątku animacji
+         */
 
-        // Losowe generowanie na mapie czołgów
-
-        for (int i=0;i<players.size();i++){
-
-            while (!players.get(i).isRandomCreated()){
-
-                isIntersection = false;
-
-                players.get(i).setX(new Random().nextInt(1330 - players.get(i).getWidth()));
-                players.get(i).setY(new Random().nextInt(740 - players.get(i).getHeight()));
-                System.out.println(players.get(i).getX());
-                System.out.println(players.get(i).getY());
-
-                for (int j=0;j<walls.size();j++){
-
-                    if (players.get(i).getBounds().intersects(walls.get(j).getBounds())){
-                        isIntersection = true;
-                        break;
-                    }
-                }
-
-                if (!isIntersection){
-                    players.get(i).setRandomCreated(true);
-                }
-            }
-        }
-
-        initialized = true;
+        animation = new Thread(this);
+        animation.start();
     }
 
     @Override
@@ -146,12 +126,11 @@ public class Game extends JPanel implements Runnable, KeyListener{
            wyświetlania paska życia dla pierwszego czołgu na sztywno
          */
 
-        g2d.drawString(String.valueOf(players.get(0).getHp()), 24, 16);
+        g2d.drawString(String.valueOf(players.get(1).getHp()), 24, 16);
 
         if (players.size() == 2){
-            g2d.drawString(String.valueOf(players.get(1).getHp()), 300, 16);
+            g2d.drawString(String.valueOf(players.get(2).getHp()), 300, 16);
         }
-
 
         g2d.drawImage(new ImageIcon(getClass().getResource("/main/resources/explosion.png")).getImage(), 60, 0, this);
         // TODO Wyświetlanie zniszczonych czołgów
@@ -163,115 +142,77 @@ public class Game extends JPanel implements Runnable, KeyListener{
 
         // Ścian nie można niszczyć, więc przy tworzeniu są one zawsze widoczne
 
-        for (int i=0; i < walls.size(); i++){
-            g2d.drawImage(walls.get(i).getImage(), walls.get(i).getX(), walls.get(i).getY(), this);
+        for (Wall wall : walls) {
+
+            wall.draw(g2d);
         }
 
-        if (initialized){
+        // Obiekty, które mogą być niszczone - czołgi(gracze)
 
-            // Obiekty, które mogą być niszczone - czołgi(gracze)
+            for ( Player player : players.values() ){
 
-            for (int i=0;i<players.size();i++) {
+                player.draw(g2d);
 
-                g2d.drawImage(players.get(i).getImage(), players.get(i).getX(), players.get(i).getY(), this);
-            }
+                // Rysowanie pocisków, jeżeli gracz żyje to rysuje
 
-            // Rysowanie pocisków, jeżeli gracz żyje to rysuje
+                for (int i = 0; i < player.getMissiles().size(); i++) {
 
-            for (int i=0;i<players.size();i++){
+                    if (player.getMissiles().get(i).isVisible()) {
 
-                for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
-
-                    if (players.get(i).getMissiles().get(j).isVisible()){
-
-                        g2d.drawImage(players.get(i).getMissiles().get(j).getImage(), players.get(i).getMissiles().get(j).getX(),
-                                players.get(i).getMissiles().get(j).getY(), this);
+                        player.getMissiles().get(i).draw(g2d);
                     }
                 }
             }
-        }
     }
 
-    private void checkCollisions() {
+    /*private void checkCollisions() {
 
         for (int i = 0; i < players.size(); i++){
 
             // Sprawdzanie kolizji czołgu z innym czołgiem - wszystko na zasadzie prostokątów i ich krzyżowania się
             // Narazie nie ma
 
-            // Sprawdzanie kolizji czołgów ze ścianami - tu jest wszystko dobrze i optymalnie
-
-            for (int j = 0; j < walls.size(); j++){
-
-                if (players.get(i).getBounds().intersects(walls.get(j).getBounds())) {
-                    players.get(i).restorePreviousPosition();
-                }
-            }
-
             // Sprawdzanie kolizji pocisków z czołgami - tu jest wszystko dobrze i optymalnie
 
             // Narazie tylko dla dwóch czołgów - problem z iteracją
 
-            if (players.size() != 1){
+            if (players.size() != 1) {
 
-                if (i == 0){
+                if (i == 0) {
 
                     for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
 
-                        if (players.get(i).getMissiles().get(j).getBounds().intersects(players.get(i + 1).getBounds())){
+                        if (players.get(i).getMissiles().get(j).getBounds().intersects(players.get(i + 1).getBounds())) {
 
-                            if (players.get(i + 1).getHp() != 1){
+                            if (players.get(i + 1).getHp() != 1) {
 
                                 // tracenie życia
 
                                 players.get(i + 1).setHp(players.get(i + 1).getHp() - players.get(i).getMissiles().get(j).getDamage());
                                 players.get(i).getMissiles().get(j).setVisible(false);
-                            }
-                            else
+                            } else
                                 players.remove(players.get(i + 1)); // usuwanie czołgu z mapy
                         }
                     }
-                }
-                else if (i == 1){
+                } else if (i == 1) {
 
                     for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
 
-                        if (players.get(i).getMissiles().get(j).getBounds().intersects(players.get(i - 1).getBounds())){
+                        if (players.get(i).getMissiles().get(j).getBounds().intersects(players.get(i - 1).getBounds())) {
 
-                            if (players.get(i - 1).getHp() != 1){
+                            if (players.get(i - 1).getHp() != 1) {
 
                                 players.get(i - 1).setHp(players.get(i - 1).getHp() - players.get(i).getMissiles().get(j).getDamage()); // tracenie życia
                                 players.get(i).getMissiles().get(j).setVisible(false);
-                            }
-                            else
+                            } else
                                 players.remove(players.get(i - 1)); // usuwanie czołgu z mapy
                         }
                     }
                 }
             }
-
-            // Sprawdzanie kolizji pocisków ze ścianami - tu jest wszystko dobrze i optymalnie
-
-            for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
-
-                for (int k = 0; k < walls.size(); k++ ){
-
-                    if (players.get(i).getMissiles().get(j).getBounds().intersects(walls.get(k).getBounds())){
-
-                        players.get(i).getMissiles().get(j).setVisible(false);
-                    }
-                }
-            }
         }
     }
-
-    @Override
-    public void addNotify() {
-        super.addNotify();
-
-        animation = new Thread(this);
-        animation.start();
-    }
+    */
 
     @Override
     public void run() {
@@ -282,13 +223,13 @@ public class Game extends JPanel implements Runnable, KeyListener{
 
         while (true) {
 
-            for (int i=0;i<players.size();i++){
+            for (Player player : players.values()) {
 
-                players.get(i).updateTank();
-                players.get(i).updateMissiles();
+                player.updateTank();
+                player.updateMissiles();
+                player.checkCollisionWithWall();
+                player.checkCollisionMissileWithWall();
             }
-
-            checkCollisions();
 
             repaint();
 
@@ -317,16 +258,56 @@ public class Game extends JPanel implements Runnable, KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
 
-        for (int i=0;i<players.size();i++){
-            players.get(i).keyPressed(e);
+        for (Player player : players.values()){
+
+            player.keyPressed(e);
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
-        for (int i=0;i<players.size();i++){
-            players.get(i).keyReleased(e);
+        for (Player player : players.values()){
+
+            player.keyReleased(e);
         }
+    }
+
+    @Override
+    public boolean registerPlayer(int id, String name) {
+
+        if (players.containsKey(id)) // jeżeli istnieje już player z danym kluczem to nie można stworzyć o tym samym kluczu
+            return false;
+
+        players.put(id, new Player(id, name));
+        repaint();
+
+        return true;
+    }
+
+    @Override
+    public void deregisterPlayer(int id) {
+
+        players.remove(id);
+        repaint();
+    }
+
+    @Override
+    public void movePlayer(int id, int x, int y) {
+
+        Player player = players.get(id);
+
+        if ( player == null )
+            return;
+
+        //player.move( x, y );
+        repaint();
+    }
+
+    @Override
+    public void clearPlayers() {
+
+        players.clear();
+        repaint();
     }
 }

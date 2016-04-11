@@ -5,9 +5,8 @@
 
 package main;
 
-import main.gui.views.GUI;
+import main.gui.GUI;
 
-import javax.swing.*;
 import java.awt.*;
 
 

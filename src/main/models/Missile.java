@@ -6,6 +6,7 @@
 package main.models;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Missile extends Sprite{
 
@@ -14,16 +15,13 @@ public class Missile extends Sprite{
     private int missileOrientation;
 
     public Missile(int x, int y) {
+
         super(x, y);
-        init();
-    }
 
-    private void init(){
-
-        damage = 1;
+        this.damage = 1;
         loadImage("Missile_Right.gif");
         getImageDimensions();
-        missileOrientation = 1;
+        this.missileOrientation = 1;
     }
 
     public int getDamage() {
@@ -32,7 +30,7 @@ public class Missile extends Sprite{
 
     void loadImage(String imageName) {
 
-        image = new ImageIcon(getClass().getResource("/main/resources/sprites/missiles/" + imageName)).getImage();
+        this.image = new ImageIcon(getClass().getResource("/main/resources/sprites/missiles/" + imageName)).getImage();
     }
 
     public int getMissileOrientation() {
@@ -41,6 +39,11 @@ public class Missile extends Sprite{
 
     void setMissileOrientation(int missileOrientation) {
         this.missileOrientation = missileOrientation;
+    }
+
+    public void draw( Graphics2D g2d )
+    {
+        g2d.drawImage(image, x, y, null);
     }
 
     public void move() {

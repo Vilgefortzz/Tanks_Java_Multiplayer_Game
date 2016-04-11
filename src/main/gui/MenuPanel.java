@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package main.gui.views;
+package main.gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

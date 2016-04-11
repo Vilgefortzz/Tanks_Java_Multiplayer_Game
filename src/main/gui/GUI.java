@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package main.gui.views;
+package main.gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,9 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class GUI extends JFrame implements ActionListener{
-
-    private static final long serialVersionUID = -2697372672378215128L;
+public class GUI extends JFrame implements ActionListener, FrontEnd{
 
     // Rozmiar okna
 
@@ -93,8 +91,6 @@ public class GUI extends JFrame implements ActionListener{
 
         setLookAndFeel("Nimbus"); // wygląd przycisków
         init();
-
-
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -614,5 +610,29 @@ public class GUI extends JFrame implements ActionListener{
         if (e.getSource() == exitBtn){
             System.exit(0);
         }
+    }
+
+    @Override
+    public boolean registerPlayer(int id, String name) {
+
+        return this.gamePanel.registerPlayer(id, name);
+    }
+
+    @Override
+    public void deregisterPlayer(int id) {
+
+        this.gamePanel.deregisterPlayer(id);
+    }
+
+    @Override
+    public void movePlayer(int id, int x, int y) {
+
+        this.gamePanel.movePlayer(id, x, y);
+    }
+
+    @Override
+    public void clearPlayers() {
+
+        this.gamePanel.clearPlayers();
     }
 }

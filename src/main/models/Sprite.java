@@ -15,26 +15,26 @@ public class Sprite{
     protected int y;
     protected boolean vis;
 
-    protected Image image;
+    protected Image image = null;
     protected int width;
     protected int height;
 
     public Sprite(){
 
-        vis = true;
+        this.vis = true;
     }
 
     public Sprite(int x, int y) {
 
         this.x = x;
         this.y = y;
-        vis = true;
+        this.vis = true;
     }
 
     protected void getImageDimensions() {
 
-        width = image.getWidth(null);
-        height = image.getHeight(null);
+        this.width = image.getWidth(null);
+        this.height = image.getHeight(null);
     }
 
     public Image getImage() {

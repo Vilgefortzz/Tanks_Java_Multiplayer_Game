@@ -6,8 +6,12 @@
 package main.models;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Random;
+
+import static main.gui.Game.walls;
 
 public class Player extends Sprite implements Runnable{
 
@@ -27,26 +31,20 @@ public class Player extends Sprite implements Runnable{
     private long updated = 0;
     private long delay = 1;
 
-
-    public Player(){
+    public Player(int id, String name) {
 
         super();
-        init();
-    }
 
-    public Player(int x, int y) {
+        this.id = id;
+        this.name = name;
 
-        super(x, y);
-        init();
-    }
-
-    private void init() {
-
-        hp = 100;
-        missiles = new ArrayList<>();
+        this.hp = 100;
+        this.missiles = new ArrayList<>();
         loadImage("Tank_Right.png");
         getImageDimensions();
-        tankOrientation = 1;
+        this.tankOrientation = 1;
+
+        randomGenerate();
 
         //t.start(); // startujemy wątek
     }
@@ -63,11 +61,11 @@ public class Player extends Sprite implements Runnable{
         return missiles;
     }
 
-    public boolean isRandomCreated() {
+    private boolean isRandomCreated() {
         return randomCreated;
     }
 
-    public void setRandomCreated(boolean randomCreated) {
+    private void setRandomCreated(boolean randomCreated) {
         this.randomCreated = randomCreated;
     }
 
@@ -81,7 +79,37 @@ public class Player extends Sprite implements Runnable{
 
     private void loadImage(String imageName) {
 
-        image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/team_purple/" + imageName)).getImage();
+        this.image = new ImageIcon(getClass().getResource("/main/resources/sprites/tanks/team_purple/" + imageName)).getImage();
+    }
+
+    private void randomGenerate(){
+
+        boolean isIntersection;
+
+        // Losowe wygenerowanie na mapie czołgu
+
+            while (!isRandomCreated()){
+
+                isIntersection = false;
+
+                this.x = new Random().nextInt(1330 - this.width);
+                this.y = new Random().nextInt(740 - this.height);
+
+                System.out.println(this.x);
+                System.out.println(this.y);
+
+                for (int i = 0; i < walls.size(); i++){
+
+                    if (getBounds().intersects(walls.get(i).getBounds())){
+                        isIntersection = true;
+                        break;
+                    }
+                }
+
+                if (!isIntersection){
+                    setRandomCreated(true);
+                }
+            }
     }
 
     private void move() {
@@ -190,6 +218,11 @@ public class Player extends Sprite implements Runnable{
 
     }
 
+    public void draw( Graphics2D g2d )
+    {
+        g2d.drawImage(image, x, y, null);
+    }
+
     public void updateMissiles() {
 
         for (int i = 0; i < missiles.size(); i++) {
@@ -207,7 +240,35 @@ public class Player extends Sprite implements Runnable{
             move();
     }
 
-    public void restorePreviousPosition(){
+    public void checkCollisionWithWall(){
+
+        // Sprawdzanie kolizji czołgów ze ścianami - tu jest wszystko dobrze i optymalnie
+
+        for (Wall wall : walls) {
+
+            if (getBounds().intersects(wall.getBounds())) {
+                restorePreviousPosition();
+            }
+        }
+    }
+
+    public void checkCollisionMissileWithWall(){
+
+        // Sprawdzanie kolizji pocisków ze ścianami - tu jest wszystko dobrze i optymalnie
+
+        for (Missile missile : missiles) {
+
+            for (Wall wall : walls) {
+
+                if (missile.getBounds().intersects(wall.getBounds())) {
+
+                    missile.setVisible(false);
+                }
+            }
+        }
+    }
+
+    private void restorePreviousPosition(){
 
         x = x - dx;
         y = y - dy;
