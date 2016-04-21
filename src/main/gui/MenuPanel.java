@@ -9,20 +9,19 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 public class MenuPanel extends JPanel {
 
     private BufferedImage backgroundImg;
 
-    public MenuPanel() { init(); }
-
-    private void init() {
+    public MenuPanel() {
 
         try {
-            backgroundImg = ImageIO.read(getClass().getResource("/main/resources/tanks1366x768.jpg"));
+        backgroundImg = ImageIO.read(new File("res\\tanks1366x768.jpg"));
         }  catch (IOException e) {
-            e.printStackTrace();
+        e.printStackTrace();
         }
     }
 

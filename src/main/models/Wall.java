@@ -1,25 +1,24 @@
+/*
+ * Copyright (c) 2016.
+ * @gklimek
+ */
+
 package main.models;
 
-
-import javax.swing.*;
 import java.awt.*;
+import static main.io.LoadImages.wall;
 
 public class Wall extends Sprite{
 
     public Wall(int x, int y) {
 
         super(x, y);
-        loadImage("brick1.png");
+        mainImage = wall;
         getImageDimensions();
-    }
-
-    private void loadImage(String imageName) {
-
-        image = new ImageIcon(getClass().getResource("/main/resources/sprites/walls/" + imageName)).getImage();
     }
 
     public void draw( Graphics2D g2d )
     {
-        g2d.drawImage(image, x, y, null);
+        g2d.drawImage(mainImage, x, y, null);
     }
 }

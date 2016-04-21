@@ -10,9 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
-public class GUI extends JFrame implements ActionListener, FrontEnd{
+public class MainFrame extends JFrame implements ActionListener, FrontEnd{
 
     // Rozmiar okna
 
@@ -22,7 +23,7 @@ public class GUI extends JFrame implements ActionListener, FrontEnd{
     // Panele 1) menu główne + poboczne 2) właściwa gra
 
     private MenuPanel menuPanel;
-    private Game gamePanel;
+    private GamePanel gamePanel;
 
     // przyciski do menu głównego
 
@@ -78,28 +79,20 @@ public class GUI extends JFrame implements ActionListener, FrontEnd{
     private Box boxStartMenu;
     private Box boxSignUpMenu;
     private Box boxSignInMenu;
-    private  Box boxStatusMenu;
-    private  Box boxOptionsMenu;
+    private Box boxStatusMenu;
+    private Box boxOptionsMenu;
     private Box boxStatsMenu;
     private Box boxHelpMenu;
 
-    public GUI(){
-
-        super("Tanks - Multiplayer by GK");
-        setSize(sizeX, sizeY);
-        setResizable(false);
+    public MainFrame(){
 
         setLookAndFeel("Nimbus"); // wygląd przycisków
         init();
 
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
-
         // Ustawienie ikonki aplikacji
 
         try {
-            setIconImage(ImageIO.read(getClass().getResource("/main/resources/tank_icon.png")));
+            setIconImage(ImageIO.read(new File("res\\tank_icon.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -497,7 +490,7 @@ public class GUI extends JFrame implements ActionListener, FrontEnd{
             menuPanel.setVisible(false);
             remove(menuPanel);
 
-            gamePanel = new Game();
+            gamePanel = new GamePanel();
             add(gamePanel);
             gamePanel.requestFocusInWindow();
         }

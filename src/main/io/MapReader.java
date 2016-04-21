@@ -6,7 +6,6 @@
 package main.io;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,9 +31,7 @@ public class MapReader {
 
         lines = new ArrayList<>();
 
-        String filePath = new File("").getAbsolutePath();
-
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath + "/src/main/resources/maps/" + filename))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("res\\maps\\" + filename))) {
 
             do {
                 lines.add(bufferedReader.readLine());

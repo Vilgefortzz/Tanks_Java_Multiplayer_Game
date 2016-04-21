@@ -13,11 +13,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class Game extends JPanel implements Runnable, KeyListener, FrontEnd{
+import static main.io.LoadImages.explosion;
+import static main.io.LoadImages.heart;
+import static main.io.LoadImages.skull;
+
+public class GamePanel extends JPanel implements Runnable, KeyListener, FrontEnd{
 
     private final int DELAY = 6;
     private Thread animation = null;
@@ -33,11 +35,7 @@ public class Game extends JPanel implements Runnable, KeyListener, FrontEnd{
 
     private MapReader map = null;
 
-    public Game() {
-        init();
-    }
-
-    private void init() {
+    public GamePanel() {
 
         addKeyListener(this);
         setFocusable(true);
@@ -64,8 +62,26 @@ public class Game extends JPanel implements Runnable, KeyListener, FrontEnd{
         players = new HashMap<>();
 
         /*
-        Zczytanie mapy do walls
+        Wygenerowanie mapy
          */
+
+        generateMap();
+
+        /*
+        1 gracz
+         */
+
+        players.put(1, new Player(1, "Grzes"));
+
+        /*
+        Startowanie wątku animacji
+         */
+
+        animation = new Thread(this);
+        animation.start();
+    }
+
+    private void generateMap(){
 
         ArrayList<String> lines = map.getLines();
 
@@ -87,20 +103,6 @@ public class Game extends JPanel implements Runnable, KeyListener, FrontEnd{
             spaceWallWidth = 0;
             spaceWallHeight += SPACE;
         }
-
-        /*
-        2 graczy
-         */
-
-        players.put(1, new Player(1, "Grzes"));
-        players.put(2, new Player(2, "Krzys"));
-
-        /*
-        Startowanie wątku animacji
-         */
-
-        animation = new Thread(this);
-        animation.start();
     }
 
     @Override
@@ -118,23 +120,15 @@ public class Game extends JPanel implements Runnable, KeyListener, FrontEnd{
 
     private void drawMenuBar(Graphics2D g2d){
 
-        g2d.drawImage(new ImageIcon(getClass().getResource("/main/resources/heart.png")).getImage(), 0, 0, this);
+        g2d.drawImage(heart, 0, 0, this);
         g2d.setColor(new Color(182, 14, 14));
         g2d.setFont(new Font("Arial", Font.BOLD, 17));
 
-        /* Narazie może wygrać tylko pierwszy czołg - w innym przypadku program się zawiesza z powodu
-           wyświetlania paska życia dla pierwszego czołgu na sztywno
-         */
-
         g2d.drawString(String.valueOf(players.get(1).getHp()), 24, 16);
 
-        if (players.size() == 2){
-            g2d.drawString(String.valueOf(players.get(2).getHp()), 300, 16);
-        }
-
-        g2d.drawImage(new ImageIcon(getClass().getResource("/main/resources/explosion.png")).getImage(), 60, 0, this);
+        g2d.drawImage(explosion, 60, 0, this);
         // TODO Wyświetlanie zniszczonych czołgów
-        g2d.drawImage(new ImageIcon(getClass().getResource("/main/resources/skull.png")).getImage(), 120, 0, this);
+        g2d.drawImage(skull, 120, 0, this);
         // TODO Wyświetlanie ilości respawnów
     }
 

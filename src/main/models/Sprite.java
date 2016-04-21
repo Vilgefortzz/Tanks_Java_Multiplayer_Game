@@ -15,7 +15,7 @@ public class Sprite{
     protected int y;
     protected boolean vis;
 
-    protected Image image = null;
+    protected Image mainImage = null;
     protected int width;
     protected int height;
 
@@ -33,12 +33,16 @@ public class Sprite{
 
     protected void getImageDimensions() {
 
-        this.width = image.getWidth(null);
-        this.height = image.getHeight(null);
+        this.width = mainImage.getWidth(null);
+        this.height = mainImage.getHeight(null);
     }
 
-    public Image getImage() {
-        return image;
+    public Image getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(Image mainImage) {
+        this.mainImage = mainImage;
     }
 
     public int getX() {
