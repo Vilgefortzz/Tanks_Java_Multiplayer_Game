@@ -25,64 +25,68 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
     private MenuPanel menuPanel;
     private GamePanel gamePanel;
 
-    // przyciski do menu głównego
+    // przyciski do menu głównego (widok dla niezalogowanego użytkownika)
 
     private JLabel title;
     private JLabel author;
-    private JButton startBtn;
-    private JButton optionsBtn;
-    private JButton statsBtn;
-    private JButton helpBtn;
+    private JButton signInBtn;
+    private JButton creditsBtn;
     private JButton exitBtn;
 
-    // przyciski do menu pobocznych
-
-    private JLabel playRoom;
-    private JButton playBtn;
-    private JButton signUpBtn;
-    private JButton signInBtn;
-    private JButton statusBtn;
-    private JButton backBtn1;
-
-    private JLabel registration;
-    private JLabel loginWriteReg;
-    private JTextField loginReg;
-    private JLabel passwordWriteReg;
-    private JPasswordField passwordReg;
-    private JButton backBtn2;
+    // przyciski do menu pobocznego (logowanie)
 
     private JLabel logIn;
     private JLabel loginWriteLog;
     private JTextField loginLog;
     private JLabel passwordWriteLog;
     private JPasswordField passwordLog;
-    private JButton backBtn3;
+    private JButton loginBtn;
+    private JLabel registrationInfo;
+    private JButton goToRegistration;
+    private JButton backBtn1;
 
-    private JLabel yourStatus;
-    private JLabel statusInfo;
-    private JButton backBtn4;
+    // przyciski do menu pobocznego (rejestracja)
 
-    private JLabel language;
-    private JRadioButton choose1;
-    private JRadioButton choose2;
-    private JButton backBtn5;
+    private JLabel registration;
+    private JLabel loginWriteReg;
+    private JTextField loginReg;
+    private JLabel passwordWriteReg;
+    private JPasswordField passwordReg;
+    private JButton createAccountBtn;
+    private JButton backBtn2;
+
+    // przyciski do menu pobocznego (zalogowany użytkownik)
+
+    private JLabel loggedAs;
+    private JButton playBtn;
+    private JButton statsBtn;
+    private JButton helpBtn;
+    private JButton logOutBtn;
+
+    // przyciski do menu pobocznego (statystyki, wyniki)
 
     private JLabel rank;
-    private JButton backBtn6;
+    private JButton backBtn3;
+
+    // przyciski do menu pobocznego (sterowanie)
 
     private JLabel helpText;
-    private JButton backBtn7;
+    private JButton backBtn4;
+
+    // przyciski do menu pobocznego (credits)
+
+    private JLabel creditsInfo;
+    private JButton backBtn5;
 
     // Boxy czyli odpowiednie sekcje w menu
 
     private Box boxMenu;
-    private Box boxStartMenu;
-    private Box boxSignUpMenu;
-    private Box boxSignInMenu;
-    private Box boxStatusMenu;
-    private Box boxOptionsMenu;
-    private Box boxStatsMenu;
-    private Box boxHelpMenu;
+    private Box boxCredits;
+    private Box boxLogging;
+    private Box boxSignUp;
+    private Box boxLoggedUser;
+    private Box boxStats;
+    private Box boxHelp;
 
     public MainFrame(){
 
@@ -103,32 +107,36 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
         // Stworzenie odpowiednich boxów dla wszystkich sekcji
 
         boxMenu = createMenu();
-        boxStartMenu = createStartMenu();
-        boxSignUpMenu = createSignUpMenu();
-        boxSignInMenu = createSignInMenu();
-        boxStatusMenu = createStatusMenu();
-        boxOptionsMenu = createOptionsMenu();
-        boxStatsMenu = createStatsMenu();
-        boxHelpMenu = createHelpMenu();
+        boxCredits = createCreditsMenu();
+        boxLogging = createLoggingMenu();
+        boxSignUp = createSignUpMenu();
+        boxLoggedUser = createLoggedUserMenu();
+        boxStats = createStatsMenu();
+        boxHelp = createHelpMenu();
 
         // Dodanie akcji do buttonów
 
-        startBtn.addActionListener(this);
-        playBtn.addActionListener(this);
-        signUpBtn.addActionListener(this);
         signInBtn.addActionListener(this);
-        statusBtn.addActionListener(this);
-        optionsBtn.addActionListener(this);
+        creditsBtn.addActionListener(this);
+        exitBtn.addActionListener(this);
+
+        loginBtn.addActionListener(this);
+        goToRegistration.addActionListener(this);
+        backBtn1.addActionListener(this);
+
+        createAccountBtn.addActionListener(this);
+        backBtn2.addActionListener(this);
+
+        playBtn.addActionListener(this);
         statsBtn.addActionListener(this);
         helpBtn.addActionListener(this);
-        exitBtn.addActionListener(this);
-        backBtn1.addActionListener(this);
-        backBtn2.addActionListener(this);
+        logOutBtn.addActionListener(this);
+
         backBtn3.addActionListener(this);
+
         backBtn4.addActionListener(this);
+
         backBtn5.addActionListener(this);
-        backBtn6.addActionListener(this);
-        backBtn7.addActionListener(this);
 
         // Rozpoczęcie (menu główne)
 
@@ -159,7 +167,7 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
         // Stworzenie napisu głównego
 
         title = new JLabel("TANKS - MULTIPLAYER");
-        title.setFont(new Font("Courier New", Font.BOLD, 75));
+        title.setFont(new Font("Courier New", Font.BOLD, 100));
         title.setForeground(Color.WHITE);
         box.add(title);
 
@@ -176,91 +184,113 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
 
         box.add(Box.createVerticalStrut(20));
 
-        startBtn = new JButton("Start");
-        startBtn.setForeground(Color.WHITE);
-        startBtn.setBackground(Color.BLACK);
-        startBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(startBtn);
+        signInBtn = new JButton("SIGN IN");
+        signInBtn.setForeground(Color.WHITE);
+        signInBtn.setBackground(Color.BLACK);
+        signInBtn.setFont(new Font("Arial", Font.PLAIN, 50));
+        box.add(signInBtn);
 
         box.add(Box.createVerticalStrut(6));
 
-        optionsBtn = new JButton("Options");
-        optionsBtn.setForeground(Color.WHITE);
-        optionsBtn.setBackground(Color.BLACK);
-        optionsBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(optionsBtn);
+        creditsBtn = new JButton("CREDITS");
+        creditsBtn.setForeground(Color.WHITE);
+        creditsBtn.setBackground(Color.BLACK);
+        creditsBtn.setFont(new Font("Arial", Font.PLAIN, 50));
+        box.add(creditsBtn);
 
         box.add(Box.createVerticalStrut(6));
 
-        statsBtn = new JButton("Stats");
-        statsBtn.setForeground(Color.WHITE);
-        statsBtn.setBackground(Color.BLACK);
-        statsBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(statsBtn);
-
-        box.add(Box.createVerticalStrut(6));
-
-        helpBtn = new JButton("Help");
-        helpBtn.setForeground(Color.WHITE);
-        helpBtn.setBackground(Color.BLACK);
-        helpBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(helpBtn);
-
-        box.add(Box.createVerticalStrut(6));
-
-        exitBtn = new JButton("Exit");
+        exitBtn = new JButton("EXIT");
         exitBtn.setForeground(Color.WHITE);
         exitBtn.setBackground(Color.BLACK);
-        exitBtn.setFont(new Font("Arial", Font.PLAIN, 20));
+        exitBtn.setFont(new Font("Arial", Font.PLAIN, 50));
         box.add(exitBtn);
 
         return box;
     }
 
-    private Box createStartMenu(){
+    private Box createCreditsMenu(){
+
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20));
 
-        playRoom = new JLabel("PLAYROOM");
-        playRoom.setForeground(Color.WHITE);
-        playRoom.setFont(new Font("Courier New", Font.BOLD, 75));
-        box.add(playRoom);
+        creditsInfo = new JLabel("<html>This is a project for java.<br><br>The goal is to create a game" +
+                "Tanks with the possibility of playing by many players,<br>gathering stats and much more." +
+                "<br>Everything based on client-server architecture and with the bases connection." +
+                "<br><br><br><br><br>Have fun!," +
+                "<br>@gklimek</html>");
+        creditsInfo.setFont(new Font("Courier New", Font.BOLD, 26));
+        creditsInfo.setForeground(Color.WHITE);
+        box.add(creditsInfo);
 
         box.add(Box.createVerticalStrut(6));
 
-        playBtn = new JButton("Play");
-        playBtn.setForeground(Color.WHITE);
-        playBtn.setBackground(Color.BLACK);
-        playBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(playBtn);
+        backBtn5 = backButton();
+        box.add(backBtn5);
 
-        box.add(Box.createVerticalStrut(6));
+        return box;
+    }
 
-        signUpBtn = new JButton("Sign up");
-        signUpBtn.setForeground(Color.WHITE);
-        signUpBtn.setBackground(Color.BLACK);
-        signUpBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(signUpBtn);
+    private Box createLoggingMenu(){
 
-        box.add(Box.createVerticalStrut(6));
-        signInBtn = new JButton("Sign in");
-        signInBtn.setForeground(Color.WHITE);
-        signInBtn.setBackground(Color.BLACK);
-        signInBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(signInBtn);
+        Box box = Box.createVerticalBox();
+        box.add(Box.createVerticalStrut(20));
 
-        box.add(Box.createVerticalStrut(6));
-        statusBtn = new JButton("Status"); // status o tym czy jesteśmy zalogowani oraz jako kto
-        statusBtn.setForeground(Color.WHITE);
-        statusBtn.setBackground(Color.BLACK);
-        statusBtn.setFont(new Font("Arial", Font.PLAIN, 20));
-        box.add(statusBtn);
+        logIn = new JLabel("LOG IN");
+        logIn.setForeground(Color.WHITE);
+        logIn.setFont(new Font("Courier New", Font.BOLD, 75));
+        box.add(logIn);
 
-        box.add(Box.createVerticalStrut(6));
+        box.add(Box.createVerticalStrut(10));
+        loginWriteLog = new JLabel("Login:");
+        loginWriteLog.setForeground(Color.WHITE);
+        loginWriteLog.setFont(new Font("Arial", Font.BOLD, 15));
+        box.add(loginWriteLog);
+
+        box.add(Box.createVerticalStrut(0));
+        loginLog = new JTextField();
+        loginLog.setToolTipText("Write login of your account");
+        loginLog.setMaximumSize(new Dimension(300, 30));
+        box.add(loginLog);
+
+        box.add(Box.createVerticalStrut(15));
+        passwordWriteLog = new JLabel("Password:");
+        passwordWriteLog.setForeground(Color.WHITE);
+        passwordWriteLog.setFont(new Font("Arial", Font.BOLD, 15));
+        box.add(passwordWriteLog);
+
+        box.add(Box.createVerticalStrut(0));
+        passwordLog = new JPasswordField();
+        passwordLog.setToolTipText("Write your password connected to your account");
+        passwordLog.setMaximumSize(new Dimension(300, 30));
+        box.add(passwordLog);
+
+        box.add(Box.createVerticalStrut(10));
+        loginBtn = new JButton("Sign in");
+        loginBtn.setForeground(Color.BLACK);
+        loginBtn.setBackground(Color.WHITE);
+        loginBtn.setFont(new Font("Arial", Font.BOLD, 20));
+        box.add(loginBtn);
+
+        box.add(Box.createVerticalStrut(20));
+        registrationInfo = new JLabel("You don't have an account? Click button below ->");
+        registrationInfo.setForeground(new Color(143, 226, 217));
+        registrationInfo.setFont(new Font("Courier New", Font.BOLD, 14));
+        box.add(registrationInfo);
+
+        box.add(Box.createVerticalStrut(10));
+        goToRegistration = new JButton("Create an account");
+        goToRegistration.setForeground(Color.WHITE);
+        goToRegistration.setBackground(Color.BLACK);
+        goToRegistration.setFont(new Font("Arial", Font.BOLD, 15));
+        box.add(goToRegistration);
+
+        box.add(Box.createVerticalStrut(70));
         backBtn1 = backButton();
         box.add(backBtn1);
 
         return box;
+
     }
 
     private Box createSignUpMenu(){
@@ -302,124 +332,58 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
         box.add(passwordReg);
 
         box.add(Box.createVerticalStrut(10));
-        JButton registerBtn = new JButton("Sign up");
-        registerBtn.setForeground(Color.RED);
-        registerBtn.setBackground(Color.BLACK);
-        registerBtn.setFont(new Font("Times New Roman", Font.ITALIC, 20));
-        box.add(registerBtn);
+        createAccountBtn = new JButton("Sign up");
+        createAccountBtn.setForeground(Color.BLACK);
+        createAccountBtn.setBackground(Color.WHITE);
+        createAccountBtn.setFont(new Font("Arial", Font.BOLD, 20));
+        box.add(createAccountBtn);
 
-        box.add(Box.createVerticalStrut(30));
+        box.add(Box.createVerticalStrut(70));
         backBtn2 = backButton();
         box.add(backBtn2);
 
         return box;
     }
 
-    private Box createSignInMenu(){
+    private Box createLoggedUserMenu(){
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20));
 
-        logIn = new JLabel("LOG IN");
-        logIn.setForeground(Color.WHITE);
-        logIn.setFont(new Font("Courier New", Font.BOLD, 75));
-        box.add(logIn);
-
-        box.add(Box.createVerticalStrut(10));
-        loginWriteLog = new JLabel("Login:");
-        loginWriteLog.setForeground(Color.WHITE);
-        loginWriteLog.setFont(new Font("Arial", Font.BOLD, 15));
-        box.add(loginWriteLog);
-
-        box.add(Box.createVerticalStrut(0));
-        loginLog = new JTextField();
-        loginLog.setToolTipText("Write login of your account");
-        loginLog.setMaximumSize(new Dimension(300, 30));
-        box.add(loginLog);
-
-        box.add(Box.createVerticalStrut(15));
-        passwordWriteLog = new JLabel("Password:");
-        passwordWriteLog.setForeground(Color.WHITE);
-        passwordWriteLog.setFont(new Font("Arial", Font.BOLD, 15));
-        box.add(passwordWriteLog);
-
-        box.add(Box.createVerticalStrut(0));
-        passwordLog = new JPasswordField();
-        passwordLog.setToolTipText("Write your password connected to your account");
-        passwordLog.setMaximumSize(new Dimension(300, 30));
-        box.add(passwordLog);
-
-        box.add(Box.createVerticalStrut(10));
-        JButton loginBtn = new JButton("Sign in");
-        loginBtn.setForeground(Color.RED);
-        loginBtn.setBackground(Color.BLACK);
-        loginBtn.setFont(new Font("Times New Roman", Font.ITALIC, 20));
-        box.add(loginBtn);
-
-        box.add(Box.createVerticalStrut(30));
-        backBtn3 = backButton();
-        box.add(backBtn3);
-
-        return box;
-    }
-
-    private Box createStatusMenu(){
-        Box box = Box.createVerticalBox();
-        box.add(Box.createVerticalStrut(20));
-
-        yourStatus = new JLabel("YOUR STATUS");
-        yourStatus.setForeground(Color.WHITE);
-        yourStatus.setFont(new Font("Courier New", Font.BOLD, 75));
-        box.add(yourStatus);
-
-        box.add(Box.createVerticalStrut(15));
-
-        statusInfo = new JLabel("You are ...");
-        statusInfo.setForeground(Color.ORANGE);
-        statusInfo.setFont(new Font("Courier New", Font.BOLD, 30));
-        box.add(statusInfo);
-
-        backBtn4 = backButton();
-        box.add(backBtn4);
-
-        return box;
-    }
-
-    private Box createOptionsMenu(){
-        Box box = Box.createVerticalBox();
-        box.add(Box.createVerticalStrut(20));
-
-        language = new JLabel("LANGUAGE");
-        language.setForeground(Color.WHITE);
-        language.setFont(new Font("Courier New", Font.BOLD, 75));
-        box.add(language);
+        loggedAs = new JLabel("Logged as: ");
+        // TODO Z bazy danych będzie pobrana informacja o nazwie użytkownika [będzie to realizowane w momencie zalogowania - nie tutaj]
+        loggedAs.setForeground(Color.WHITE);
+        loggedAs.setFont(new Font("Courier New", Font.BOLD, 75));
+        box.add(loggedAs);
 
         box.add(Box.createVerticalStrut(6));
 
-        // Stworzenie radioButtona do zaznaczania wyboru
-
-        choose1 = new JRadioButton("English");
-        choose1.setFont(new Font("Courier new", Font.BOLD, 40));
-        choose1.setForeground(Color.ORANGE);
-        choose1.setSelected(true); // domyślnie angielski na początku - można zmienić
-        box.add(choose1);
+        playBtn = new JButton("Play");
+        playBtn.setForeground(Color.WHITE);
+        playBtn.setBackground(Color.BLACK);
+        playBtn.setFont(new Font("Arial", Font.PLAIN, 20));
+        box.add(playBtn);
 
         box.add(Box.createVerticalStrut(6));
 
-        choose2 = new JRadioButton("Polish");
-        choose2.setFont(new Font("Courier new", Font.BOLD, 40));
-        choose2.setForeground(Color.ORANGE);
-        box.add(choose2);
-
-        // Grupowanie aby możliwe było zaznaczenie z wykluczeniem drugiego wyboru
-
-        ButtonGroup group = new ButtonGroup();
-        group.add(choose1);
-        group.add(choose2);
+        statsBtn = new JButton("Stats");
+        statsBtn.setForeground(Color.WHITE);
+        statsBtn.setBackground(Color.BLACK);
+        statsBtn.setFont(new Font("Arial", Font.PLAIN, 20));
+        box.add(statsBtn);
 
         box.add(Box.createVerticalStrut(6));
+        helpBtn = new JButton("Help");
+        helpBtn.setForeground(Color.WHITE);
+        helpBtn.setBackground(Color.BLACK);
+        helpBtn.setFont(new Font("Arial", Font.PLAIN, 20));
+        box.add(helpBtn);
 
-        backBtn5 = backButton();
-        box.add(backBtn5);
+        box.add(Box.createVerticalStrut(6));
+        logOutBtn = new JButton("Log out"); // wylogowanie się
+        logOutBtn.setForeground(Color.BLACK);
+        logOutBtn.setBackground(Color.WHITE);
+        logOutBtn.setFont(new Font("Arial", Font.PLAIN, 20));
+        box.add(logOutBtn);
 
         return box;
     }
@@ -435,8 +399,8 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
 
         box.add(Box.createVerticalStrut(6));
 
-        backBtn6 = backButton();
-        box.add(backBtn6);
+        backBtn3 = backButton();
+        box.add(backBtn3);
 
         return box;
     }
@@ -456,8 +420,8 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
 
         box.add(Box.createVerticalStrut(6));
 
-        backBtn7 = backButton();
-        box.add(backBtn7);
+        backBtn4 = backButton();
+        box.add(backBtn4);
 
         return box;
     }
@@ -466,27 +430,80 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
         JButton backBtn = new JButton("Back");
         backBtn.setForeground(Color.WHITE);
         backBtn.setBackground(Color.BLACK);
-        backBtn.setFont(new Font("Arial", Font.PLAIN, 20));
+        backBtn.setFont(new Font("Arial", Font.PLAIN, 10));
         return  backBtn;
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
 
-        if (e.getSource() == startBtn){
+        if (e.getSource() == signInBtn){
 
             boxMenu.setVisible(false);
             menuPanel.remove(boxMenu);
-            menuPanel.add(boxStartMenu);
-            boxStartMenu.setVisible(true);
+            menuPanel.add(boxLogging);
+            boxLogging.setVisible(true);
+        }
+
+        if (e.getSource() == creditsBtn){
+
+            boxMenu.setVisible(false);
+            menuPanel.remove(boxMenu);
+            menuPanel.add(boxCredits);
+            boxCredits.setVisible(true);
+        }
+
+        if (e.getSource() == exitBtn){
+            System.exit(0);
+        }
+
+        if (e.getSource() == loginBtn){
+
+            JOptionPane.showMessageDialog(null, "Logging completed");
+
+            boxLogging.setVisible(false);
+            menuPanel.remove(boxLogging);
+            menuPanel.add(boxLoggedUser);
+            boxLoggedUser.setVisible(true);
+        }
+
+        if (e.getSource() == goToRegistration){
+
+            boxLogging.setVisible(false);
+            menuPanel.remove(boxLogging);
+            menuPanel.add(boxSignUp);
+            boxSignUp.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn1){
+            boxLogging.setVisible(false);
+            menuPanel.remove(boxLogging);
+            menuPanel.add(boxMenu);
+            boxMenu.setVisible(true);
+        }
+
+        if (e.getSource() == createAccountBtn){
+
+            JOptionPane.showMessageDialog(null, "Account succesfully created!");
+
+            boxLogging.setVisible(false);
+            menuPanel.remove(boxLogging);
+            menuPanel.add(boxSignUp);
+            boxSignUp.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn2){
+
+            boxSignUp.setVisible(false);
+            menuPanel.remove(boxSignUp);
+            menuPanel.add(boxLogging);
+            boxLogging.setVisible(true);
         }
 
         if (e.getSource() == playBtn){
 
-            /* TODO Jeżeli niezalogowany to komunikat, że nie może wejść do gry i zostaje w menu. Jeśli zalogowany to wchodzi */
-
-            boxStartMenu.setVisible(false);
-            menuPanel.remove(boxStartMenu);
+            boxLoggedUser.setVisible(false);
+            menuPanel.remove(boxLoggedUser);
             menuPanel.setVisible(false);
             remove(menuPanel);
 
@@ -495,113 +512,54 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
             gamePanel.requestFocusInWindow();
         }
 
-        if (e.getSource() == signUpBtn){
-
-            boxStartMenu.setVisible(false);
-            menuPanel.remove(boxStartMenu);
-            menuPanel.add(boxSignUpMenu);
-            boxSignUpMenu.setVisible(true);
-
-            // JOptionPane.showMessageDialog(null, "HELLO");
-        }
-
-        if (e.getSource() == backBtn2){
-
-            boxSignUpMenu.setVisible(false);
-            menuPanel.remove(boxSignUpMenu);
-            menuPanel.add(boxStartMenu);
-            boxStartMenu.setVisible(true);
-        }
-
-        if (e.getSource() == signInBtn){
-
-            boxStartMenu.setVisible(false);
-            menuPanel.remove(boxStartMenu);
-            menuPanel.add(boxSignInMenu);
-            boxSignInMenu.setVisible(true);
-        }
-
-        if (e.getSource() == backBtn3){
-
-            boxSignInMenu.setVisible(false);
-            menuPanel.remove(boxSignInMenu);
-            menuPanel.add(boxStartMenu);
-            boxStartMenu.setVisible(true);
-        }
-
-        if (e.getSource() == statusBtn){
-
-            boxStartMenu.setVisible(false);
-            menuPanel.remove(boxStartMenu);
-            menuPanel.add(boxStatusMenu);
-            boxStatusMenu.setVisible(true);
-        }
-
-        if (e.getSource() == backBtn4){
-
-            boxStatusMenu.setVisible(false);
-            menuPanel.remove(boxStatusMenu);
-            menuPanel.add(boxStartMenu);
-            boxStartMenu.setVisible(true);
-        }
-
-        if (e.getSource() == backBtn1){
-            boxStartMenu.setVisible(false);
-            menuPanel.remove(boxStartMenu);
-            menuPanel.add(boxMenu);
-            boxMenu.setVisible(true);
-        }
-
-        if (e.getSource() == optionsBtn){
-
-            boxMenu.setVisible(false);
-            menuPanel.remove(boxMenu);
-            menuPanel.add(boxOptionsMenu);
-            boxOptionsMenu.setVisible(true);
-        }
-
-        if (e.getSource() == backBtn5){
-
-            boxOptionsMenu.setVisible(false);
-            menuPanel.remove(boxOptionsMenu);
-            menuPanel.add(boxMenu);
-            boxMenu.setVisible(true);
-        }
-
         if (e.getSource() == statsBtn){
 
-            boxMenu.setVisible(false);
-            menuPanel.remove(boxMenu);
-            menuPanel.add(boxStatsMenu);
-            boxStatsMenu.setVisible(true);
-        }
-
-        if (e.getSource() == backBtn6){
-
-            boxStatsMenu.setVisible(false);
-            menuPanel.remove(boxStatsMenu);
-            menuPanel.add(boxMenu);
-            boxMenu.setVisible(true);
+            boxLoggedUser.setVisible(false);
+            menuPanel.remove(boxLoggedUser);
+            menuPanel.add(boxStats);
+            boxStats.setVisible(true);
         }
 
         if (e.getSource() == helpBtn){
 
-            boxMenu.setVisible(false);
-            menuPanel.remove(boxMenu);
-            menuPanel.add(boxHelpMenu);
-            boxHelpMenu.setVisible(true);
+            boxLoggedUser.setVisible(false);
+            menuPanel.remove(boxLoggedUser);
+            menuPanel.add(boxHelp);
+            boxHelp.setVisible(true);
         }
 
-        if (e.getSource() == backBtn7){
+        if (e.getSource() == logOutBtn){
 
-            boxHelpMenu.setVisible(false);
-            menuPanel.remove(boxHelpMenu);
+            JOptionPane.showMessageDialog(null, "You are logged out. I hope we will see you soon ;)");
+
+            boxLoggedUser.setVisible(false);
+            menuPanel.remove(boxLoggedUser);
             menuPanel.add(boxMenu);
             boxMenu.setVisible(true);
         }
 
-        if (e.getSource() == exitBtn){
-            System.exit(0);
+        if (e.getSource() == backBtn3){
+
+            boxStats.setVisible(false);
+            menuPanel.remove(boxStats);
+            menuPanel.add(boxLoggedUser);
+            boxLoggedUser.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn4){
+
+            boxHelp.setVisible(false);
+            menuPanel.remove(boxHelp);
+            menuPanel.add(boxLoggedUser);
+            boxLoggedUser.setVisible(true);
+        }
+
+        if (e.getSource() == backBtn5){
+
+            boxCredits.setVisible(false);
+            menuPanel.remove(boxCredits);
+            menuPanel.add(boxMenu);
+            boxMenu.setVisible(true);
         }
     }
 
