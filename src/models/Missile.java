@@ -3,10 +3,10 @@
  * @gklimek
  */
 
-package main.models;
+package models;
 
 import java.awt.*;
-import static main.io.LoadImages.*;
+import static io.LoadImages.*;
 
 public class Missile extends Sprite{
 

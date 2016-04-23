@@ -3,10 +3,10 @@
  * @gklimek
  */
 
-package main.models;
+package models;
 
 import java.awt.*;
-import static main.io.LoadImages.wall;
+import static io.LoadImages.wall;
 
 public class Wall extends Sprite{
 

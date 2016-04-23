@@ -3,15 +3,15 @@
  * @gklimek
  */
 
-package main.models;
+package models;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static main.gui.GamePanel.walls;
-import static main.io.LoadImages.*;
+import static gui.GamePanel.walls;
+import static io.LoadImages.*;
 
 public class Player extends Sprite {
 

@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package main.models;
+package models;
 
 import java.awt.*;
 

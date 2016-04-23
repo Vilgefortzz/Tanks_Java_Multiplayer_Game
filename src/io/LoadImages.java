@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package main.io;
+package io;
 
 import javax.swing.*;
 import java.awt.*;

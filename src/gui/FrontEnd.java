@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package main.gui;
+package gui;
 
 public interface FrontEnd {
 

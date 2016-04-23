@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package main.io;
+package io;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

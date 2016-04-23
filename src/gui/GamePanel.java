@@ -3,11 +3,11 @@
  * @gklimek
  */
 
-package main.gui;
+package gui;
 
-import main.io.MapReader;
-import main.models.Player;
-import main.models.Wall;
+import io.MapReader;
+import models.Player;
+import models.Wall;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,9 +15,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
 
-import static main.io.LoadImages.explosion;
-import static main.io.LoadImages.heart;
-import static main.io.LoadImages.skull;
+import static io.LoadImages.explosion;
+import static io.LoadImages.heart;
+import static io.LoadImages.skull;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener, FrontEnd{
 

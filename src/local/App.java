@@ -3,15 +3,15 @@
  * @gklimek
  */
 
-package main;
+package local;
 
-import main.gui.MainFrame;
+import gui.MainFrame;
 
 import javax.swing.*;
 
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import static main.gui.MainFrame.sizeX;
-import static main.gui.MainFrame.sizeY;
+import static gui.MainFrame.sizeX;
+import static gui.MainFrame.sizeY;
 
 public class App {
 
