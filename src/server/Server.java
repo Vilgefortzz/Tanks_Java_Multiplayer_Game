@@ -50,10 +50,19 @@ public class Server {
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
+
     public Server() {
 
         started = false;
         running = false;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 
     public void start(int port) throws IOException{
@@ -72,7 +81,7 @@ public class Server {
 
             while(running){
 
-                try{
+                try {
 
                     clientSocket = serverSocket.accept();
                     in = new DataInputStream(clientSocket.getInputStream());
@@ -91,9 +100,9 @@ public class Server {
             }
         });
 
+        started = true;
         running = true;
         serverThread.start();
-        started = true;
     }
 
     public void stop()
@@ -101,6 +110,7 @@ public class Server {
         if (started)
         {
             running = false; // zatrzymanie pętli
+            started = false; // wyłączenie servera
 
             try {
                 serverSocket.close(); // zamknięcie socketa

@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class MainFrame extends JFrame implements ActionListener, FrontEnd{
+public class MainFrame extends JFrame implements ActionListener{
 
     // Rozmiar okna
 
@@ -216,7 +216,7 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
 
         creditsInfo = new JLabel("<html>This is a project for java.<br><br>The goal is to create a game" +
                 "Tanks with the possibility of playing by many players,<br>gathering stats and much more." +
-                "<br>Everything based on client-server architecture and with the bases connection." +
+                "<br>Everything based on client-server architecture and with the databases connection." +
                 "<br><br><br><br><br>Have fun!," +
                 "<br>@gklimek</html>");
         creditsInfo.setFont(new Font("Courier New", Font.BOLD, 26));
@@ -561,29 +561,5 @@ public class MainFrame extends JFrame implements ActionListener, FrontEnd{
             menuPanel.add(boxMenu);
             boxMenu.setVisible(true);
         }
-    }
-
-    @Override
-    public boolean registerPlayer(int id, String name) {
-
-        return this.gamePanel.registerPlayer(id, name);
-    }
-
-    @Override
-    public void deregisterPlayer(int id) {
-
-        this.gamePanel.deregisterPlayer(id);
-    }
-
-    @Override
-    public void movePlayer(int id, int x, int y) {
-
-        this.gamePanel.movePlayer(id, x, y);
-    }
-
-    @Override
-    public void clearPlayers() {
-
-        this.gamePanel.clearPlayers();
     }
 }

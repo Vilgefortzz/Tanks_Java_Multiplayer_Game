@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package server;
+package client;
 
 import java.io.IOException;
 
@@ -11,20 +11,19 @@ public class Main {
 
     public static void main( String[] args ) {
 
+        final String HOST = "localhost";
         final int PORT = 8080;
 
-        Server server = new Server();
+        Client client = new Client();
 
         try {
 
-            server.start(PORT); // start servera
-            System.out.println("Server started on port: " + PORT + "\n" + "Waiting for events...");
+            client.connect(HOST, PORT);
+            System.out.println("Client connected on the port: " + PORT);
 
         } catch (IOException ex) {
 
             System.out.println(ex);
         }
-
-        //server.stop(); // zatrzymanie servera
     }
 }

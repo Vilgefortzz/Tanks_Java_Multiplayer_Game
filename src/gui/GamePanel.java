@@ -19,7 +19,7 @@ import static io.LoadImages.explosion;
 import static io.LoadImages.heart;
 import static io.LoadImages.skull;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener, FrontEnd{
+public class GamePanel extends JPanel implements Runnable, KeyListener{
 
     private final int DELAY = 6;
     private Thread animation = null;
@@ -265,43 +265,5 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, FrontEnd
 
             player.keyReleased(e);
         }
-    }
-
-    @Override
-    public boolean registerPlayer(int id, String name) {
-
-        if (players.containsKey(id)) // jeżeli istnieje już player z danym kluczem to nie można stworzyć o tym samym kluczu
-            return false;
-
-        players.put(id, new Player(id, name));
-        repaint();
-
-        return true;
-    }
-
-    @Override
-    public void deregisterPlayer(int id) {
-
-        players.remove(id);
-        repaint();
-    }
-
-    @Override
-    public void movePlayer(int id, int x, int y) {
-
-        Player player = players.get(id);
-
-        if ( player == null )
-            return;
-
-        //player.move( x, y );
-        repaint();
-    }
-
-    @Override
-    public void clearPlayers() {
-
-        players.clear();
-        repaint();
     }
 }
