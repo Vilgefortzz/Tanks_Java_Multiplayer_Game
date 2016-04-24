@@ -88,13 +88,12 @@ public class Server {
                     System.out.println("Polaczono z socketem");
                     in = new DataInputStream(clientSocket.getInputStream());
                     out = new DataOutputStream(clientSocket.getOutputStream());
-                    sendMessage("I am server!!");
-                    System.out.println(receiveMessage());
 
                 } catch (IOException e){
-                    System.out.println("Nastspilo zerwanie polaczenia klienta z serverem");
+                    System.out.println("Nastapilo zerwanie polaczenia klienta z serverem");
                 } finally {
 
+                    System.out.println("Jestem");
                     ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
                     ConnectionHandling.close(in); // zamykanie strumienia wejściowego
                     ConnectionHandling.close(clientSocket); // zamknięcie clientSocketa
@@ -127,10 +126,14 @@ public class Server {
 
     public void sendMessage(String message){
 
-        ConnectionHandling.sendMessage(out, message);
+        try {
+            ConnectionHandling.sendMessage(out, message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String receiveMessage(){
+    public String receiveMessage() throws IOException {
 
         return ConnectionHandling.receiveMessage(in);
     }

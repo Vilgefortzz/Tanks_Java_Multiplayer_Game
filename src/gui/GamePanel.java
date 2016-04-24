@@ -5,6 +5,7 @@
 
 package gui;
 
+import io.KeyInput;
 import io.MapReader;
 import models.Player;
 import models.Wall;
@@ -19,7 +20,7 @@ import static io.LoadImages.explosion;
 import static io.LoadImages.heart;
 import static io.LoadImages.skull;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener{
+public class GamePanel extends JPanel implements Runnable{
 
     private final int DELAY = 6;
     private Thread animation = null;
@@ -30,14 +31,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
     private final int SPACE = 24; // rozmiar ściany - obrazka
 
     public static ArrayList<Wall> walls = null; // statyczna lista ścian - potrzebna przy badaniu kolizji
-
-    private Map<Integer, Player> players; // lista playerów w postaci mapy < klucz , obiekt >
-
     private MapReader map = null;
+
+
+
+    public Map<Integer, Player> players; // lista playerów w postaci mapy < klucz , obiekt >
+    public int mainPlayerID; // jest to ważne, kiedy w momencie tworzenia playera zainicjalizuję tą wartość
+                         // przyda się w klasie KeyInput do sterowania konkretnym graczem
 
     public GamePanel() {
 
-        addKeyListener(this);
+        addKeyListener(new KeyInput(this));
         setFocusable(true);
 
         initWorld();
@@ -241,29 +245,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
             }
 
             beforeTime = System.currentTimeMillis();
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-        for (Player player : players.values()){
-
-            player.keyPressed(e);
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-        for (Player player : players.values()){
-
-            player.keyReleased(e);
         }
     }
 }

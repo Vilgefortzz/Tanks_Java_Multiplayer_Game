@@ -20,7 +20,7 @@ public class Player extends Sprite {
      */
 
     private int id;
-    private String name;
+    private String login;
 
     private boolean randomCreated = false;
 
@@ -33,12 +33,12 @@ public class Player extends Sprite {
     private int dy;
     private ArrayList<Missile> missiles = null;
 
-    public Player(int id, String name) {
+    public Player(int id, String login) {
 
         super();
 
         this.id = id;
-        this.name = name;
+        this.login = login;
 
         this.hp = 100;
         this.missiles = new ArrayList<>();
@@ -53,8 +53,8 @@ public class Player extends Sprite {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getLogin() {
+        return login;
     }
 
     public ArrayList<Missile> getMissiles() {

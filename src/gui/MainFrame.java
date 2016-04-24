@@ -562,4 +562,15 @@ public class MainFrame extends JFrame implements ActionListener{
             boxMenu.setVisible(true);
         }
     }
+
+    /*
+    Methods to handle events - do it in gui
+     */
+
+    public void connectionError()
+    {
+        JOptionPane.showMessageDialog(null, "Loose connection with server", "ERROR", JOptionPane.ERROR_MESSAGE);
+        System.out.println( "Connection error!" );
+        System.exit(0);
+    }
 }

@@ -6,13 +6,22 @@
 package client;
 
 import connection.ConnectionHandling;
+import gui.MainFrame;
 
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 public class Client {
+
+    /*
+    Identyfikacja clienta
+     */
+
+    private int ID;
+    private String LOGIN;
 
     /*
     Informacje o stanie klienta
@@ -40,6 +49,12 @@ public class Client {
     private DataInputStream in = null; // wejściowy strumień danych od servera
     private DataOutputStream out = null; // wyjściowy strumień danych do servera
 
+    /*
+    Okno clienta
+     */
+
+    private MainFrame frame = null;
+
     /* -------------------------------------------------------------------------------------------------------------- */
 
 
@@ -55,6 +70,10 @@ public class Client {
 
     public boolean isRunning() {
         return running;
+    }
+
+    public void setFrame(MainFrame frame) {
+        this.frame = frame;
     }
 
     public void connect(String host, int port) throws IOException{
@@ -75,16 +94,34 @@ public class Client {
 
         this.clientThread = new Thread(() ->
         {
-            while (running){
+            boolean looseConnectionWithServer = false;
 
-                // Narazie wykonuje się to w nieskończoność
-            }
+                try {
 
-            running = false;
-            connected = false;
+                    while (running){
 
-            // Tutaj trzeba jeszcze zamykać wszystkie strumienie + socketa (osobna klasa będzie do tego)
+                    }
+                    throw new IOException("Never throw!");
 
+                } catch (IOException e) {
+                   looseConnectionWithServer = true;
+                } finally {
+
+                    running = false; // zatrzymanie pętli
+
+                    ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
+                    ConnectionHandling.close(in); // zamykanie strumienia wejściowego
+                    ConnectionHandling.close(clientSocket); // zamknięcie socketa
+
+                    connected = false; // odłączenie klienta
+
+                    System.out.println("Jestem");
+                    if (looseConnectionWithServer){
+
+                        frame.connectionError();
+                    }
+
+                }
         });
 
         connected = true;
@@ -110,11 +147,19 @@ public class Client {
 
     public void sendMessage(String message){
 
-        ConnectionHandling.sendMessage(out, message);
+        try {
+            ConnectionHandling.sendMessage(out, message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String receiveMessage(){
+    public void receiveMessage() throws IOException {
 
-        return ConnectionHandling.receiveMessage(in);
+        try {
+            ConnectionHandling.receiveMessage(in);
+        } catch (IOException e) {
+            throw e;
+        }
     }
 }

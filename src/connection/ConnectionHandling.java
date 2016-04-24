@@ -32,25 +32,13 @@ public class ConnectionHandling {
         }
     }
 
-    public static void sendMessage(DataOutputStream out, String message){
+    public static void sendMessage(DataOutputStream out, String message) throws IOException {
 
-        try {
-            out.writeUTF(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        out.writeUTF(message);
     }
 
-    public static String receiveMessage(DataInputStream in){
+    public static String receiveMessage(DataInputStream in) throws IOException {
 
-        String receivedMessage = null;
-
-        try {
-            receivedMessage = in.readUTF();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return receivedMessage;
+        return in.readUTF();
     }
 }
