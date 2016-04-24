@@ -25,5 +25,8 @@ public class Main {
 
             System.out.println(ex);
         }
+
+        System.out.println(client.receiveMessage());
+        client.sendMessage("I am client!!");
     }
 }

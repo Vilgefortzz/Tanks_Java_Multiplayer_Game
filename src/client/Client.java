@@ -5,6 +5,8 @@
 
 package client;
 
+import connection.ConnectionHandling;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -95,19 +97,24 @@ public class Client {
         if (connected)
         {
             running = false; // zatrzymanie pętli
+
+            ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
+            ConnectionHandling.close(in); // zamykanie strumienia wejściowego
+            ConnectionHandling.close(clientSocket); // zamknięcie socketa
+
+            ConnectionHandling.join(clientThread); // czekanie aż wątek się wykonana do końca
+
             connected = false; // odłączenie klienta
-
-            try {
-                clientSocket.close(); // zamknięcie socketa
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                clientThread.join(); // czekanie aż wątek się wykonana do końca
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
+    }
+
+    public void sendMessage(String message){
+
+        ConnectionHandling.sendMessage(out, message);
+    }
+
+    public String receiveMessage(){
+
+        return ConnectionHandling.receiveMessage(in);
     }
 }

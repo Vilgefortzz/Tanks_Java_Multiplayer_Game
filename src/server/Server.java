@@ -5,6 +5,7 @@
 
 package server;
 
+import connection.ConnectionHandling;
 import models.Player;
 
 import java.io.DataInputStream;
@@ -84,18 +85,19 @@ public class Server {
                 try {
 
                     clientSocket = serverSocket.accept();
+                    System.out.println("Polaczono z socketem");
                     in = new DataInputStream(clientSocket.getInputStream());
                     out = new DataOutputStream(clientSocket.getOutputStream());
+                    sendMessage("I am server!!");
+                    System.out.println(receiveMessage());
 
                 } catch (IOException e){
+                    System.out.println("Nastspilo zerwanie polaczenia klienta z serverem");
+                } finally {
 
-                    running = false;
-
-                    try {
-                        serverSocket.close();
-                    } catch (IOException e2) {
-                        e2.printStackTrace();
-                    }
+                    ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
+                    ConnectionHandling.close(in); // zamykanie strumienia wejściowego
+                    ConnectionHandling.close(clientSocket); // zamknięcie clientSocketa
                 }
             }
         });
@@ -110,19 +112,26 @@ public class Server {
         if (started)
         {
             running = false; // zatrzymanie pętli
+
+            ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
+            ConnectionHandling.close(in); // zamykanie strumienia wejściowego
+            ConnectionHandling.close(clientSocket); // zamknięcie clientSocketa
+
+            ConnectionHandling.close(serverSocket); // zamknięcie serverSocketa
+
+            ConnectionHandling.join(serverThread); // czekanie aż wątek się wykonana do końca
+
             started = false; // wyłączenie servera
-
-            try {
-                serverSocket.close(); // zamknięcie socketa
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                serverThread.join(); // czekanie aż wątek się wykonana do końca
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
+    }
+
+    public void sendMessage(String message){
+
+        ConnectionHandling.sendMessage(out, message);
+    }
+
+    public String receiveMessage(){
+
+        return ConnectionHandling.receiveMessage(in);
     }
 }
