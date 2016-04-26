@@ -1,0 +1,2 @@
+1)Mechanizm bezpiecznego rozgłaszania komunikatów między użytkownikami
+2)Wątek do każdego klienta (synchronizowanie obiektów i bezpieczne przerwania)
