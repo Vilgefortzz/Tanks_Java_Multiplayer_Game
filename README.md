@@ -41,16 +41,12 @@ połączą sie z serwerem i wejdą do gry).
 	-> sterowanie czołgiem - reakcja na klawisze
 	-> strzelanie czołgiem - w jednym kierunku
 
-[1.4] Stworzenie dodatkowych okien interfejsu
-
-	-> utworzenie interfejsu serwera
-
-[1.5] ~~Animacje czołgów~~ [ 22.03.16 ]
+[1.4] ~~Animacje czołgów~~ [ 22.03.16 ]
 
     -> prawidłowe zachowanie się czołgu czyli obracanie się (animacja), kierunek strzału
     -> losowe generowanie czołgu na mapie
 
-[1.6] ~~Rozgrywka ( otrzymywanie obrażeń, strata zdrowia, usuwanie z mapy )~~ [ 05.04.16 ]
+[1.5] ~~Rozgrywka ( otrzymywanie obrażeń, strata zdrowia, usuwanie z mapy )~~ [ 05.04.16 ]
 
     -> poprawna fizyka gry
 	-> mechanika związana z otrzymywanymi obrażeniami
@@ -119,7 +115,7 @@ połączą sie z serwerem i wejdą do gry).
 	-> wysyłanie komunikatów do serwera i oczekiwanie na odpowiednią odpowiedź w zależności od wysłanej flagi.
 	-> wykonanie odpowiedniej operacji w zależności od wysłanej informacji zwrotnej od serwera.
 
-[5.3] Ustawienie połączenia wielu klientów poprzez serwer??
+[5.3] Ustawienie połączenia wielu klientów poprzez serwer
 
 [5.4] Protokół komunikacji DataInputStream, DataOutputStream
 
@@ -127,9 +123,9 @@ połączą sie z serwerem i wejdą do gry).
 
 [6] Zaproponowane przez studenta
 
-[6.1] Logika rozgrywki, kolizje, timer będzie używał wątku animacji
+[6.1] ~~Logika rozgrywki, kolizje, timer będzie używał wątku animacji~~ [ 19.04.16 ]
 
-[6.2] Tryb teamMatch + obsługa pocisków
+[6.2] ~~Obsługa pocisków~~ [ 19.04.16 ]
 
 [6.2] ~~Grafika~~ [ 15.03.16 ]
 

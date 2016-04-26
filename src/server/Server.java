@@ -43,12 +43,6 @@ public class Server {
     private DataInputStream in = null; // wejściowy strumień danych od klienta
     private DataOutputStream out = null; // wyjściowy strumień danych od klienta
 
-    /*
-    Gracze
-     */
-
-    private Player Player1 = null; // gracz(klient) (narazie 1 gracz)
-
     /* -------------------------------------------------------------------------------------------------------------- */
 
 
@@ -89,8 +83,15 @@ public class Server {
                     in = new DataInputStream(clientSocket.getInputStream());
                     out = new DataOutputStream(clientSocket.getOutputStream());
 
+                    eventListening(); // pętla nasłuchująca eventy od klientów
+
                 } catch (IOException e){
                     System.out.println("Nastapilo zerwanie polaczenia klienta z serverem");
+
+                    // Powiadomienie wszystkich pozostałych klientów o odejściu konkretnego klienta
+                    // TODO Tutaj jest duży problem jak powiadomić pozostałych klientów o odejściu klienta
+
+
                 } finally {
 
                     System.out.println("Jestem");
@@ -124,17 +125,72 @@ public class Server {
         }
     }
 
-    public void sendMessage(String message){
+    private void eventListening() throws IOException {
 
-        try {
-            ConnectionHandling.sendMessage(out, message);
-        } catch (IOException e) {
-            e.printStackTrace();
+        while (true){
+
+            // rodzaj komunikatu
+            int communique = in.readByte();
+
+            switch (communique)
+            {
+                case 1:
+                    registerHandling();
+
+                case 2:
+                    unRegisterHandling();
+
+                case 3:
+                    movementHandling();
+
+                default:
+            }
         }
     }
 
-    public String receiveMessage() throws IOException {
+    private void registerHandling() throws IOException {
 
-        return ConnectionHandling.receiveMessage(in);
+        // Zczytanie informacji o kliencie
+        int id = in.readInt();
+        String login = in.readUTF();
+        int x = in.readInt();
+        int y = in.readInt();
+
+        // Wysłanie tej informacji pozostałym klientom
+        /*
+        out.writeByte(1);
+        out.writeInt(id);
+        out.writeUTF(login);
+        out.writeInt(x);
+        out.writeInt(y);
+         */
+    }
+
+    private void unRegisterHandling() throws IOException {
+
+        // Zczytanie id klienta, który opuścił grę
+        int id = in.readInt();
+
+        // Wysłanie informacji o opuszczeniu gry przez konkretnego klienta pozostałym klientom
+        /*
+        out.writeByte(2);
+        out.writeInt(id);
+         */
+    }
+
+    private void movementHandling() throws IOException {
+
+        // Zczytanie informacji o kliencie, który się poruszył
+        int id = in.readInt();
+        int dx = in.readInt();
+        int dy = in.readInt();
+
+        // Wysłanie informacji o ruchu konkretnego klienta pozostałym klientom
+        /*
+        out.writeByte(3);
+        out.writeInt(id);
+        out.writeInt(dx);
+        out.writeInt(dy);
+         */
     }
 }

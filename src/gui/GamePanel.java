@@ -12,8 +12,6 @@ import models.Wall;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.*;
 
 import static io.LoadImages.explosion;
@@ -75,14 +73,7 @@ public class GamePanel extends JPanel implements Runnable{
         1 gracz
          */
 
-        players.put(1, new Player(1, "Grzes"));
-
-        /*
-        Startowanie wątku animacji
-         */
-
-        animation = new Thread(this);
-        animation.start();
+        //players.put(1, new Player(1, "Grzes"));
     }
 
     private void generateMap(){
@@ -128,7 +119,7 @@ public class GamePanel extends JPanel implements Runnable{
         g2d.setColor(new Color(182, 14, 14));
         g2d.setFont(new Font("Arial", Font.BOLD, 17));
 
-        g2d.drawString(String.valueOf(players.get(1).getHp()), 24, 16);
+        //g2d.drawString(String.valueOf(players.get(1).getHp()), 24, 16);
 
         g2d.drawImage(explosion, 60, 0, this);
         // TODO Wyświetlanie zniszczonych czołgów
@@ -162,55 +153,6 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
     }
-
-    /*private void checkCollisions() {
-
-        for (int i = 0; i < players.size(); i++){
-
-            // Sprawdzanie kolizji czołgu z innym czołgiem - wszystko na zasadzie prostokątów i ich krzyżowania się
-            // Narazie nie ma
-
-            // Sprawdzanie kolizji pocisków z czołgami - tu jest wszystko dobrze i optymalnie
-
-            // Narazie tylko dla dwóch czołgów - problem z iteracją
-
-            if (players.size() != 1) {
-
-                if (i == 0) {
-
-                    for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
-
-                        if (players.get(i).getMissiles().get(j).getBounds().intersects(players.get(i + 1).getBounds())) {
-
-                            if (players.get(i + 1).getHp() != 1) {
-
-                                // tracenie życia
-
-                                players.get(i + 1).setHp(players.get(i + 1).getHp() - players.get(i).getMissiles().get(j).getDamage());
-                                players.get(i).getMissiles().get(j).setVisible(false);
-                            } else
-                                players.remove(players.get(i + 1)); // usuwanie czołgu z mapy
-                        }
-                    }
-                } else if (i == 1) {
-
-                    for (int j = 0; j < players.get(i).getMissiles().size(); j++) {
-
-                        if (players.get(i).getMissiles().get(j).getBounds().intersects(players.get(i - 1).getBounds())) {
-
-                            if (players.get(i - 1).getHp() != 1) {
-
-                                players.get(i - 1).setHp(players.get(i - 1).getHp() - players.get(i).getMissiles().get(j).getDamage()); // tracenie życia
-                                players.get(i).getMissiles().get(j).setVisible(false);
-                            } else
-                                players.remove(players.get(i - 1)); // usuwanie czołgu z mapy
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
 
     @Override
     public void run() {
@@ -246,5 +188,51 @@ public class GamePanel extends JPanel implements Runnable{
 
             beforeTime = System.currentTimeMillis();
         }
+    }
+
+    public void registerMainPlayer(int id, String login, int x, int y){
+
+        mainPlayerID = id; // WAŻNE !!!
+        players.put(id, new Player(id, login, x, y));
+        repaint();
+
+        /*
+        Startowanie wątku animacji
+         */
+
+        animation = new Thread(this);
+        animation.start();
+    }
+
+    public void registerAnotherPlayer(int id, String login, int x, int y){
+
+        if (players.containsKey(id)){
+            return;
+        }
+
+        players.put(id, new Player(id, login, x, y));
+        repaint();
+    }
+
+    public void unRegisterPlayer(int id){
+
+        players.remove(id);
+        repaint();
+    }
+
+    public void movePlayer(int id, int dx, int dy){
+
+        Player somePlayer = players.get(id);
+
+        somePlayer.setDx(dx);
+        somePlayer.setDy(dy);
+
+        repaint();
+    }
+
+    public void deletePlayers(){
+
+        players.clear();
+        repaint();
     }
 }

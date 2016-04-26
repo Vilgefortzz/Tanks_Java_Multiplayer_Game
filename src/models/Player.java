@@ -33,6 +33,7 @@ public class Player extends Sprite {
     private int dy;
     private ArrayList<Missile> missiles = null;
 
+    // Konstruktor do losowego generowania
     public Player(int id, String login) {
 
         super();
@@ -49,12 +50,43 @@ public class Player extends Sprite {
         randomGenerate();
     }
 
+    // Konstruktor do generowania na konkretnej pozycji
+    public Player(int id, String login, int x, int y) {
+
+        super(x, y);
+
+        this.id = id;
+        this.login = login;
+
+        this.hp = 100;
+        this.missiles = new ArrayList<>();
+
+        mainImage = tankRight;
+        getImageDimensions();
+    }
+
     public int getId() {
         return id;
     }
 
     public String getLogin() {
         return login;
+    }
+
+    public void setDx(int dx) {
+        this.dx = dx;
+    }
+
+    public void setDy(int dy) {
+        this.dy = dy;
+    }
+
+    public int getDx() {
+        return dx;
+    }
+
+    public int getDy() {
+        return dy;
     }
 
     public ArrayList<Missile> getMissiles() {

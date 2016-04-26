@@ -22,10 +22,8 @@ public class Main {
         final String HOST = "localhost";
         final int PORT = 8080;
 
-        Client client = new Client();
-
-        final MainFrame frame = new MainFrame(); // Stworzenie okna dla połączonego klienta
-        client.setFrame(frame); // Przekazanie okna klientowi aby mógł informować o eventach
+        final MainFrame frame = new MainFrame(); // Stworzenie okna dla klienta (nie jest jeszcze widoczne)
+        Client client = new Client(frame, frame.getGamePanel()); // stworzenie klienta do komunikacji - dostaje okno + panel z grą
 
         try {
 
@@ -36,6 +34,10 @@ public class Main {
 
             System.out.println(ex);
         }
+
+        /*
+        Okno jest widoczne, jeżeli klient prawidłowo się podłączył
+         */
 
         if (client.isConnected()){
 

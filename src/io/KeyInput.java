@@ -22,14 +22,15 @@ public class KeyInput extends KeyAdapter{
 
     public void keyPressed(KeyEvent e) {
 
-        Player me = game.players.get(1);
+        Player me = game.players.get(game.mainPlayerID);
         me.keyPressed(e);
-
+        game.movePlayer(me.getId(), me.getDx(), me.getDy());
     }
 
     public void keyReleased(KeyEvent e) {
 
-        Player me = game.players.get(1);
+        Player me = game.players.get(game.mainPlayerID);
         me.keyReleased(e);
+        game.movePlayer(me.getId(), me.getDx(), me.getDy());
     }
 }

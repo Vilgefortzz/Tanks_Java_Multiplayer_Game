@@ -6,9 +6,10 @@
 package client;
 
 import connection.ConnectionHandling;
+import gui.GamePanel;
 import gui.MainFrame;
+import models.Player;
 
-import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -50,15 +51,25 @@ public class Client {
     private DataOutputStream out = null; // wyjściowy strumień danych do servera
 
     /*
-    Okno clienta
+    Okno clienta oraz panel z grą
      */
 
     private MainFrame frame = null;
+    private GamePanel game = null;
+
+    /*
+    Client dostaje playera do gry
+     */
+
+    private Player myPlayer = null;
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
 
-    public Client() {
+    public Client(MainFrame frame, GamePanel game) {
+
+        this.frame = frame;
+        this.game = game;
 
         connected = false;
         running = false;
@@ -70,10 +81,6 @@ public class Client {
 
     public boolean isRunning() {
         return running;
-    }
-
-    public void setFrame(MainFrame frame) {
-        this.frame = frame;
     }
 
     public void connect(String host, int port) throws IOException{
@@ -92,6 +99,22 @@ public class Client {
             throw new IOException("Client didn't connect with server");
         }
 
+        myPlayer = new Player(1, "Grzes"); // TODO Trzeba zwiększać id playera żeby każdy klient był kolejnym id
+        // Zarejestrowanie playera(main - sterowanie) na panelu
+        game.registerMainPlayer(myPlayer.getId(), myPlayer.getLogin(), myPlayer.getX(), myPlayer.getY());
+
+        // Wysłanie informacji o stworzonym kliencie pozostałym klientom
+        try{
+
+            out.writeByte(1);
+            out.writeInt(myPlayer.getId());
+            out.writeUTF(myPlayer.getLogin());
+            out.writeInt(myPlayer.getX());
+            out.writeInt(myPlayer.getY());
+        } catch (IOException e){
+            System.out.println("Loose connection, cannot send information to another clients");
+        }
+
         this.clientThread = new Thread(() ->
         {
             boolean looseConnectionWithServer = false;
@@ -100,8 +123,8 @@ public class Client {
 
                     while (running){
 
+                        eventListening();
                     }
-                    throw new IOException("Never throw!");
 
                 } catch (IOException e) {
                    looseConnectionWithServer = true;
@@ -120,7 +143,6 @@ public class Client {
 
                         frame.connectionError();
                     }
-
                 }
         });
 
@@ -129,8 +151,8 @@ public class Client {
         clientThread.start();
     }
 
-    public void disconnect()
-    {
+    public void disconnect() {
+
         if (connected)
         {
             running = false; // zatrzymanie pętli
@@ -145,21 +167,65 @@ public class Client {
         }
     }
 
-    public void sendMessage(String message){
+    private void eventListening() throws IOException {
+
+        // rodzaj komunikatu
+        int communique = in.readByte();
+
+        switch (communique)
+        {
+            case 1:
+                registerHandling();
+
+            case 2:
+                unRegisterHandling();
+
+            case 3:
+                movementHandling();
+
+            default:
+        }
+    }
+
+    /*
+    public void sendYourMove(int id, int dx, int dy){
 
         try {
-            ConnectionHandling.sendMessage(out, message);
+            out.writeInt(id);
+            out.writeInt(dx);
+            out.writeInt(dy);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    */
 
-    public void receiveMessage() throws IOException {
+    private void registerHandling() throws IOException {
 
-        try {
-            ConnectionHandling.receiveMessage(in);
-        } catch (IOException e) {
-            throw e;
-        }
+        // Zczytanie informacji o kliencie
+        int id = in.readInt();
+        String login = in.readUTF();
+        int x = in.readInt();
+        int y = in.readInt();
+
+        game.registerAnotherPlayer(id, login, x, y);
+    }
+
+    private void unRegisterHandling() throws IOException {
+
+        // Zczytanie id klienta, który opuścił grę
+        int id = in.readInt();
+
+        game.unRegisterPlayer(id);
+    }
+
+    private void movementHandling() throws IOException {
+
+        // Zczytanie informacji o kliencie, który się poruszył
+        int id = in.readInt();
+        int dx = in.readInt();
+        int dy = in.readInt();
+
+        game.movePlayer(id, dx, dy);
     }
 }

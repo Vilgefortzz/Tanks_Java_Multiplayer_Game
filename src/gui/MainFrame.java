@@ -138,10 +138,14 @@ public class MainFrame extends JFrame implements ActionListener{
 
         backBtn5.addActionListener(this);
 
-        // Rozpoczęcie (menu główne)
+        // Stworzenie paneli z menu oraz grą
 
         menuPanel = new MenuPanel();
         menuPanel.add(boxMenu);
+        gamePanel = new GamePanel();
+
+        // Rozpoczęcie (menu główne)
+
         add(menuPanel);
     }
 
@@ -158,6 +162,10 @@ public class MainFrame extends JFrame implements ActionListener{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
     }
 
     private Box createMenu() {
@@ -507,7 +515,8 @@ public class MainFrame extends JFrame implements ActionListener{
             menuPanel.setVisible(false);
             remove(menuPanel);
 
-            gamePanel = new GamePanel();
+            // Widok: panel z grą
+
             add(gamePanel);
             gamePanel.requestFocusInWindow();
         }
