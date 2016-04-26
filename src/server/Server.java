@@ -69,7 +69,7 @@ public class Server {
         try {
             serverSocket = new ServerSocket(port); // utworzenie serverSocketa na danym porcie
         } catch (IOException ex){
-            throw new IOException("Server didn't start, check port availability");
+            throw new IOException("Error to create server", ex);
         }
 
         serverThread = new Thread(() -> {

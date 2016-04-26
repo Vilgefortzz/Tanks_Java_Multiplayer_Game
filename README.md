@@ -65,7 +65,7 @@ połączą sie z serwerem i wejdą do gry).
 		
 [2.3] Plik z logami klienta i serwera (klasa do obsługi logów z przed 2 tygodni np.)
 
-[2.4] Zapis i wczytywanie stanu gry
+[2.4] Zapis i wczytywanie stanu gry (punktacja, czas, obrażenia, ilość czołgów, które zniszczyłem itp.)
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -75,9 +75,9 @@ połączą sie z serwerem i wejdą do gry).
 
 [3.2] ~~Ruch gracza + kolizje (wątek animacji)~~ [ 05.04.16 ]
 
-[3.4] Utworzenie wątku serwera(akceptujący) + wątki dla każdego klienta + mechanizm bezpiecznego zatrzymywania wątku(join, flagi podtrzymujące)
+[3.3] ~~Utworzenie wątku serwera(akceptujący) + wątki dla każdego klienta + mechanizm bezpiecznego zatrzymywania wątku(join, flagi podtrzymujące)~~ [ 26.04.16 ]
 
-[3.5] Wątek do każdego klienta (synchronizowanie obiektów i bezpieczne przerwania)
+[3.4] Wątek do każdego klienta (synchronizowanie obiektów i bezpieczne przerwania)
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -103,13 +103,13 @@ połączą sie z serwerem i wejdą do gry).
 
 [5] Komunikacja sieciowa poprzez sockety
 
-[5.1] Aplikacja server
+[5.1] ~~Aplikacja server~~ [ 26.04.16 ]
 
 	-> oczekiwanie na połączenie
 	-> odbieranie informacji od klienta
 	-> wykonanie operacji w zależności od flagi przekazanej przez główną aplikację.
 
-[5.2] Aplikacja client
+[5.2] ~~Aplikacja client~~ [ 26.04.16 ]
 
 	-> łączenie się z serwerem
 	-> wysyłanie komunikatów do serwera i oczekiwanie na odpowiednią odpowiedź w zależności od wysłanej flagi.
@@ -117,7 +117,7 @@ połączą sie z serwerem i wejdą do gry).
 
 [5.3] Ustawienie połączenia wielu klientów poprzez serwer
 
-[5.4] Protokół komunikacji DataInputStream, DataOutputStream
+[5.4] ~~Protokół komunikacji DataInputStream, DataOutputStream~~ [ 26.04.16 ]
 
 ---------------------------------------------------------------------------------------------------------------------
 
