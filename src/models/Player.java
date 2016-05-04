@@ -268,16 +268,20 @@ public class Player extends Sprite {
         }
     }
 
-    public void checkCollisionWithWall(){
+    public boolean checkCollisionWithWall(){
+
+        boolean collision = false;
 
         // Sprawdzanie kolizji czołgów ze ścianami - tu jest wszystko dobrze i optymalnie
 
         for (Wall wall : walls) {
 
             if (getBounds().intersects(wall.getBounds())) {
-                restorePreviousPosition();
+                collision = true;
+                break;
             }
         }
+        return collision;
     }
 
     public void checkCollisionMissileWithWall(){
@@ -305,7 +309,7 @@ public class Player extends Sprite {
         }
     }
 
-    private void restorePreviousPosition(){
+    public void restorePreviousPosition(){
 
         x = x - dx;
         y = y - dy;

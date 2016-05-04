@@ -8,6 +8,7 @@ package client;
 import connection.ConnectionHandling;
 import gui.GamePanel;
 import gui.MainFrame;
+import io.KeyInput;
 import models.Player;
 
 import javax.swing.*;
@@ -51,13 +52,13 @@ public class Client {
 
     private MainFrame frame = null;
     private GamePanel game = null;
+    private KeyInput keyboard = null; // obsługa klawiatury
 
     /*
     Client dostaje playera do gry
      */
 
     private Player myPlayer = null;
-    public static int clientPlayerID; // do sterowania
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
@@ -66,6 +67,7 @@ public class Client {
 
         this.frame = frame;
         this.game = game;
+        keyboard = game.getKeyboard();
     }
 
     public boolean isConnected() {
@@ -99,10 +101,9 @@ public class Client {
         }
 
         myPlayer = new Player(new Random().nextInt(5000) + 1);
-        clientPlayerID = myPlayer.getId();
-        System.out.println("ID : " + clientPlayerID);
+        keyboard.setThisPlayer(myPlayer);
 
-        sendYourId(clientPlayerID); // wysłanie do serwera, który go zapamięta (WAŻNE!!)
+        sendYourId(myPlayer.getId()); // wysłanie do serwera, który go zapamięta (WAŻNE!!)
 
         this.clientThread = new Thread(() ->
         {
@@ -177,6 +178,10 @@ public class Client {
                 movementHandling();
                 break;
 
+            case 4:
+                colissionTankWithWallHandling();
+                break;
+
             default:
                 break;
         }
@@ -216,6 +221,16 @@ public class Client {
         }
     }
 
+    public static void sendYourCollisionTankWithWall(int id){
+
+        try {
+            out.writeInt(4);
+            out.writeInt(id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void registerHandling() throws IOException {
 
         // Zczytanie informacji o kliencie
@@ -244,5 +259,17 @@ public class Client {
         int dy = in.readInt();
 
         game.movePlayer(id, orientation, dx, dy);
+    }
+
+    /*
+    Collisions
+     */
+
+    private void colissionTankWithWallHandling() throws IOException {
+
+        // Zczytanie id klienta, który zderzył się z ścianą
+        int id = in.readInt();
+
+        game.collisionTankWithWall(id);
     }
 }

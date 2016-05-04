@@ -13,12 +13,10 @@ import models.Wall;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.*;
 
-import static client.Client.clientPlayerID;
+import static client.Client.sendYourCollisionTankWithWall;
 import static io.LoadImages.*;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -32,10 +30,11 @@ public class GamePanel extends JPanel implements Runnable{
     public static ArrayList<Wall> walls = null; // statyczna lista ścian - potrzebna przy badaniu kolizji
     private MapReader map = null;
 
-    public Map<Integer, Player> players = null; // lista playerów w postaci mapy < klucz , obiekt >
+    private Map<Integer, Player> players = null; // lista playerów w postaci mapy < klucz , obiekt >
 
     private MainFrame frame = null;
     private MenuPanel menuPanel = null;
+    private KeyInput keyboard = null;
 
     private JButton backToPlayroom = null;
 
@@ -44,8 +43,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         this.frame = frame;
         this.menuPanel = menuPanel;
+        keyboard = new KeyInput();
 
-        addKeyListener(new KeyInput(this));
+        addKeyListener(keyboard);
         setFocusable(true);
 
         initWorld();
@@ -57,6 +57,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void setAnimating(boolean animating) {
         this.animating = animating;
+    }
+
+    public KeyInput getKeyboard() {
+        return keyboard;
     }
 
     private void initWorld() {
@@ -80,10 +84,12 @@ public class GamePanel extends JPanel implements Runnable{
         backToPlayroom.addActionListener(e -> SwingUtilities.invokeLater(() -> {
 
             Client klient = frame.getClient();
+            Player player = keyboard.getThisPlayer();
+
             try {
                 System.out.println("Unregister player");
-                System.out.println("Client player id: " + clientPlayerID);
-                klient.sendYourUnRegister(clientPlayerID);
+                System.out.println("Client player id: " + player.getId());
+                klient.sendYourUnRegister(player.getId());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -184,6 +190,13 @@ public class GamePanel extends JPanel implements Runnable{
 
         while (animating) {
 
+            for (Player player : players.values()){
+
+                if (player.checkCollisionWithWall()){
+                    sendYourCollisionTankWithWall(player.getId());
+                }
+            }
+
             repaint();
 
             timeDiff = System.currentTimeMillis() - beforeTime;
@@ -249,8 +262,15 @@ public class GamePanel extends JPanel implements Runnable{
         players.get(id).setDx(dx);
         players.get(id).setDy(dy);
         players.get(id).updateMovement();
+    }
 
-        //players.get(id).checkCollisionWithWall();
+    /*
+    Collisions
+     */
+
+    public void collisionTankWithWall(int id){
+
+        players.get(id).restorePreviousPosition();
     }
 
     private void deletePlayers(){

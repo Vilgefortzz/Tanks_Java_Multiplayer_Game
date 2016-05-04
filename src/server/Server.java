@@ -226,6 +226,10 @@ public class Server {
                     movementHandling(in);
                     break;
 
+                case 4:
+                    collisionTankWithWallHandling(in);
+                    break;
+
                 default:
                     break;
             }
@@ -255,6 +259,12 @@ public class Server {
         out.writeInt(orientation);
         out.writeInt(dx);
         out.writeInt(dy);
+    }
+
+    private void sendCollisionTankWithWallInfo(DataOutputStream out, int id) throws IOException {
+
+        out.writeInt(4);
+        out.writeInt(id);
     }
 
     private void registerHandling(DataInputStream in) throws IOException {
@@ -323,5 +333,21 @@ public class Server {
 
         System.out.println("registered X: " + registeredClients.get(id).getX());
         System.out.println("registered Y: " + registeredClients.get(id).getY());
+    }
+
+    /*
+    Collisions
+     */
+
+    private void collisionTankWithWallHandling(DataInputStream in) throws IOException {
+
+        int id = in.readInt();
+
+        // Wysłanie informacji o ruchu konkretnego klienta wszystkim klientom
+        for (DataOutputStream out : dataOutputStreams.values()) {
+            sendCollisionTankWithWallInfo(out, id);
+        }
+
+        registeredClients.get(id).restorePreviousPosition();
     }
 }
