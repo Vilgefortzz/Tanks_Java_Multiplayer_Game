@@ -5,6 +5,8 @@
 
 package gui;
 
+import client.Client;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +21,10 @@ public class MainFrame extends JFrame implements ActionListener{
 
     public static final int sizeX = 1366;
     public static final int sizeY = 768;
+
+    // Klient, który posiada to okno
+
+    private Client client = null;
 
     // Panele 1) menu główne + poboczne 2) właściwa gra
 
@@ -84,7 +90,7 @@ public class MainFrame extends JFrame implements ActionListener{
     private Box boxCredits;
     private Box boxLogging;
     private Box boxSignUp;
-    private Box boxLoggedUser;
+    public  Box boxLoggedUser;
     private Box boxStats;
     private Box boxHelp;
 
@@ -142,7 +148,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         menuPanel = new MenuPanel();
         menuPanel.add(boxMenu);
-        gamePanel = new GamePanel();
+        gamePanel = new GamePanel(this, menuPanel);
 
         // Rozpoczęcie (menu główne)
 
@@ -166,6 +172,18 @@ public class MainFrame extends JFrame implements ActionListener{
 
     public GamePanel getGamePanel() {
         return gamePanel;
+    }
+
+    public MenuPanel getMenuPanel() {
+        return menuPanel;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     private Box createMenu() {
@@ -468,6 +486,7 @@ public class MainFrame extends JFrame implements ActionListener{
         if (e.getSource() == loginBtn){
 
             JOptionPane.showMessageDialog(null, "Logging completed");
+            setTitle("Client logged as: ..."); // z bazy danych będzie brane
 
             boxLogging.setVisible(false);
             menuPanel.remove(boxLogging);
@@ -492,12 +511,17 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == createAccountBtn){
 
+            /*
+            jeżeli dobrze stworzone to to co nizej się dzieje w przeciwnym wypadku komunikat o złym
+            stworzeniu konta(istnieje w bazie taki sam + inne warunki) oraz zostanie na boxie z rejestracją
+            */
+
             JOptionPane.showMessageDialog(null, "Account succesfully created!");
 
-            boxLogging.setVisible(false);
-            menuPanel.remove(boxLogging);
-            menuPanel.add(boxSignUp);
-            boxSignUp.setVisible(true);
+            boxSignUp.setVisible(false);
+            menuPanel.remove(boxSignUp);
+            menuPanel.add(boxLogging);
+            boxLogging.setVisible(true);
         }
 
         if (e.getSource() == backBtn2){
@@ -508,17 +532,45 @@ public class MainFrame extends JFrame implements ActionListener{
             boxLogging.setVisible(true);
         }
 
+        /* --------------------------------------------------------------------------------------------------------- */
+        /* --------------------------------------------------------------------------------------------------------- */
+        /* ---------------------------------Lączenie klienta z serverem--------------------------------------------- */
+        /* --------------------------------------------------------------------------------------------------------- */
+        /* --------------------------------------------------------------------------------------------------------- */
+
         if (e.getSource() == playBtn){
 
-            boxLoggedUser.setVisible(false);
-            menuPanel.remove(boxLoggedUser);
-            menuPanel.setVisible(false);
-            remove(menuPanel);
+            // Stworzenie klienta - socketa do komunikacji
 
-            // Widok: panel z grą
+            final String HOST = "localhost";
+            final int PORT = 8080;
 
-            add(gamePanel);
-            gamePanel.requestFocusInWindow();
+            try {
+
+                client.connect(HOST, PORT);
+
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            if (client.isConnected()){
+
+                boxLoggedUser.setVisible(false);
+                menuPanel.remove(boxLoggedUser);
+                menuPanel.setVisible(false);
+                remove(menuPanel);
+
+                // Widok: panel z grą
+
+                gamePanel.setVisible(true);
+                add(gamePanel);
+                gamePanel.requestFocusInWindow();
+
+                gamePanel.setAnimating(true); // ustawienie flagi dla wątku, który jest wywołany linijkę niżej
+                gamePanel.runAnimationThread();
+            }
         }
 
         if (e.getSource() == statsBtn){
@@ -540,6 +592,7 @@ public class MainFrame extends JFrame implements ActionListener{
         if (e.getSource() == logOutBtn){
 
             JOptionPane.showMessageDialog(null, "You are logged out. I hope we will see you soon ;)");
+            setTitle("Client not logged now");
 
             boxLoggedUser.setVisible(false);
             menuPanel.remove(boxLoggedUser);

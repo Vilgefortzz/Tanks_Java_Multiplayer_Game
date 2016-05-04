@@ -15,8 +15,8 @@ public class ConnectionHandling {
         try {
             object.close();
 
-        } catch ( IOException e ) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Problem with closing the object!");
         }
     }
 
@@ -25,8 +25,8 @@ public class ConnectionHandling {
         try {
             thread.join();
 
-        } catch ( InterruptedException e ) {
-            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Incorrectly stopping a thread!");
         }
     }
 }

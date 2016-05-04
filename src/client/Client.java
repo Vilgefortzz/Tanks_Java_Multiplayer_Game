@@ -10,26 +10,21 @@ import gui.GamePanel;
 import gui.MainFrame;
 import models.Player;
 
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Random;
 
 public class Client {
-
-    /*
-    Identyfikacja clienta
-     */
-
-    private int ID;
-    private String LOGIN;
 
     /*
     Informacje o stanie klienta
      */
 
-    private boolean connected; // informacja(czy połączony czy nie)
-    private boolean running; // informacja (czy działa czy nie)
+    private boolean connected = false; // informacja(czy połączony czy nie)
+    private boolean running = false; // informacja (czy działa czy nie)
 
     /*
     Wątek klienta
@@ -47,8 +42,8 @@ public class Client {
     Protokoły komunikacji
      */
 
-    private DataInputStream in = null; // wejściowy strumień danych od servera
-    private DataOutputStream out = null; // wyjściowy strumień danych do servera
+    private static DataInputStream in = null; // wejściowy strumień danych od servera
+    private static DataOutputStream out = null; // wyjściowy strumień danych do servera
 
     /*
     Okno clienta oraz panel z grą
@@ -62,6 +57,7 @@ public class Client {
      */
 
     private Player myPlayer = null;
+    public static int clientPlayerID; // do sterowania
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
@@ -70,9 +66,6 @@ public class Client {
 
         this.frame = frame;
         this.game = game;
-
-        connected = false;
-        running = false;
     }
 
     public boolean isConnected() {
@@ -92,44 +85,36 @@ public class Client {
         try {
 
             clientSocket = new Socket(host, port); // utworzenie socketa oraz połączenie go z serverem
-            in = new DataInputStream(clientSocket.getInputStream());
             out = new DataOutputStream(clientSocket.getOutputStream());
+            in = new DataInputStream(clientSocket.getInputStream());
 
         } catch (IOException ex){
-            throw new IOException("Client didn't connect with server");
+            if (out != null)
+                ConnectionHandling.close(out);
+            if (in != null)
+                ConnectionHandling.close(in);
+            if (clientSocket != null)
+                ConnectionHandling.close(clientSocket);
+            throw new IOException("Client didn't connect with server", ex);
         }
 
-        myPlayer = new Player(1, "Grzes"); // TODO Trzeba zwiększać id playera żeby każdy klient był kolejnym id
-        // Zarejestrowanie playera(main - sterowanie) na panelu
-        game.registerMainPlayer(myPlayer.getId(), myPlayer.getLogin(), myPlayer.getX(), myPlayer.getY());
+        myPlayer = new Player(new Random().nextInt(5000) + 1);
+        clientPlayerID = myPlayer.getId();
+        System.out.println("ID : " + clientPlayerID);
 
-        // Wysłanie informacji o stworzonym kliencie pozostałym klientom
-        try{
-
-            out.writeByte(1);
-            out.writeInt(myPlayer.getId());
-            out.writeUTF(myPlayer.getLogin());
-            out.writeInt(myPlayer.getX());
-            out.writeInt(myPlayer.getY());
-        } catch (IOException e){
-            System.out.println("Loose connection, cannot send information to another clients");
-        }
+        sendYourId(clientPlayerID); // wysłanie do serwera, który go zapamięta (WAŻNE!!)
 
         this.clientThread = new Thread(() ->
         {
-            boolean looseConnectionWithServer = false;
-
                 try {
-
                     while (running){
-
                         eventListening();
                     }
-
                 } catch (IOException e) {
-                   looseConnectionWithServer = true;
+                    System.out.println("Jestem");
                 } finally {
 
+                    System.out.println("Sprzatanko");
                     running = false; // zatrzymanie pętli
 
                     ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
@@ -138,77 +123,108 @@ public class Client {
 
                     connected = false; // odłączenie klienta
 
-                    System.out.println("Jestem");
-                    if (looseConnectionWithServer){
+                    game.setVisible(false);
+                    frame.remove(game);
 
-                        frame.connectionError();
-                    }
+                    frame.getMenuPanel().setVisible(true);
+                    frame.boxLoggedUser.setVisible(true);
+                    frame.getMenuPanel().add(frame.boxLoggedUser);
+
+                    frame.add(frame.getMenuPanel());
                 }
         });
 
         connected = true;
         running = true;
         clientThread.start();
+
+        // Wysłanie informacji serwerowi o utworzonym graczu
+        try {
+            sendYourRegister(myPlayer.getId(), myPlayer.getOrientation(), myPlayer.getX(), myPlayer.getY());
+            System.out.println("Wysylam");
+        } catch (IOException e){
+            throw new IOException("Loose connection, cannot send information about new player to another clients", e);
+        }
     }
 
     public void disconnect() {
 
         if (connected)
         {
-            running = false; // zatrzymanie pętli
 
-            ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
-            ConnectionHandling.close(in); // zamykanie strumienia wejściowego
-            ConnectionHandling.close(clientSocket); // zamknięcie socketa
-
+            ConnectionHandling.close(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli przez rzucenie wyjątku
             ConnectionHandling.join(clientThread); // czekanie aż wątek się wykonana do końca
-
-            connected = false; // odłączenie klienta
         }
     }
 
     private void eventListening() throws IOException {
 
         // rodzaj komunikatu
-        int communique = in.readByte();
+        int communique = in.readInt();
 
         switch (communique)
         {
             case 1:
+                System.out.println("Rejestracja");
                 registerHandling();
+                break;
 
             case 2:
                 unRegisterHandling();
+                break;
 
             case 3:
                 movementHandling();
+                break;
 
             default:
+                break;
         }
     }
 
-    /*
-    public void sendYourMove(int id, int dx, int dy){
+    private void sendYourId(int id) throws IOException {
+
+        // Wysłanie serwerowi głównego id aby serwer zapamiętał go
+        out.writeInt(id);
+    }
+
+    private void sendYourRegister(int id, int orientation, int x, int y) throws IOException {
+
+        out.writeInt(1);
+        out.writeInt(id);
+        out.writeInt(orientation);
+        out.writeInt(x);
+        out.writeInt(y);
+    }
+
+    public void sendYourUnRegister(int id) throws IOException {
+
+        out.writeInt(2);
+        out.writeInt(id);
+    }
+
+    public static void sendYourMove(int id, int orientation, int dx, int dy){
 
         try {
+            out.writeInt(3);
             out.writeInt(id);
+            out.writeInt(orientation);
             out.writeInt(dx);
             out.writeInt(dy);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    */
 
     private void registerHandling() throws IOException {
 
         // Zczytanie informacji o kliencie
         int id = in.readInt();
-        String login = in.readUTF();
+        int orientation = in.readInt();
         int x = in.readInt();
         int y = in.readInt();
 
-        game.registerAnotherPlayer(id, login, x, y);
+        game.registerPlayer(id, orientation, x, y);
     }
 
     private void unRegisterHandling() throws IOException {
@@ -223,9 +239,10 @@ public class Client {
 
         // Zczytanie informacji o kliencie, który się poruszył
         int id = in.readInt();
+        int orientation = in.readInt();
         int dx = in.readInt();
         int dy = in.readInt();
 
-        game.movePlayer(id, dx, dy);
+        game.movePlayer(id, orientation, dx, dy);
     }
 }

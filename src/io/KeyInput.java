@@ -11,6 +11,9 @@ import models.Player;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import static client.Client.clientPlayerID;
+import static client.Client.sendYourMove;
+
 public class KeyInput extends KeyAdapter{
 
     private GamePanel game;
@@ -22,15 +25,21 @@ public class KeyInput extends KeyAdapter{
 
     public void keyPressed(KeyEvent e) {
 
-        Player me = game.players.get(game.mainPlayerID);
+        Player me = game.players.get(clientPlayerID);
         me.keyPressed(e);
-        game.movePlayer(me.getId(), me.getDx(), me.getDy());
+
+        // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+
+        sendYourMove(me.getId(), me.getOrientation(), me.getDx(), me.getDy());
     }
 
     public void keyReleased(KeyEvent e) {
 
-        Player me = game.players.get(game.mainPlayerID);
+        Player me = game.players.get(clientPlayerID);
         me.keyReleased(e);
-        game.movePlayer(me.getId(), me.getDx(), me.getDy());
+
+        // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+
+        sendYourMove(me.getId(), me.getOrientation(), me.getDx(), me.getDy());
     }
 }

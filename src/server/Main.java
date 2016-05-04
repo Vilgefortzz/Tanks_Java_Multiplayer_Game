@@ -17,12 +17,12 @@ public class Main {
 
         try {
 
-            server.start(PORT); // start servera
+            server.start(PORT); // start servera // Uruchamia wątek akceptujący servera oraz wątki dla każdego klienta
             System.out.println("Server started on port: " + PORT + "\n" + "Waiting for events...");
 
         } catch (IOException ex) {
 
-            System.out.println(ex);
+            System.out.println(ex.getMessage());
         }
 
         //server.stop(); // zatrzymanie servera

@@ -11,7 +11,7 @@ import static io.LoadImages.*;
 public class Missile extends Sprite{
 
     private int damage;
-    private final int MISSILE_SPEED = 9;
+    private final int MISSILE_SPEED = 5;
 
     public Missile(int x, int y) {
 

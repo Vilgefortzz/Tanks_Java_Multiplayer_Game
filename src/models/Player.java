@@ -7,8 +7,7 @@ package models;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 import static gui.GamePanel.walls;
 import static io.LoadImages.*;
@@ -20,9 +19,9 @@ public class Player extends Sprite {
      */
 
     private int id;
-    private String login;
 
     private boolean randomCreated = false;
+    private int orientation;
 
     /*
     Basic things like hp, array with missiles etc.
@@ -33,35 +32,49 @@ public class Player extends Sprite {
     private int dy;
     private ArrayList<Missile> missiles = null;
 
+
     // Konstruktor do losowego generowania
-    public Player(int id, String login) {
+    public Player(int id) {
 
         super();
 
         this.id = id;
-        this.login = login;
 
         this.hp = 100;
         this.missiles = new ArrayList<>();
 
         mainImage = tankRight;
+        orientation = 3;
         getImageDimensions();
 
         randomGenerate();
     }
 
-    // Konstruktor do generowania na konkretnej pozycji
-    public Player(int id, String login, int x, int y) {
+    // Konstruktor do generowania na konkretnej pozycji i z konkretną orientacją czołgu
+    public Player(int id, int orientation, int x, int y) {
 
         super(x, y);
 
         this.id = id;
-        this.login = login;
 
         this.hp = 100;
         this.missiles = new ArrayList<>();
 
-        mainImage = tankRight;
+        this.orientation = orientation;
+
+        if (orientation == 1){
+            mainImage = tankLeft;
+        }
+        else if (orientation == 2){
+            mainImage = tankUp;
+        }
+        else if (orientation == 3){
+            mainImage = tankRight;
+        }
+        else{
+            mainImage = tankDown;
+        }
+
         getImageDimensions();
     }
 
@@ -69,25 +82,21 @@ public class Player extends Sprite {
         return id;
     }
 
-    public String getLogin() {
-        return login;
+    public int getOrientation() {
+        return orientation;
     }
 
-    public void setDx(int dx) {
-        this.dx = dx;
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
     }
 
-    public void setDy(int dy) {
-        this.dy = dy;
-    }
+    public void setDx(int dx) {this.dx = dx;}
 
-    public int getDx() {
-        return dx;
-    }
+    public void setDy(int dy) {this.dy = dy;}
 
-    public int getDy() {
-        return dy;
-    }
+    public int getDx() {return dx;}
+
+    public int getDy() {return dy;}
 
     public ArrayList<Missile> getMissiles() {
         return missiles;
@@ -125,9 +134,9 @@ public class Player extends Sprite {
                 System.out.println(this.x);
                 System.out.println(this.y);
 
-                for (int i = 0; i < walls.size(); i++){
+                for (Wall wall1 : walls) {
 
-                    if (getBounds().intersects(walls.get(i).getBounds())){
+                    if (getBounds().intersects(wall1.getBounds())) {
                         isIntersection = true;
                         break;
                     }
@@ -139,8 +148,7 @@ public class Player extends Sprite {
             }
     }
 
-    private void move() {
-
+    public void updateMovement() {
         x += dx;
         y += dy;
     }
@@ -165,55 +173,62 @@ public class Player extends Sprite {
 
         int key = e.getKeyCode();
 
-            if (key == KeyEvent.VK_L) if (mainImage == tankDown) {
-                shootDown();
-                missiles.get(missiles.size() - 1).setMainImage(missileDown);
-                missiles.get(missiles.size() - 1).getImageDimensions();
-            } else if (mainImage == tankUp) {
-                shootUP();
-                missiles.get(missiles.size() - 1).setMainImage(missileUp);
-                missiles.get(missiles.size() - 1).getImageDimensions();
-            } else if (mainImage == tankLeft) {
-                shootLeft();
-                missiles.get(missiles.size() - 1).setMainImage(missileLeft);
-                missiles.get(missiles.size() - 1).getImageDimensions();
-            } else {
-                if (mainImage == tankRight) {
-                    shootRight();
-                    missiles.get(missiles.size() - 1).setMainImage(missileRight);
+            if (key == KeyEvent.VK_L){
+
+                if (orientation == 4){
+                    shootDown();
+                    missiles.get(missiles.size() - 1).setMainImage(missileDown);
                     missiles.get(missiles.size() - 1).getImageDimensions();
+                } else if (orientation == 2){
+                    shootUP();
+                    missiles.get(missiles.size() - 1).setMainImage(missileUp);
+                    missiles.get(missiles.size() - 1).getImageDimensions();
+                } else if (orientation == 1){
+                    shootLeft();
+                    missiles.get(missiles.size() - 1).setMainImage(missileLeft);
+                    missiles.get(missiles.size() - 1).getImageDimensions();
+                } else {
+                    if (orientation == 3){
+                        shootRight();
+                        missiles.get(missiles.size() - 1).setMainImage(missileRight);
+                        missiles.get(missiles.size() - 1).getImageDimensions();
+                    }
                 }
             }
 
-            else if (key == KeyEvent.VK_S) {
+            else if (key == KeyEvent.VK_S){
 
+                    orientation = 4;
                     mainImage = tankDown;
                     getImageDimensions();
-                    dy = 1;
+                    dy = 2;
             }
 
-            else if (key == KeyEvent.VK_A) {
+            else if (key == KeyEvent.VK_A){
 
+                    orientation = 1;
                     mainImage = tankLeft;
                     getImageDimensions();
-                    dx = -1;
+                    dx = -2;
             }
 
-            else if (key == KeyEvent.VK_W) {
+            else if (key == KeyEvent.VK_W){
 
+                    orientation = 2;
                     mainImage = tankUp;
                     getImageDimensions();
-                    dy = -1;
+                    dy = -2;
             }
 
-            else if (key == KeyEvent.VK_D) {
+            else if (key == KeyEvent.VK_D){
 
+                    orientation = 3;
                     mainImage = tankRight;
                     getImageDimensions();
-                    dx = 1;
+                    dx = 2;
             }
 
-            else if (key == KeyEvent.VK_ESCAPE) {
+            else if (key == KeyEvent.VK_ESCAPE){
 
                 System.exit(0);
             }
@@ -223,22 +238,17 @@ public class Player extends Sprite {
 
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_W) {
+        if (key == KeyEvent.VK_W)
             dy = 0;
-        }
 
-        if (key == KeyEvent.VK_A) {
+        if (key == KeyEvent.VK_A)
             dx = 0;
-        }
 
-        if (key == KeyEvent.VK_D) {
+        if (key == KeyEvent.VK_D)
             dx = 0;
-        }
 
-        if (key == KeyEvent.VK_S) {
+        if (key == KeyEvent.VK_S)
             dy = 0;
-        }
-
     }
 
     public void draw( Graphics2D g2d )
@@ -250,17 +260,12 @@ public class Player extends Sprite {
 
         for (int i = 0; i < missiles.size(); i++) {
 
-            if (missiles.get(i).isVisible()){
+            if (missiles.get(i).isVisible()) {
 
                 missiles.get(i).move();
-            }
-            else
-               missiles.remove(i);
+            } else
+                missiles.remove(i);
         }
-    }
-    public void updateTank() {
-
-            move();
     }
 
     public void checkCollisionWithWall(){
@@ -279,15 +284,24 @@ public class Player extends Sprite {
 
         // Sprawdzanie kolizji pocisków ze ścianami - tu jest wszystko dobrze i optymalnie
 
-        for (Missile missile : missiles) {
+        /*for (Iterator<Missile> iterator = missiles.iterator(); iterator.hasNext();) {
+            Missile missile = iterator.next();
+            if (missile.isVisible()) {
+                iterator.remove();
+            }
+        }
+        */
 
-            for (Wall wall : walls) {
+        for (Wall wall : walls){
+
+            for (Missile missile : missiles) {
 
                 if (missile.getBounds().intersects(wall.getBounds())) {
 
                     missile.setVisible(false);
                 }
             }
+
         }
     }
 

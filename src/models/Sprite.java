@@ -31,7 +31,7 @@ public class Sprite{
         this.vis = true;
     }
 
-    protected void getImageDimensions() {
+    public void getImageDimensions() {
 
         this.width = mainImage.getWidth(null);
         this.height = mainImage.getHeight(null);

@@ -5,6 +5,7 @@
 
 package gui;
 
+import client.Client;
 import io.KeyInput;
 import io.MapReader;
 import models.Player;
@@ -12,73 +13,93 @@ import models.Wall;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.*;
 
-import static io.LoadImages.explosion;
-import static io.LoadImages.heart;
-import static io.LoadImages.skull;
+import static client.Client.clientPlayerID;
+import static io.LoadImages.*;
 
 public class GamePanel extends JPanel implements Runnable{
 
-    private final int DELAY = 6;
+    private final int DELAY = 8;
     private Thread animation = null;
-
-    private int spaceWallWidth = 0;
-    private int spaceWallHeight = 0;
+    private boolean animating;
 
     private final int SPACE = 24; // rozmiar ściany - obrazka
 
     public static ArrayList<Wall> walls = null; // statyczna lista ścian - potrzebna przy badaniu kolizji
     private MapReader map = null;
 
+    public Map<Integer, Player> players = null; // lista playerów w postaci mapy < klucz , obiekt >
+
+    private MainFrame frame = null;
+    private MenuPanel menuPanel = null;
+
+    private JButton backToPlayroom = null;
 
 
-    public Map<Integer, Player> players; // lista playerów w postaci mapy < klucz , obiekt >
-    public int mainPlayerID; // jest to ważne, kiedy w momencie tworzenia playera zainicjalizuję tą wartość
-                         // przyda się w klasie KeyInput do sterowania konkretnym graczem
+    public GamePanel(MainFrame frame, MenuPanel menuPanel) {
 
-    public GamePanel() {
+        this.frame = frame;
+        this.menuPanel = menuPanel;
 
         addKeyListener(new KeyInput(this));
         setFocusable(true);
 
         initWorld();
+        makeButton();
 
         setBackground(new Color(113, 99, 96));
         setDoubleBuffered(true);
     }
 
-    private void initWorld() {
+    public void setAnimating(boolean animating) {
+        this.animating = animating;
+    }
 
-        /*
-        Stworzenie mapy oraz ścian
-         */
+    private void initWorld() {
 
         map = new MapReader("mapDeathMatch.txt");
         walls = new ArrayList<>();
-
-        /*
-        Stworzenie graczy
-         */
-
         players = new HashMap<>();
 
-        /*
-        Wygenerowanie mapy
-         */
-
         generateMap();
+    }
 
-        /*
-        1 gracz
-         */
+    private void makeButton(){
 
-        //players.put(1, new Player(1, "Grzes"));
+        backToPlayroom = new JButton("Go to the playroom");
+        backToPlayroom.setForeground(Color.WHITE);
+        backToPlayroom.setBackground(Color.BLACK);
+        backToPlayroom.setFont(new Font("Arial", Font.BOLD, 10));
+
+        add(backToPlayroom, BorderLayout.NORTH);
+
+        backToPlayroom.addActionListener(e -> SwingUtilities.invokeLater(() -> {
+
+            Client klient = frame.getClient();
+            try {
+                System.out.println("Unregister player");
+                System.out.println("Client player id: " + clientPlayerID);
+                klient.sendYourUnRegister(clientPlayerID);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            klient.disconnect();
+
+            deletePlayers(); // usunięcie wszystkich playerów z listy
+            repaint();
+            animating = false; // zatrzymanie wątku z animacją
+        }));
     }
 
     private void generateMap(){
 
         ArrayList<String> lines = map.getLines();
+        int spaceWallWidth = 0;
+        int spaceWallHeight = 0;
 
         for (String line : lines) {
             for (int j = 0; j < line.length(); j++) {
@@ -161,15 +182,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         beforeTime = System.currentTimeMillis();
 
-        while (true) {
-
-            for (Player player : players.values()) {
-
-                player.updateTank();
-                player.updateMissiles();
-                player.checkCollisionWithWall();
-                player.checkCollisionMissileWithWall();
-            }
+        while (animating) {
 
             repaint();
 
@@ -190,11 +203,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    public void registerMainPlayer(int id, String login, int x, int y){
-
-        mainPlayerID = id; // WAŻNE !!!
-        players.put(id, new Player(id, login, x, y));
-        repaint();
+    public void runAnimationThread(){
 
         /*
         Startowanie wątku animacji
@@ -204,35 +213,48 @@ public class GamePanel extends JPanel implements Runnable{
         animation.start();
     }
 
-    public void registerAnotherPlayer(int id, String login, int x, int y){
+    public void registerPlayer(int id, int orientation, int x, int y){
 
         if (players.containsKey(id)){
             return;
         }
 
-        players.put(id, new Player(id, login, x, y));
-        repaint();
+        System.out.println("player X: " + x);
+        System.out.println("player Y: " + y);
+
+        players.put(id, new Player(id, orientation, x, y));
     }
 
     public void unRegisterPlayer(int id){
 
         players.remove(id);
-        repaint();
     }
 
-    public void movePlayer(int id, int dx, int dy){
+    public void movePlayer(int id, int orientation, int dx, int dy){
 
-        Player somePlayer = players.get(id);
+        if (orientation == 1){
+            players.get(id).setMainImage(tankLeft);
+        }
+        else if (orientation == 2){
+            players.get(id).setMainImage(tankUp);
+        }
+        else if (orientation == 3){
+            players.get(id).setMainImage(tankRight);
+        }
+        else{
+            players.get(id).setMainImage(tankDown);
+        }
 
-        somePlayer.setDx(dx);
-        somePlayer.setDy(dy);
+        players.get(id).getImageDimensions();
+        players.get(id).setDx(dx);
+        players.get(id).setDy(dy);
+        players.get(id).updateMovement();
 
-        repaint();
+        //players.get(id).checkCollisionWithWall();
     }
 
-    public void deletePlayers(){
+    private void deletePlayers(){
 
         players.clear();
-        repaint();
     }
 }
