@@ -10,13 +10,16 @@ import static io.LoadImages.*;
 
 public class Missile extends Sprite{
 
-    private int damage;
-    private final int MISSILE_SPEED = 5;
+    private int damage = 1;
+    private final int MISSILE_SPEED = 6;
+    private int orientation;
 
-    public Missile(int x, int y) {
+    public Missile(int orientation, int x, int y) {
 
         super(x, y);
-        this.damage = 1;
+        this.orientation = orientation;
+        mainImage = missileOrientationMap.get(orientation);
+        getImageDimensions();
     }
 
     public int getDamage() {
@@ -30,16 +33,16 @@ public class Missile extends Sprite{
 
     public void move() {
 
-        if (mainImage == missileRight){
+        if (orientation == 3){
             x += MISSILE_SPEED;
         }
-        else if (mainImage == missileUp){
+        else if (orientation == 2){
             y -= MISSILE_SPEED;
         }
-        else if (mainImage == missileLeft){
+        else if (orientation == 1){
             x -= MISSILE_SPEED;
         }
-        else if (mainImage == missileDown){
+        else if (orientation == 4){
             y += MISSILE_SPEED;
         }
     }

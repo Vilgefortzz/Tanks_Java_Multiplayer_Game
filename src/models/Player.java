@@ -27,7 +27,7 @@ public class Player extends Sprite {
     Basic things like hp, array with missiles etc.
      */
 
-    private int hp;
+    private int hp = 100;
     private int dx;
     private int dy;
     private ArrayList<Missile> missiles = null;
@@ -39,12 +39,10 @@ public class Player extends Sprite {
         super();
 
         this.id = id;
-
-        this.hp = 100;
         this.missiles = new ArrayList<>();
 
-        mainImage = tankRight;
         orientation = 3;
+        mainImage = tankRight;
         getImageDimensions();
 
         randomGenerate();
@@ -56,24 +54,12 @@ public class Player extends Sprite {
         super(x, y);
 
         this.id = id;
-
-        this.hp = 100;
         this.missiles = new ArrayList<>();
 
         this.orientation = orientation;
+        createTankOrientationMap();
 
-        if (orientation == 1){
-            mainImage = tankLeft;
-        }
-        else if (orientation == 2){
-            mainImage = tankUp;
-        }
-        else if (orientation == 3){
-            mainImage = tankRight;
-        }
-        else{
-            mainImage = tankDown;
-        }
+        mainImage = tankOrientationMap.get(orientation);
 
         getImageDimensions();
     }
@@ -153,79 +139,46 @@ public class Player extends Sprite {
         y += dy;
     }
 
-    private void shootUP(){
-        missiles.add(new Missile(x + width/2 - 5, y - 5));
+    public void shootUP(){
+        missiles.add(new Missile(2, x + width/2 - 5, y - 5));
     }
 
-    private void shootDown(){
-        missiles.add(new Missile(x + width/2 - 5, y + height + 2));
+    public void shootDown(){
+        missiles.add(new Missile(4, x + width/2 - 5, y + height + 2));
     }
 
-    private void shootRight() {
-        missiles.add(new Missile(x + width, y + height/2 - 5));
+    public void shootRight() {
+        missiles.add(new Missile(3, x + width, y + height/2 - 5));
     }
 
-    private void shootLeft(){
-        missiles.add(new Missile(x - 10, y + height/2 - 5));
+    public void shootLeft(){
+        missiles.add(new Missile(1, x - 10, y + height/2 - 5));
     }
 
-    public void keyPressed(KeyEvent e) {
+    public void keyMoving(int key) {
 
-        int key = e.getKeyCode();
+            if (key == KeyEvent.VK_S){
 
-            if (key == KeyEvent.VK_L){
-
-                if (orientation == 4){
-                    shootDown();
-                    missiles.get(missiles.size() - 1).setMainImage(missileDown);
-                    missiles.get(missiles.size() - 1).getImageDimensions();
-                } else if (orientation == 2){
-                    shootUP();
-                    missiles.get(missiles.size() - 1).setMainImage(missileUp);
-                    missiles.get(missiles.size() - 1).getImageDimensions();
-                } else if (orientation == 1){
-                    shootLeft();
-                    missiles.get(missiles.size() - 1).setMainImage(missileLeft);
-                    missiles.get(missiles.size() - 1).getImageDimensions();
-                } else {
-                    if (orientation == 3){
-                        shootRight();
-                        missiles.get(missiles.size() - 1).setMainImage(missileRight);
-                        missiles.get(missiles.size() - 1).getImageDimensions();
-                    }
-                }
-            }
-
-            else if (key == KeyEvent.VK_S){
-
-                    orientation = 4;
-                    mainImage = tankDown;
-                    getImageDimensions();
-                    dy = 2;
+                orientation = 4;
+                dy = 2;
             }
 
             else if (key == KeyEvent.VK_A){
 
-                    orientation = 1;
-                    mainImage = tankLeft;
-                    getImageDimensions();
-                    dx = -2;
+                orientation = 1;
+                dx = -2;
             }
 
             else if (key == KeyEvent.VK_W){
 
-                    orientation = 2;
-                    mainImage = tankUp;
-                    getImageDimensions();
-                    dy = -2;
+                orientation = 2;
+                dy = -2;
             }
 
             else if (key == KeyEvent.VK_D){
 
-                    orientation = 3;
-                    mainImage = tankRight;
-                    getImageDimensions();
-                    dx = 2;
+                orientation = 3;
+                dx = 2;
             }
 
             else if (key == KeyEvent.VK_ESCAPE){
@@ -234,9 +187,7 @@ public class Player extends Sprite {
             }
     }
 
-    public void keyReleased(KeyEvent e) {
-
-        int key = e.getKeyCode();
+    public void keyReleased(int key) {
 
         if (key == KeyEvent.VK_W)
             dy = 0;

@@ -9,6 +9,8 @@ import models.Player;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import static client.Client.sendYourFire;
 import static client.Client.sendYourMove;
 
 public class KeyInput extends KeyAdapter{
@@ -25,16 +27,26 @@ public class KeyInput extends KeyAdapter{
 
     public void keyPressed(KeyEvent e) {
 
-        thisPlayer.keyPressed(e);
+        int key = e.getKeyCode();
 
-        // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+        if (key == KeyEvent.VK_L){
 
-        sendYourMove(thisPlayer.getId(), thisPlayer.getOrientation(), thisPlayer.getDx(), thisPlayer.getDy());
+            // Wysłanie informacji serwerowi o oddaniu strzału przez konkretnego klienta
+            sendYourFire(thisPlayer.getId(), thisPlayer.getOrientation());
+        }
+        else{
+
+            thisPlayer.keyMoving(key);
+            // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+            sendYourMove(thisPlayer.getId(), thisPlayer.getOrientation(), thisPlayer.getDx(), thisPlayer.getDy());
+        }
     }
 
     public void keyReleased(KeyEvent e) {
 
-        thisPlayer.keyReleased(e);
+        int key = e.getKeyCode();
+
+        thisPlayer.keyReleased(key);
 
         // Wysłanie informacji serwerowi o ruchu konkretnego klienta
 

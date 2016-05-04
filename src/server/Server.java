@@ -41,6 +41,11 @@ public class Server {
 
     private ServerSocket serverSocket = null;
     private Map<Integer, Socket> clientSockets = null;
+
+    /*
+    Pomocne
+     */
+
     private int clientID = 1; // identyfikacja na mapie poszczególnych klientów
     private Map<Integer, Player> registeredClients = null;
 
@@ -85,6 +90,9 @@ public class Server {
         dataOutputStreams = new HashMap<>();
         dataInputStreams = new HashMap<>();
         clientThreads = new ArrayList<>(); // stworzenie wątków
+
+        createTankOrientationMap(); // stworzenie mapy z klasy pomocniczej ( mam teraz tankOrientationMap )
+        createMissileOrientationMap(); // stworzenie mapy z klasy pomocniczej ( mam teraz missileOrientationMap )
 
         serverThread = new Thread(() -> {
 
@@ -227,6 +235,10 @@ public class Server {
                     break;
 
                 case 4:
+                    fireHandling(in);
+                    break;
+
+                case 5:
                     collisionTankWithWallHandling(in);
                     break;
 
@@ -261,9 +273,16 @@ public class Server {
         out.writeInt(dy);
     }
 
-    private void sendCollisionTankWithWallInfo(DataOutputStream out, int id) throws IOException {
+    private void sendFireInfo(DataOutputStream out, int id, int orientation) throws IOException {
 
         out.writeInt(4);
+        out.writeInt(id);
+        out.writeInt(orientation);
+    }
+
+    private void sendCollisionTankWithWallInfo(DataOutputStream out, int id) throws IOException {
+
+        out.writeInt(5);
         out.writeInt(id);
     }
 
@@ -312,27 +331,27 @@ public class Server {
             sendMoveInfo(out, id, orientation, dx, dy);
         }
 
-        if (orientation == 1){
-            registeredClients.get(id).setMainImage(tankLeft);
-        }
-        else if (orientation == 2){
-            registeredClients.get(id).setMainImage(tankUp);
-        }
-        else if (orientation == 3){
-            registeredClients.get(id).setMainImage(tankRight);
-        }
-        else{
-            registeredClients.get(id).setMainImage(tankDown);
-        }
-
-        registeredClients.get(id).getImageDimensions();
+        registeredClients.get(id).setOrientation(orientation);
         registeredClients.get(id).setDx(dx);
         registeredClients.get(id).setDy(dy);
-        registeredClients.get(id).setOrientation(orientation);
+        registeredClients.get(id).setMainImage(tankOrientationMap.get(orientation));
+        registeredClients.get(id).getImageDimensions();
         registeredClients.get(id).updateMovement();
 
         System.out.println("registered X: " + registeredClients.get(id).getX());
         System.out.println("registered Y: " + registeredClients.get(id).getY());
+    }
+
+    private void fireHandling(DataInputStream in) throws IOException {
+
+        // Zczytanie informacji o wystrzeleniu pocisku przez konkretnego klienta
+        int id = in.readInt();
+        int orientation = in.readInt();
+
+        // Wysłanie informacji o wystrzeleniu pocisku przez konkretnego klienta wszystkim klientom
+        for (DataOutputStream out : dataOutputStreams.values()) {
+            sendFireInfo(out, id, orientation);
+        }
     }
 
     /*

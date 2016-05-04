@@ -179,6 +179,10 @@ public class Client {
                 break;
 
             case 4:
+                fireHandling();
+                break;
+
+            case 5:
                 colissionTankWithWallHandling();
                 break;
 
@@ -221,10 +225,21 @@ public class Client {
         }
     }
 
-    public static void sendYourCollisionTankWithWall(int id){
+    public static void sendYourFire(int id, int orientation){
 
         try {
             out.writeInt(4);
+            out.writeInt(id);
+            out.writeInt(orientation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendYourCollisionTankWithWall(int id){
+
+        try {
+            out.writeInt(5);
             out.writeInt(id);
         } catch (IOException e) {
             e.printStackTrace();
@@ -259,6 +274,15 @@ public class Client {
         int dy = in.readInt();
 
         game.movePlayer(id, orientation, dx, dy);
+    }
+
+    private void fireHandling() throws IOException {
+
+        // Zczytanie id klienta, który strzelił
+        int id = in.readInt();
+        int orientation = in.readInt();
+
+        game.playerFire(id, orientation);
     }
 
     /*

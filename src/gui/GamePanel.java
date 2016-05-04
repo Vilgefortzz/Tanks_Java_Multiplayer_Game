@@ -69,6 +69,9 @@ public class GamePanel extends JPanel implements Runnable{
         walls = new ArrayList<>();
         players = new HashMap<>();
 
+        createTankOrientationMap();
+        createMissileOrientationMap();
+
         generateMap();
     }
 
@@ -192,6 +195,8 @@ public class GamePanel extends JPanel implements Runnable{
 
             for (Player player : players.values()){
 
+                player.updateMissiles();
+
                 if (player.checkCollisionWithWall()){
                     sendYourCollisionTankWithWall(player.getId());
                 }
@@ -245,23 +250,23 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void movePlayer(int id, int orientation, int dx, int dy){
 
-        if (orientation == 1){
-            players.get(id).setMainImage(tankLeft);
-        }
-        else if (orientation == 2){
-            players.get(id).setMainImage(tankUp);
-        }
-        else if (orientation == 3){
-            players.get(id).setMainImage(tankRight);
-        }
-        else{
-            players.get(id).setMainImage(tankDown);
-        }
-
+        players.get(id).setMainImage(tankOrientationMap.get(orientation));
         players.get(id).getImageDimensions();
         players.get(id).setDx(dx);
         players.get(id).setDy(dy);
         players.get(id).updateMovement();
+    }
+
+    public void playerFire(int id, int orientation){
+
+        if (orientation == 1)
+            players.get(id).shootLeft();
+        else if (orientation == 2)
+            players.get(id).shootUP();
+        else if (orientation == 3)
+            players.get(id).shootRight();
+        else
+            players.get(id).shootDown();
     }
 
     /*
