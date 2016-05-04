@@ -139,6 +139,18 @@ public class Player extends Sprite {
         y += dy;
     }
 
+    public void updateMissiles() {
+
+        for (int i = 0; i < missiles.size(); i++) {
+
+            if (missiles.get(i).isVisible()) {
+
+                missiles.get(i).move();
+            } else
+                missiles.remove(i);
+        }
+    }
+
     public void shootUP(){
         missiles.add(new Missile(2, x + width/2 - 5, y - 5));
     }
@@ -207,26 +219,15 @@ public class Player extends Sprite {
         g2d.drawImage(mainImage, x, y, null);
     }
 
-    public void updateMissiles() {
-
-        for (int i = 0; i < missiles.size(); i++) {
-
-            if (missiles.get(i).isVisible()) {
-
-                missiles.get(i).move();
-            } else
-                missiles.remove(i);
-        }
-    }
+    /*
+    Collisions detection
+     */
 
     public boolean checkCollisionWithWall(){
 
         boolean collision = false;
 
-        // Sprawdzanie kolizji czołgów ze ścianami - tu jest wszystko dobrze i optymalnie
-
         for (Wall wall : walls) {
-
             if (getBounds().intersects(wall.getBounds())) {
                 collision = true;
                 break;
@@ -237,26 +238,11 @@ public class Player extends Sprite {
 
     public void checkCollisionMissileWithWall(){
 
-        // Sprawdzanie kolizji pocisków ze ścianami - tu jest wszystko dobrze i optymalnie
-
-        /*for (Iterator<Missile> iterator = missiles.iterator(); iterator.hasNext();) {
-            Missile missile = iterator.next();
-            if (missile.isVisible()) {
-                iterator.remove();
-            }
-        }
-        */
-
-        for (Wall wall : walls){
-
-            for (Missile missile : missiles) {
-
-                if (missile.getBounds().intersects(wall.getBounds())) {
-
+        for (Missile missile : missiles){
+            for (Wall wall : walls){
+                if (missile.getBounds().intersects(wall.getBounds()))
                     missile.setVisible(false);
-                }
             }
-
         }
     }
 

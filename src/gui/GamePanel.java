@@ -87,20 +87,7 @@ public class GamePanel extends JPanel implements Runnable{
         backToPlayroom.addActionListener(e -> SwingUtilities.invokeLater(() -> {
 
             Client klient = frame.getClient();
-            Player player = keyboard.getThisPlayer();
-
-            try {
-                System.out.println("Unregister player");
-                System.out.println("Client player id: " + player.getId());
-                klient.sendYourUnRegister(player.getId());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
             klient.disconnect();
-
-            deletePlayers(); // usunięcie wszystkich playerów z listy
-            repaint();
-            animating = false; // zatrzymanie wątku z animacją
         }));
     }
 
@@ -200,6 +187,8 @@ public class GamePanel extends JPanel implements Runnable{
                 if (player.checkCollisionWithWall()){
                     sendYourCollisionTankWithWall(player.getId());
                 }
+
+                player.checkCollisionMissileWithWall();
             }
 
             repaint();
@@ -278,7 +267,7 @@ public class GamePanel extends JPanel implements Runnable{
         players.get(id).restorePreviousPosition();
     }
 
-    private void deletePlayers(){
+    public void deletePlayers(){
 
         players.clear();
     }

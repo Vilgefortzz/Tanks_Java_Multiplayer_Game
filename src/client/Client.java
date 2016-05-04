@@ -112,11 +112,10 @@ public class Client {
                         eventListening();
                     }
                 } catch (IOException e) {
-                    System.out.println("Jestem");
+                    running = false; // zatrzymanie pętli
                 } finally {
 
                     System.out.println("Sprzatanko");
-                    running = false; // zatrzymanie pętli
 
                     ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
                     ConnectionHandling.close(in); // zamykanie strumienia wejściowego
@@ -132,6 +131,10 @@ public class Client {
                     frame.getMenuPanel().add(frame.boxLoggedUser);
 
                     frame.add(frame.getMenuPanel());
+
+                    game.deletePlayers(); // usunięcie wszystkich playerów z listy
+                    game.setAnimating(false); // zatrzymanie wątku z animacją
+                    game.repaint();
                 }
         });
 
