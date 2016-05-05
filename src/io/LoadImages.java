@@ -48,6 +48,12 @@ public class LoadImages {
 
     public static Image wall = new ImageIcon("res\\sprites\\walls\\brick.png").getImage();
 
+    /*
+    Skull inform about death
+     */
+
+    public static Image death_inform = new ImageIcon("res\\death_inform.png").getImage();
+
 
     public static void createTankOrientationMap(){
 

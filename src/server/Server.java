@@ -242,6 +242,10 @@ public class Server {
                     collisionTankWithWallHandling(in);
                     break;
 
+                case 6:
+                    respawnHandling(in);
+                    break;
+
                 default:
                     break;
             }
@@ -284,6 +288,14 @@ public class Server {
 
         out.writeInt(5);
         out.writeInt(id);
+    }
+
+    private void sendRespawnInfo(DataOutputStream out, int id, int x, int y) throws IOException {
+
+        out.writeInt(6);
+        out.writeInt(id);
+        out.writeInt(x);
+        out.writeInt(y);
     }
 
     private void registerHandling(DataInputStream in) throws IOException {
@@ -352,6 +364,26 @@ public class Server {
         for (DataOutputStream out : dataOutputStreams.values()) {
             sendFireInfo(out, id, orientation);
         }
+    }
+
+    private void respawnHandling(DataInputStream in) throws IOException {
+
+        // Zczytanie tylko id, następnie wygenerowanie nowych współrzędnych
+        int id = in.readInt();
+        int x = in.readInt();
+        int y = in.readInt();
+
+        // Wysłanie informacji o odnowieniu się konkretnego klienta wszystkim klientom
+        for (DataOutputStream out : dataOutputStreams.values()){
+            sendRespawnInfo(out, id, x, y);
+        }
+
+        registeredClients.get(id).setHp(100);
+        registeredClients.get(id).setX(x);
+        registeredClients.get(id).setY(y);
+        registeredClients.get(id).setOrientation(3);
+        registeredClients.get(id).setMainImage(tankOrientationMap.get(3));
+        registeredClients.get(id).getImageDimensions();
     }
 
     /*

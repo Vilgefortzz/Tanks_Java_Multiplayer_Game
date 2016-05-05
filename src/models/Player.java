@@ -57,6 +57,7 @@ public class Player extends Sprite {
 
         this.id = id;
         this.missiles = new ArrayList<>();
+        randomCreated = true;
 
         this.orientation = orientation;
         createTankOrientationMap();
@@ -94,7 +95,7 @@ public class Player extends Sprite {
         return randomCreated;
     }
 
-    private void setRandomCreated(boolean randomCreated) {
+    public void setRandomCreated(boolean randomCreated) {
         this.randomCreated = randomCreated;
     }
 
@@ -122,7 +123,7 @@ public class Player extends Sprite {
         this.deaths = deaths;
     }
 
-    private void randomGenerate(){
+    public void randomGenerate(){
 
         boolean isIntersection;
 
@@ -258,5 +259,15 @@ public class Player extends Sprite {
 
         x = x - dx;
         y = y - dy;
+    }
+
+    public void respawn(int x, int y){
+
+        hp = 100;
+        this.x = x;
+        this.y = y;
+        orientation = 3;
+        mainImage = death_inform;
+        getImageDimensions();
     }
 }

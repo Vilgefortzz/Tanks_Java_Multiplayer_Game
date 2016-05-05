@@ -15,8 +15,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
+import static client.Client.myPlayer;
 import static client.Client.sendYourCollisionTankWithWall;
-import static io.KeyInput.thisPlayer;
+import static client.Client.sendYourRespawn;
 import static io.LoadImages.*;
 
 public class GamePanel extends JPanel{
@@ -153,19 +154,19 @@ public class GamePanel extends JPanel{
 
         g2d.setColor(new Color(182, 14, 14));
         g2d.setFont(new Font("Arial", Font.BOLD, 17));
-        g2d.drawString(String.valueOf(thisPlayer.getHp()), 24, 16);
+        g2d.drawString(String.valueOf(myPlayer.getHp()), 24, 16);
 
         g2d.drawImage(explosion, 60, 0, this);
 
         g2d.setColor(new Color(210, 191, 37));
         g2d.setFont(new Font("Arial", Font.BOLD, 17));
-        g2d.drawString(String.valueOf(thisPlayer.getDestroyed()), 84, 16);
+        g2d.drawString(String.valueOf(myPlayer.getDestroyed()), 84, 16);
 
         g2d.drawImage(skull, 120, 0, this);
 
         g2d.setColor(new Color(0,0,0));
         g2d.setFont(new Font("Arial", Font.BOLD, 17));
-        g2d.drawString(String.valueOf(thisPlayer.getDeaths()), 144, 16);
+        g2d.drawString(String.valueOf(myPlayer.getDeaths()), 144, 16);
     }
 
     private void paintWorld(Graphics2D g2d) {
@@ -175,13 +176,13 @@ public class GamePanel extends JPanel{
             wall.draw(g2d);
         }
 
-        // Sprawdzanie kolizji czołgów ze ścianami + rysowanie playerów
+        // Sprawdzanie kolizji czołgu ze ścianami oraz powiadomienie innych w przypadku kolizji
+        if (myPlayer.checkCollisionWithWall()) {
+            sendYourCollisionTankWithWall(myPlayer.getId());
+        }
+
+        // Rysowanie playerów
         for (Player player : players.values()) {
-
-            if (player.checkCollisionWithWall()) {
-                sendYourCollisionTankWithWall(player.getId());
-            }
-
             player.draw(g2d);
         }
 
@@ -199,6 +200,12 @@ public class GamePanel extends JPanel{
             for (int i = 0; i < player.getMissiles().size(); i++) {
                 player.getMissiles().get(i).hitPlayers(players);
             }
+        }
+
+        // Srawdzanie czy gracz żyje, jeżeli nie to respawn oraz powiadomienie innych o nowej pozycji gracza
+        if (myPlayer.getHp() == 0){
+            Player tempPlayer = new Player(myPlayer.getId());
+            sendYourRespawn(tempPlayer.getId(), tempPlayer.getX(), tempPlayer.getY());
         }
 
         // Rysowanie pocisków oraz aktualizowanie ich pozycji
@@ -236,9 +243,17 @@ public class GamePanel extends JPanel{
         players.get(id).setDx(dx);
         players.get(id).setDy(dy);
         players.get(id).updateMovement();
+
+        if (players.get(id).getId() == myPlayer.getId()){
+
+            myPlayer.setMainImage(tankOrientationMap.get(orientation));
+            myPlayer.getImageDimensions();
+            myPlayer.setX(players.get(id).getX());
+            myPlayer.setY(players.get(id).getY());
+        }
     }
 
-    public void playerFire(int id, int orientation){
+    public void firePlayer(int id, int orientation){
 
         if (orientation == 1)
             players.get(id).shootLeft();
@@ -248,6 +263,16 @@ public class GamePanel extends JPanel{
             players.get(id).shootRight();
         else
             players.get(id).shootDown();
+    }
+
+    public void respawnPlayer(int id, int x, int y){
+
+        players.get(id).respawn(x, y);
+
+        if (players.get(id).getId() == myPlayer.getId()){
+            myPlayer.respawn(x, y);
+            myPlayer.setDeaths(myPlayer.getDeaths() + 1);
+        }
     }
 
     public void deletePlayers(){

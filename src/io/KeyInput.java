@@ -15,10 +15,14 @@ import static client.Client.sendYourMove;
 
 public class KeyInput extends KeyAdapter{
 
-    public static Player thisPlayer;
+    private Player thisPlayer; // tylko do wysyłania odpowiednich ruchów gracza
 
     public Player getThisPlayer() {
         return thisPlayer;
+    }
+
+    public void setThisPlayer(Player thisPlayer) {
+        this.thisPlayer = thisPlayer;
     }
 
     public void keyPressed(KeyEvent e) {

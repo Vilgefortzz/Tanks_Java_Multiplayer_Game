@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
 
-import static io.KeyInput.thisPlayer;
-
 public class Client {
 
     /*
@@ -59,7 +57,7 @@ public class Client {
     Client dostaje playera do gry
      */
 
-    private Player myPlayer = null;
+    public static Player myPlayer = null;
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
@@ -102,7 +100,7 @@ public class Client {
         }
 
         myPlayer = new Player(new Random().nextInt(5000) + 1);
-        thisPlayer = myPlayer;
+        keyboard.setThisPlayer(myPlayer);
 
         sendYourId(myPlayer.getId()); // wysłanie do serwera, który go zapamięta (WAŻNE!!)
 
@@ -169,7 +167,6 @@ public class Client {
         switch (communique)
         {
             case 1:
-                System.out.println("Rejestracja");
                 registerHandling();
                 break;
 
@@ -187,6 +184,10 @@ public class Client {
 
             case 5:
                 colissionTankWithWallHandling();
+                break;
+
+            case 6:
+                respawnHandling();
                 break;
 
             default:
@@ -249,6 +250,18 @@ public class Client {
         }
     }
 
+    public static void sendYourRespawn(int id, int x, int y){
+
+        try {
+            out.writeInt(6);
+            out.writeInt(id);
+            out.writeInt(x);
+            out.writeInt(y);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void registerHandling() throws IOException {
 
         // Zczytanie informacji o kliencie
@@ -285,7 +298,17 @@ public class Client {
         int id = in.readInt();
         int orientation = in.readInt();
 
-        game.playerFire(id, orientation);
+        game.firePlayer(id, orientation);
+    }
+
+    private void respawnHandling() throws IOException {
+
+        // Zczytanie id klienta, który został zniszczony
+        int id = in.readInt();
+        int x = in.readInt();
+        int y = in.readInt();
+
+        game.respawnPlayer(id, x, y);
     }
 
     /*
