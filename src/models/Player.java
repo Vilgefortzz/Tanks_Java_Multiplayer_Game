@@ -28,6 +28,8 @@ public class Player extends Sprite {
      */
 
     private int hp = 100;
+    private int destroyed = 0;
+    private int deaths = 0;
     private int dx;
     private int dy;
     private ArrayList<Missile> missiles = null;
@@ -104,6 +106,22 @@ public class Player extends Sprite {
         this.hp = hp;
     }
 
+    public int getDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(int destroyed) {
+        this.destroyed = destroyed;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
     private void randomGenerate(){
 
         boolean isIntersection;
@@ -152,7 +170,7 @@ public class Player extends Sprite {
     }
 
     public void shootUP(){
-        missiles.add(new Missile(2, x + width/2 - 5, y - 5));
+        missiles.add(new Missile(2, x + width/2 - 5, y - 11));
     }
 
     public void shootDown(){
@@ -164,7 +182,7 @@ public class Player extends Sprite {
     }
 
     public void shootLeft(){
-        missiles.add(new Missile(1, x - 10, y + height/2 - 5));
+        missiles.add(new Missile(1, x - 11, y + height/2 - 5));
     }
 
     public void keyMoving(int key) {
@@ -234,16 +252,6 @@ public class Player extends Sprite {
             }
         }
         return collision;
-    }
-
-    public void checkCollisionMissileWithWall(){
-
-        for (Missile missile : missiles){
-            for (Wall wall : walls){
-                if (missile.getBounds().intersects(wall.getBounds()))
-                    missile.setVisible(false);
-            }
-        }
     }
 
     public void restorePreviousPosition(){

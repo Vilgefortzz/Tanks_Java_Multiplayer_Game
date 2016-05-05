@@ -15,11 +15,7 @@ import static client.Client.sendYourMove;
 
 public class KeyInput extends KeyAdapter{
 
-    private Player thisPlayer;
-
-    public void setThisPlayer(Player thisPlayer) {
-        this.thisPlayer = thisPlayer;
-    }
+    public static Player thisPlayer;
 
     public Player getThisPlayer() {
         return thisPlayer;

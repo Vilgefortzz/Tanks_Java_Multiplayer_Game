@@ -568,8 +568,7 @@ public class MainFrame extends JFrame implements ActionListener{
                 add(gamePanel);
                 gamePanel.requestFocusInWindow();
 
-                gamePanel.setAnimating(true); // ustawienie flagi dla wątku, który jest wywołany linijkę niżej
-                gamePanel.runAnimationThread();
+                gamePanel.runRepaintingThread(); // ustawienie flagi animating na true + uruchomienie wątku rysującego świat
             }
         }
 

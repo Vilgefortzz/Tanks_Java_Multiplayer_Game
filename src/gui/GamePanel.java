@@ -13,17 +13,16 @@ import models.Wall;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.*;
 
 import static client.Client.sendYourCollisionTankWithWall;
+import static io.KeyInput.thisPlayer;
 import static io.LoadImages.*;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel{
 
-    private final int DELAY = 8;
-    private Thread animation = null;
-    private boolean animating;
+    private Thread repainting = null;
+    private boolean animating = false;
 
     private final int SPACE = 24; // rozmiar ściany - obrazka
 
@@ -55,12 +54,12 @@ public class GamePanel extends JPanel implements Runnable{
         setDoubleBuffered(true);
     }
 
-    public void setAnimating(boolean animating) {
-        this.animating = animating;
-    }
-
     public KeyInput getKeyboard() {
         return keyboard;
+    }
+
+    public void setAnimating(boolean animating) {
+        this.animating = animating;
     }
 
     private void initWorld() {
@@ -117,6 +116,24 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
+    public void runRepaintingThread(){
+
+        repainting = new Thread(() -> {
+
+            while (animating) {
+                repaint();
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        animating = true;
+        repainting.start();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
 
@@ -133,93 +150,68 @@ public class GamePanel extends JPanel implements Runnable{
     private void drawMenuBar(Graphics2D g2d){
 
         g2d.drawImage(heart, 0, 0, this);
+
         g2d.setColor(new Color(182, 14, 14));
         g2d.setFont(new Font("Arial", Font.BOLD, 17));
-
-        //g2d.drawString(String.valueOf(players.get(1).getHp()), 24, 16);
+        g2d.drawString(String.valueOf(thisPlayer.getHp()), 24, 16);
 
         g2d.drawImage(explosion, 60, 0, this);
-        // TODO Wyświetlanie zniszczonych czołgów
+
+        g2d.setColor(new Color(210, 191, 37));
+        g2d.setFont(new Font("Arial", Font.BOLD, 17));
+        g2d.drawString(String.valueOf(thisPlayer.getDestroyed()), 84, 16);
+
         g2d.drawImage(skull, 120, 0, this);
-        // TODO Wyświetlanie ilości respawnów
+
+        g2d.setColor(new Color(0,0,0));
+        g2d.setFont(new Font("Arial", Font.BOLD, 17));
+        g2d.drawString(String.valueOf(thisPlayer.getDeaths()), 144, 16);
     }
 
     private void paintWorld(Graphics2D g2d) {
 
-        // Ścian nie można niszczyć, więc przy tworzeniu są one zawsze widoczne
-
+        // Rysowanie ścian
         for (Wall wall : walls) {
-
             wall.draw(g2d);
         }
 
-        // Obiekty, które mogą być niszczone - czołgi(gracze)
+        // Sprawdzanie kolizji czołgów ze ścianami + rysowanie playerów
+        for (Player player : players.values()) {
 
-            for ( Player player : players.values() ){
-
-                player.draw(g2d);
-
-                // Rysowanie pocisków, jeżeli gracz żyje to rysuje
-
-                for (int i = 0; i < player.getMissiles().size(); i++) {
-
-                    if (player.getMissiles().get(i).isVisible()) {
-
-                        player.getMissiles().get(i).draw(g2d);
-                    }
-                }
+            if (player.checkCollisionWithWall()) {
+                sendYourCollisionTankWithWall(player.getId());
             }
-    }
 
-    @Override
-    public void run() {
+            player.draw(g2d);
+        }
 
-        long beforeTime, timeDiff, sleep;
-
-        beforeTime = System.currentTimeMillis();
-
-        while (animating) {
-
+        // Sprawdzanie kolizji pocisków ze ścianami
+        for (Wall wall : walls){
             for (Player player : players.values()){
-
-                player.updateMissiles();
-
-                if (player.checkCollisionWithWall()){
-                    sendYourCollisionTankWithWall(player.getId());
+                for (int i = 0; i < player.getMissiles().size(); i++) {
+                    player.getMissiles().get(i).hitWall(wall);
                 }
+            }
+        }
 
-                player.checkCollisionMissileWithWall();
+        // Sprawdzanie kolizji pocisków z czołgami oraz zadawanie obrażeń jeżeli jest kolizja
+        for (Player player : players.values()) {
+            for (int i = 0; i < player.getMissiles().size(); i++) {
+                player.getMissiles().get(i).hitPlayers(players);
+            }
+        }
+
+        // Rysowanie pocisków oraz aktualizowanie ich pozycji
+        for (Player player : players.values()) {
+            for (int i = 0; i < player.getMissiles().size(); i++) {
+                if (player.getMissiles().get(i).isVisible()) {
+                    player.getMissiles().get(i).draw(g2d);
+                }
             }
 
-            repaint();
-
-            timeDiff = System.currentTimeMillis() - beforeTime;
-            sleep = DELAY - timeDiff;
-
-            if (sleep < 0) {
-                sleep = 2;
-            }
-
-            try {
-                Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-                System.out.println("Interrupted: " + e.getMessage());
-            }
-
-            beforeTime = System.currentTimeMillis();
+            player.updateMissiles();
         }
     }
-
-    public void runAnimationThread(){
-
-        /*
-        Startowanie wątku animacji
-         */
-
-        animation = new Thread(this);
-        animation.start();
-    }
-
     public void registerPlayer(int id, int orientation, int x, int y){
 
         if (players.containsKey(id)){
@@ -258,6 +250,11 @@ public class GamePanel extends JPanel implements Runnable{
             players.get(id).shootDown();
     }
 
+    public void deletePlayers(){
+
+        players.clear();
+    }
+
     /*
     Collisions
      */
@@ -265,10 +262,5 @@ public class GamePanel extends JPanel implements Runnable{
     public void collisionTankWithWall(int id){
 
         players.get(id).restorePreviousPosition();
-    }
-
-    public void deletePlayers(){
-
-        players.clear();
     }
 }

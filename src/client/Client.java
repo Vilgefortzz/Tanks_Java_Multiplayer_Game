@@ -11,12 +11,13 @@ import gui.MainFrame;
 import io.KeyInput;
 import models.Player;
 
-import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
+
+import static io.KeyInput.thisPlayer;
 
 public class Client {
 
@@ -101,7 +102,7 @@ public class Client {
         }
 
         myPlayer = new Player(new Random().nextInt(5000) + 1);
-        keyboard.setThisPlayer(myPlayer);
+        thisPlayer = myPlayer;
 
         sendYourId(myPlayer.getId()); // wysłanie do serwera, który go zapamięta (WAŻNE!!)
 
@@ -133,8 +134,7 @@ public class Client {
                     frame.add(frame.getMenuPanel());
 
                     game.deletePlayers(); // usunięcie wszystkich playerów z listy
-                    game.setAnimating(false); // zatrzymanie wątku z animacją
-                    game.repaint();
+                    game.setAnimating(false); // wątek rysujący przestaje działać
                 }
         });
 

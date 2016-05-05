@@ -5,12 +5,16 @@
 
 package models;
 
+
 import java.awt.*;
+import java.util.Map;
+
+import static io.KeyInput.thisPlayer;
 import static io.LoadImages.*;
 
 public class Missile extends Sprite{
 
-    private int damage = 1;
+    private int damage = 2;
     private final int MISSILE_SPEED = 6;
     private int orientation;
 
@@ -44,6 +48,28 @@ public class Missile extends Sprite{
         }
         else if (orientation == 4){
             y += MISSILE_SPEED;
+        }
+    }
+
+    public void hitPlayers(Map<Integer, Player> players) {
+        for (Player player : players.values())
+            if (getBounds().intersects(player.getBounds()))
+                hitPlayer(player);
+    }
+
+    private void hitPlayer(Player player) {
+
+        if (player.getId() == thisPlayer.getId()){
+            player.setHp(player.getHp() - damage); // zadanie obrażeń
+            thisPlayer.setHp(thisPlayer.getHp() - damage);
+        }
+
+        setVisible(false); // pocisk staje się niewidoczny przy kontakcie z czołgiem
+    }
+
+    public void hitWall(Wall w) {
+        if (getBounds().intersects(w.getBounds())) {
+            setVisible(false);
         }
     }
 }
