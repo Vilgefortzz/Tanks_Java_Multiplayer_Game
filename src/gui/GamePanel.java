@@ -17,7 +17,6 @@ import java.util.*;
 
 import static client.Client.myPlayer;
 import static client.Client.sendYourCollisionTankWithWall;
-import static client.Client.sendYourRespawn;
 import static io.LoadImages.*;
 
 public class GamePanel extends JPanel{
@@ -176,9 +175,11 @@ public class GamePanel extends JPanel{
             wall.draw(g2d);
         }
 
-        // Sprawdzanie kolizji czołgu ze ścianami oraz powiadomienie innych w przypadku kolizji
-        if (myPlayer.checkCollisionWithWall()) {
-            sendYourCollisionTankWithWall(myPlayer.getId());
+        // Sprawdzanie kolizji czołgu(mojego gracza) ze ścianami oraz powiadomienie innych w przypadku kolizji
+        for (Player player : players.values()){
+            if (player.getId() == myPlayer.getId() && player.checkCollisionWithWall()){
+                sendYourCollisionTankWithWall(player.getId());
+            }
         }
 
         // Rysowanie playerów
@@ -202,12 +203,6 @@ public class GamePanel extends JPanel{
             }
         }
 
-        // Srawdzanie czy gracz żyje, jeżeli nie to respawn oraz powiadomienie innych o nowej pozycji gracza
-        if (myPlayer.getHp() == 0){
-            Player tempPlayer = new Player(myPlayer.getId());
-            sendYourRespawn(tempPlayer.getId(), tempPlayer.getX(), tempPlayer.getY());
-        }
-
         // Rysowanie pocisków oraz aktualizowanie ich pozycji
         for (Player player : players.values()) {
             for (int i = 0; i < player.getMissiles().size(); i++) {
@@ -225,9 +220,6 @@ public class GamePanel extends JPanel{
             return;
         }
 
-        System.out.println("player X: " + x);
-        System.out.println("player Y: " + y);
-
         players.put(id, new Player(id, orientation, x, y));
     }
 
@@ -243,14 +235,6 @@ public class GamePanel extends JPanel{
         players.get(id).setDx(dx);
         players.get(id).setDy(dy);
         players.get(id).updateMovement();
-
-        if (players.get(id).getId() == myPlayer.getId()){
-
-            myPlayer.setMainImage(tankOrientationMap.get(orientation));
-            myPlayer.getImageDimensions();
-            myPlayer.setX(players.get(id).getX());
-            myPlayer.setY(players.get(id).getY());
-        }
     }
 
     public void firePlayer(int id, int orientation){
@@ -270,8 +254,15 @@ public class GamePanel extends JPanel{
         players.get(id).respawn(x, y);
 
         if (players.get(id).getId() == myPlayer.getId()){
-            myPlayer.respawn(x, y);
+            myPlayer.setHp(100); // tylko hp wystarczy
             myPlayer.setDeaths(myPlayer.getDeaths() + 1);
+        }
+    }
+
+    public void destroyedByPlayer(int id){
+
+        if (players.get(id).getId() == myPlayer.getId()){
+            myPlayer.setDestroyed(myPlayer.getDestroyed() + 1);
         }
     }
 

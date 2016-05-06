@@ -246,6 +246,10 @@ public class Server {
                     respawnHandling(in);
                     break;
 
+                case 7:
+                    destroyedByHandling(in);
+                    break;
+
                 default:
                     break;
             }
@@ -296,6 +300,12 @@ public class Server {
         out.writeInt(id);
         out.writeInt(x);
         out.writeInt(y);
+    }
+
+    private void sendDestroyedByInfo(DataOutputStream out, int id) throws IOException {
+
+        out.writeInt(7);
+        out.writeInt(id);
     }
 
     private void registerHandling(DataInputStream in) throws IOException {
@@ -349,9 +359,6 @@ public class Server {
         registeredClients.get(id).setMainImage(tankOrientationMap.get(orientation));
         registeredClients.get(id).getImageDimensions();
         registeredClients.get(id).updateMovement();
-
-        System.out.println("registered X: " + registeredClients.get(id).getX());
-        System.out.println("registered Y: " + registeredClients.get(id).getY());
     }
 
     private void fireHandling(DataInputStream in) throws IOException {
@@ -385,6 +392,18 @@ public class Server {
         registeredClients.get(id).setMainImage(tankOrientationMap.get(3));
         registeredClients.get(id).getImageDimensions();
     }
+
+    private void destroyedByHandling(DataInputStream in) throws IOException {
+
+        // Zczytanie id klienta, którego pocisk zniszczył wrogi czołg
+        int id = in.readInt();
+
+        // Wysłanie informacji o tym graczu, który zniszczył wrogi czołg wszystkim klientom
+        for (DataOutputStream out : dataOutputStreams.values()){
+            sendDestroyedByInfo(out, id);
+        }
+    }
+
 
     /*
     Collisions

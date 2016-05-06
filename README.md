@@ -58,12 +58,12 @@ połączą sie z serwerem i wejdą do gry).
 
 [2.1] Zapisywanie i odpisywanie konfiguracji
 
-    -> na jakim porcie jest rozgrywka, ile czołgów, użytkownik który łączy sie na serwerze
+    -> na jakim porcie jest rozgrywka, ile czołgów, użytkownik który łączy się na serwerze
     -> konfiguracja serwera i klienta
 
 [2.2] ~~Wczytywanie mapy~~ [ 22.03.16 ]
 		
-[2.3] Plik z logami klienta i serwera (klasa do obsługi logów z przed 2 tygodni np.)
+[2.3] Plik z logami klienta i serwera (klasa do obsługi logów sprzed 2 tygodni np.)
 
 [2.4] Zapis i wczytywanie stanu gry (punktacja, czas, obrażenia, ilość czołgów, które zniszczyłem itp.)
 
@@ -71,13 +71,13 @@ połączą sie z serwerem i wejdą do gry).
 
 [3] Współbieżność: wątki, operacje atomowe, itp.
 
-[3.1] Mechanizm bezpiecznego rozgłaszania komunikatów między użytkownikami
+[3.1] ~~Mechanizm bezpiecznego rozgłaszania komunikatów między użytkownikami~~ [ 10.05.16 ]
 
 [3.2] ~~Ruch gracza + kolizje (wątek animacji)~~ [ 05.04.16 ]
 
 [3.3] ~~Utworzenie wątku serwera(akceptujący) + wątki dla każdego klienta + mechanizm bezpiecznego zatrzymywania wątku(join, flagi podtrzymujące)~~ [ 26.04.16 ]
 
-[3.4] Wątek do każdego klienta (synchronizowanie obiektów i bezpieczne przerwania)
+[3.4] ~~Wątek do każdego klienta (synchronizowanie obiektów i bezpieczne przerwania)~~ [ 10.05.16 ]
 
 ---------------------------------------------------------------------------------------------------------------------
 

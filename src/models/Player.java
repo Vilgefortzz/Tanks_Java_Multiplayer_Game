@@ -95,7 +95,7 @@ public class Player extends Sprite {
         return randomCreated;
     }
 
-    public void setRandomCreated(boolean randomCreated) {
+    private void setRandomCreated(boolean randomCreated) {
         this.randomCreated = randomCreated;
     }
 
@@ -123,7 +123,7 @@ public class Player extends Sprite {
         this.deaths = deaths;
     }
 
-    public void randomGenerate(){
+    private void randomGenerate(){
 
         boolean isIntersection;
 
@@ -171,19 +171,19 @@ public class Player extends Sprite {
     }
 
     public void shootUP(){
-        missiles.add(new Missile(2, x + width/2 - 5, y - 11));
+        missiles.add(new Missile(2, x + width/2 - 5, y - 11, id));
     }
 
     public void shootDown(){
-        missiles.add(new Missile(4, x + width/2 - 5, y + height + 2));
+        missiles.add(new Missile(4, x + width/2 - 5, y + height + 2, id));
     }
 
     public void shootRight() {
-        missiles.add(new Missile(3, x + width, y + height/2 - 5));
+        missiles.add(new Missile(3, x + width, y + height/2 - 5, id));
     }
 
     public void shootLeft(){
-        missiles.add(new Missile(1, x - 11, y + height/2 - 5));
+        missiles.add(new Missile(1, x - 11, y + height/2 - 5, id));
     }
 
     public void keyMoving(int key) {

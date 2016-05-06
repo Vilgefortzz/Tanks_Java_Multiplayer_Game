@@ -15,14 +15,14 @@ import static client.Client.sendYourMove;
 
 public class KeyInput extends KeyAdapter{
 
-    private Player thisPlayer; // tylko do wysyłania odpowiednich ruchów gracza
+    private Player toControlPlayer; // tylko do wysyłania odpowiednich ruchów gracza
 
-    public Player getThisPlayer() {
-        return thisPlayer;
+    public Player getToControlPlayer() {
+        return toControlPlayer;
     }
 
-    public void setThisPlayer(Player thisPlayer) {
-        this.thisPlayer = thisPlayer;
+    public void setToControlPlayer(Player toControlPlayer) {
+        this.toControlPlayer = toControlPlayer;
     }
 
     public void keyPressed(KeyEvent e) {
@@ -32,13 +32,13 @@ public class KeyInput extends KeyAdapter{
         if (key == KeyEvent.VK_L){
 
             // Wysłanie informacji serwerowi o oddaniu strzału przez konkretnego klienta
-            sendYourFire(thisPlayer.getId(), thisPlayer.getOrientation());
+            sendYourFire(toControlPlayer.getId(), toControlPlayer.getOrientation());
         }
         else{
 
-            thisPlayer.keyMoving(key);
+            toControlPlayer.keyMoving(key);
             // Wysłanie informacji serwerowi o ruchu konkretnego klienta
-            sendYourMove(thisPlayer.getId(), thisPlayer.getOrientation(), thisPlayer.getDx(), thisPlayer.getDy());
+            sendYourMove(toControlPlayer.getId(), toControlPlayer.getOrientation(), toControlPlayer.getDx(), toControlPlayer.getDy());
         }
     }
 
@@ -46,10 +46,10 @@ public class KeyInput extends KeyAdapter{
 
         int key = e.getKeyCode();
 
-        thisPlayer.keyReleased(key);
+        toControlPlayer.keyReleased(key);
 
         // Wysłanie informacji serwerowi o ruchu konkretnego klienta
 
-        sendYourMove(thisPlayer.getId(), thisPlayer.getOrientation(), thisPlayer.getDx(), thisPlayer.getDy());
+        sendYourMove(toControlPlayer.getId(), toControlPlayer.getOrientation(), toControlPlayer.getDx(), toControlPlayer.getDy());
     }
 }

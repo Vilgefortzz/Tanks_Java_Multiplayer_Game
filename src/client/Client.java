@@ -100,7 +100,7 @@ public class Client {
         }
 
         myPlayer = new Player(new Random().nextInt(5000) + 1);
-        keyboard.setThisPlayer(myPlayer);
+        keyboard.setToControlPlayer(myPlayer);
 
         sendYourId(myPlayer.getId()); // wysłanie do serwera, który go zapamięta (WAŻNE!!)
 
@@ -151,9 +151,7 @@ public class Client {
 
     public void disconnect() {
 
-        if (connected)
-        {
-
+        if (connected) {
             ConnectionHandling.close(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli przez rzucenie wyjątku
             ConnectionHandling.join(clientThread); // czekanie aż wątek się wykonana do końca
         }
@@ -188,6 +186,10 @@ public class Client {
 
             case 6:
                 respawnHandling();
+                break;
+
+            case 7:
+                destroyedByHandling();
                 break;
 
             default:
@@ -262,6 +264,16 @@ public class Client {
         }
     }
 
+    public static void sendDestroyedBy(int id){
+
+        try {
+            out.writeInt(7);
+            out.writeInt(id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void registerHandling() throws IOException {
 
         // Zczytanie informacji o kliencie
@@ -309,6 +321,14 @@ public class Client {
         int y = in.readInt();
 
         game.respawnPlayer(id, x, y);
+    }
+
+    private void destroyedByHandling() throws IOException {
+
+        // Zczytanie id klienta, którego pocisk zniszczył wrogi czołg
+        int id = in.readInt();
+
+        game.destroyedByPlayer(id);
     }
 
     /*
