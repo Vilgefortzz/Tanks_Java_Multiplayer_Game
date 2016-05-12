@@ -3,7 +3,7 @@
  * @gklimek
  */
 
-package connection;
+package utilities;
 
 import java.io.Closeable;
 import java.io.IOException;

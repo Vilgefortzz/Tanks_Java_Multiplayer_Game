@@ -6,6 +6,7 @@
 package gui;
 
 import client.Client;
+import database.Database;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class MainFrame extends JFrame implements ActionListener{
 
@@ -25,6 +27,10 @@ public class MainFrame extends JFrame implements ActionListener{
     // Klient, który posiada to okno
 
     private Client client = null;
+
+    // Baza danych
+
+    private Database database = null;
 
     // Panele 1) menu główne + poboczne 2) właściwa gra
 
@@ -153,6 +159,18 @@ public class MainFrame extends JFrame implements ActionListener{
         // Rozpoczęcie (menu główne)
 
         add(menuPanel);
+
+        // Stworzenie instancji bazy danych oraz połączenie z nią
+
+        database = new Database();
+
+        try {
+            database.connectToDatabase();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
     }
 
     // Ta metoda ustawia wygląd przycisków oraz innych elementów
@@ -242,7 +260,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         creditsInfo = new JLabel("<html>This is a project for java.<br><br>The goal is to create a game" +
                 "Tanks with the possibility of playing by many players,<br>gathering stats and much more." +
-                "<br>Everything based on client-server architecture and with the databases connection." +
+                "<br>Everything based on client-server structure and with the databases connections." +
                 "<br><br><br><br><br>Have fun!," +
                 "<br>@gklimek</html>");
         creditsInfo.setFont(new Font("Courier New", Font.BOLD, 26));
@@ -630,7 +648,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
     public void connectionError()
     {
-        JOptionPane.showMessageDialog(null, "Loose connection with server", "ERROR", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Loose utilities with server", "ERROR", JOptionPane.ERROR_MESSAGE);
         System.out.println( "Connection error!" );
         System.exit(0);
     }

@@ -5,7 +5,7 @@
 
 package server;
 
-import connection.ConnectionHandling;
+import utilities.ConnectionHandling;
 import models.Player;
 
 import java.io.DataInputStream;
@@ -256,7 +256,7 @@ public class Server {
         }
     }
 
-    private void sendRegisterInfo(DataOutputStream out, int id, int orientation, int x, int y) throws IOException {
+    private synchronized void sendRegisterInfo(DataOutputStream out, int id, int orientation, int x, int y) throws IOException {
 
         out.writeInt(1);
         out.writeInt(id);
@@ -265,14 +265,14 @@ public class Server {
         out.writeInt(y);
     }
 
-    private void sendUnRegisterInfo(DataOutputStream out, int id) throws IOException {
+    private synchronized void sendUnRegisterInfo(DataOutputStream out, int id) throws IOException {
 
         out.writeInt(2);
         out.writeInt(id);
         System.out.println("Wysylam do pozostalych o odejsciu");
     }
 
-    private void sendMoveInfo(DataOutputStream out, int id, int orientation, int dx, int dy) throws IOException {
+    private synchronized void sendMoveInfo(DataOutputStream out, int id, int orientation, int dx, int dy) throws IOException {
 
         out.writeInt(3);
         out.writeInt(id);
@@ -281,20 +281,20 @@ public class Server {
         out.writeInt(dy);
     }
 
-    private void sendFireInfo(DataOutputStream out, int id, int orientation) throws IOException {
+    private synchronized void sendFireInfo(DataOutputStream out, int id, int orientation) throws IOException {
 
         out.writeInt(4);
         out.writeInt(id);
         out.writeInt(orientation);
     }
 
-    private void sendCollisionTankWithWallInfo(DataOutputStream out, int id) throws IOException {
+    private synchronized void sendCollisionTankWithWallInfo(DataOutputStream out, int id) throws IOException {
 
         out.writeInt(5);
         out.writeInt(id);
     }
 
-    private void sendRespawnInfo(DataOutputStream out, int id, int x, int y) throws IOException {
+    private synchronized void sendRespawnInfo(DataOutputStream out, int id, int x, int y) throws IOException {
 
         out.writeInt(6);
         out.writeInt(id);
@@ -302,7 +302,7 @@ public class Server {
         out.writeInt(y);
     }
 
-    private void sendDestroyedByInfo(DataOutputStream out, int id) throws IOException {
+    private synchronized void sendDestroyedByInfo(DataOutputStream out, int id) throws IOException {
 
         out.writeInt(7);
         out.writeInt(id);

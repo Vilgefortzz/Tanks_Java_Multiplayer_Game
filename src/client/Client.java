@@ -5,7 +5,7 @@
 
 package client;
 
-import connection.ConnectionHandling;
+import utilities.ConnectionHandling;
 import gui.GamePanel;
 import gui.MainFrame;
 import io.KeyInput;

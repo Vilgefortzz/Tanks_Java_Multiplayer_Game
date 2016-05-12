@@ -17,8 +17,6 @@ public class Main {
 
     public static void main( String[] args ) {
 
-        final String HOST = "localhost";
-        final int PORT = 8080;
         //final String HOST; // to będzie na końcu wynikowo
         //final int PORT;
 
