@@ -49,23 +49,31 @@ public class MainFrame extends JFrame implements ActionListener{
 
     private JLabel logIn;
     private JLabel loginWriteLog;
-    private JTextField loginLog;
     private JLabel passwordWriteLog;
-    private JPasswordField passwordLog;
     private JButton loginBtn;
     private JLabel registrationInfo;
     private JButton goToRegistration;
     private JButton backBtn1;
 
+    private JTextField loginLog;
+    private JPasswordField passwordLog;
+
     // przyciski do menu pobocznego (rejestracja)
 
     private JLabel registration;
     private JLabel loginWriteReg;
-    private JTextField loginReg;
     private JLabel passwordWriteReg;
-    private JPasswordField passwordReg;
+    private JLabel firstNameWriteReg;
+    private JLabel lastNameWriteReg;
+    private JLabel emailWriteReg;
     private JButton createAccountBtn;
     private JButton backBtn2;
+
+    private JTextField loginReg;
+    private JPasswordField passwordReg;
+    private JTextField firstNameReg;
+    private JTextField lastNameReg;
+    private JTextField emailReg;
 
     // przyciski do menu pobocznego (zalogowany użytkownik)
 
@@ -160,16 +168,26 @@ public class MainFrame extends JFrame implements ActionListener{
 
         add(menuPanel);
 
-        // Stworzenie instancji bazy danych oraz połączenie z nią
+        // Stworzenie instancji bazy danych
 
         database = new Database();
+
+        // Połączenie z bazą danych
 
         try {
             database.connectToDatabase();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
+        }
+
+        // Zczytanie informacji z bazy danych (zapisanie do mapy userów z bazy)
+
+        try {
+            database.fillMapFromDatabase();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -355,11 +373,7 @@ public class MainFrame extends JFrame implements ActionListener{
         box.add(Box.createVerticalStrut(0));
         loginReg = new JTextField();
         loginReg.setEditable(true);
-        loginReg.setToolTipText("Image login just as you wish");
         loginReg.setMaximumSize(new Dimension(300, 30));
-
-        // TODO Sprawdzanie czy nie ma już użytkownika o danym loginie, jeżeli tak to odpowiedni komunikat
-
         box.add(loginReg);
 
         box.add(Box.createVerticalStrut(15));
@@ -371,9 +385,44 @@ public class MainFrame extends JFrame implements ActionListener{
         box.add(Box.createVerticalStrut(0));
         passwordReg = new JPasswordField();
         passwordReg.setEditable(true);
-        passwordReg.setToolTipText("Image your password - try choose not easy one");
         passwordReg.setMaximumSize(new Dimension(300, 30));
         box.add(passwordReg);
+
+        box.add(Box.createVerticalStrut(15));
+        firstNameWriteReg = new JLabel("First name:");
+        firstNameWriteReg.setForeground(Color.WHITE);
+        firstNameWriteReg.setFont(new Font("Arial", Font.BOLD, 15));
+        box.add(firstNameWriteReg);
+
+        box.add(Box.createVerticalStrut(0));
+        firstNameReg = new JTextField();
+        firstNameReg.setEditable(true);
+        firstNameReg.setMaximumSize(new Dimension(300, 30));
+        box.add(firstNameReg);
+
+        box.add(Box.createVerticalStrut(15));
+        lastNameWriteReg = new JLabel("Last name:");
+        lastNameWriteReg.setForeground(Color.WHITE);
+        lastNameWriteReg.setFont(new Font("Arial", Font.BOLD, 15));
+        box.add(lastNameWriteReg);
+
+        box.add(Box.createVerticalStrut(0));
+        lastNameReg = new JTextField();
+        lastNameReg.setEditable(true);
+        lastNameReg.setMaximumSize(new Dimension(300, 30));
+        box.add(lastNameReg);
+
+        box.add(Box.createVerticalStrut(15));
+        emailWriteReg = new JLabel("Email:");
+        emailWriteReg.setForeground(Color.WHITE);
+        emailWriteReg.setFont(new Font("Arial", Font.BOLD, 15));
+        box.add(emailWriteReg);
+
+        box.add(Box.createVerticalStrut(0));
+        emailReg = new JTextField();
+        emailReg.setEditable(true);
+        emailReg.setMaximumSize(new Dimension(300, 30));
+        box.add(emailReg);
 
         box.add(Box.createVerticalStrut(10));
         createAccountBtn = new JButton("Sign up");
@@ -529,17 +578,23 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == createAccountBtn){
 
-            /*
-            jeżeli dobrze stworzone to to co nizej się dzieje w przeciwnym wypadku komunikat o złym
-            stworzeniu konta(istnieje w bazie taki sam + inne warunki) oraz zostanie na boxie z rejestracją
-            */
+            if (database.registerUser(loginReg.getText(), String.valueOf(passwordReg.getPassword()), firstNameReg.getText(), lastNameReg.getText(), emailReg.getText())){
 
-            JOptionPane.showMessageDialog(null, "Account succesfully created!");
+                JOptionPane.showMessageDialog(null, "Account successfully created!");
 
-            boxSignUp.setVisible(false);
-            menuPanel.remove(boxSignUp);
-            menuPanel.add(boxLogging);
-            boxLogging.setVisible(true);
+                boxSignUp.setVisible(false);
+                menuPanel.remove(boxSignUp);
+                menuPanel.add(boxLogging);
+                boxLogging.setVisible(true);
+
+                loginReg.setText("");
+                passwordReg.setText("");
+                firstNameReg.setText("");
+                lastNameReg.setText("");
+                emailReg.setText("");
+            }
+            else
+                JOptionPane.showMessageDialog(null, "User with this login has already exists! Change login to create account", "Account not created", JOptionPane.ERROR_MESSAGE);
         }
 
         if (e.getSource() == backBtn2){

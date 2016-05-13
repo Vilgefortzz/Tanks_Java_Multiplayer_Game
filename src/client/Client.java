@@ -91,11 +91,11 @@ public class Client {
 
         } catch (IOException ex){
             if (out != null)
-                ConnectionHandling.close(out);
+                ConnectionHandling.closingSocketsAndStreams(out);
             if (in != null)
-                ConnectionHandling.close(in);
+                ConnectionHandling.closingSocketsAndStreams(in);
             if (clientSocket != null)
-                ConnectionHandling.close(clientSocket);
+                ConnectionHandling.closingSocketsAndStreams(clientSocket);
             throw new IOException("Client didn't connect with server", ex);
         }
 
@@ -116,9 +116,9 @@ public class Client {
 
                     System.out.println("Sprzatanko");
 
-                    ConnectionHandling.close(out); // zamykanie strumienia wyjściowego
-                    ConnectionHandling.close(in); // zamykanie strumienia wejściowego
-                    ConnectionHandling.close(clientSocket); // zamknięcie socketa
+                    ConnectionHandling.closingSocketsAndStreams(out); // zamykanie strumienia wyjściowego
+                    ConnectionHandling.closingSocketsAndStreams(in); // zamykanie strumienia wejściowego
+                    ConnectionHandling.closingSocketsAndStreams(clientSocket); // zamknięcie socketa
 
                     connected = false; // odłączenie klienta
 
@@ -152,7 +152,7 @@ public class Client {
     public void disconnect() {
 
         if (connected) {
-            ConnectionHandling.close(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli przez rzucenie wyjątku
+            ConnectionHandling.closingSocketsAndStreams(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli przez rzucenie wyjątku
             ConnectionHandling.join(clientThread); // czekanie aż wątek się wykonana do końca
         }
     }

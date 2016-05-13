@@ -148,9 +148,9 @@ public class Server {
 
                 System.out.println("Witam ciebie");
                 // Zamknięcie strumieni dla klienta + socketa
-                ConnectionHandling.close(out);
-                ConnectionHandling.close(in);
-                ConnectionHandling.close(clientSockets.get(clientID));
+                ConnectionHandling.closingSocketsAndStreams(out);
+                ConnectionHandling.closingSocketsAndStreams(in);
+                ConnectionHandling.closingSocketsAndStreams(clientSockets.get(clientID));
 
                 // Usunięcie z mapy strumieni oraz socketów
                 dataOutputStreams.remove(clientID);
@@ -183,22 +183,22 @@ public class Server {
             // Zamykanie wszystkich strumieni wyjściowych
 
             for (DataOutputStream out : dataOutputStreams.values()){
-                ConnectionHandling.close(out);
+                ConnectionHandling.closingSocketsAndStreams(out);
             }
 
             // Zamykanie wszystkich strumieni wejściowych
 
             for (DataInputStream in : dataInputStreams.values()){
-                ConnectionHandling.close(in);
+                ConnectionHandling.closingSocketsAndStreams(in);
             }
 
             // Zamykanie wszystkich socketów
 
             for (Socket socket : clientSockets.values()){
-                ConnectionHandling.close(socket);
+                ConnectionHandling.closingSocketsAndStreams(socket);
             }
 
-            ConnectionHandling.close(serverSocket); // zamknięcie serverSocketa
+            ConnectionHandling.closingSocketsAndStreams(serverSocket); // zamknięcie serverSocketa
 
             // Czekanie, aż wątki klientów wykonają się do końca
 
