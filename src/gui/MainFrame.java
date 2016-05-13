@@ -77,7 +77,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
     // przyciski do menu pobocznego (zalogowany użytkownik)
 
-    private JLabel loggedAs;
+    private JLabel playroom;
     private JButton playBtn;
     private JButton statsBtn;
     private JButton helpBtn;
@@ -102,7 +102,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
     private Box boxMenu;
     private Box boxCredits;
-    private Box boxLogging;
+    private Box boxLogIn;
     private Box boxSignUp;
     public  Box boxLoggedUser;
     private Box boxStats;
@@ -128,7 +128,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         boxMenu = createMenu();
         boxCredits = createCreditsMenu();
-        boxLogging = createLoggingMenu();
+        boxLogIn = createLogInMenu();
         boxSignUp = createSignUpMenu();
         boxLoggedUser = createLoggedUserMenu();
         boxStats = createStatsMenu();
@@ -293,7 +293,7 @@ public class MainFrame extends JFrame implements ActionListener{
         return box;
     }
 
-    private Box createLoggingMenu(){
+    private Box createLogInMenu(){
 
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20));
@@ -311,7 +311,6 @@ public class MainFrame extends JFrame implements ActionListener{
 
         box.add(Box.createVerticalStrut(0));
         loginLog = new JTextField();
-        loginLog.setToolTipText("Write login of your account");
         loginLog.setMaximumSize(new Dimension(300, 30));
         box.add(loginLog);
 
@@ -323,7 +322,6 @@ public class MainFrame extends JFrame implements ActionListener{
 
         box.add(Box.createVerticalStrut(0));
         passwordLog = new JPasswordField();
-        passwordLog.setToolTipText("Write your password connected to your account");
         passwordLog.setMaximumSize(new Dimension(300, 30));
         box.add(passwordLog);
 
@@ -335,13 +333,14 @@ public class MainFrame extends JFrame implements ActionListener{
         box.add(loginBtn);
 
         box.add(Box.createVerticalStrut(20));
-        registrationInfo = new JLabel("You don't have an account? Click button below ->");
-        registrationInfo.setForeground(new Color(143, 226, 217));
-        registrationInfo.setFont(new Font("Courier New", Font.BOLD, 14));
+        registrationInfo = new JLabel("<html>You don't have an account yet?" +
+                "<br> Don't think twice,<br>click the button below -></html>");
+        registrationInfo.setForeground(new Color(246, 236, 218));
+        registrationInfo.setFont(new Font("Courier New", Font.BOLD, 20));
         box.add(registrationInfo);
 
         box.add(Box.createVerticalStrut(10));
-        goToRegistration = new JButton("Create an account");
+        goToRegistration = new JButton("Create an account for FREE");
         goToRegistration.setForeground(Color.WHITE);
         goToRegistration.setBackground(Color.BLACK);
         goToRegistration.setFont(new Font("Arial", Font.BOLD, 15));
@@ -442,11 +441,10 @@ public class MainFrame extends JFrame implements ActionListener{
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20));
 
-        loggedAs = new JLabel("Logged as: ");
-        // TODO Z bazy danych będzie pobrana informacja o nazwie użytkownika [będzie to realizowane w momencie zalogowania - nie tutaj]
-        loggedAs.setForeground(Color.WHITE);
-        loggedAs.setFont(new Font("Courier New", Font.BOLD, 75));
-        box.add(loggedAs);
+        playroom = new JLabel("Playroom");
+        playroom.setForeground(new Color(86, 192, 46));
+        playroom.setFont(new Font("Comic Sans MS", Font.BOLD, 80));
+        box.add(playroom);
 
         box.add(Box.createVerticalStrut(6));
 
@@ -534,8 +532,8 @@ public class MainFrame extends JFrame implements ActionListener{
 
             boxMenu.setVisible(false);
             menuPanel.remove(boxMenu);
-            menuPanel.add(boxLogging);
-            boxLogging.setVisible(true);
+            menuPanel.add(boxLogIn);
+            boxLogIn.setVisible(true);
         }
 
         if (e.getSource() == creditsBtn){
@@ -552,26 +550,37 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == loginBtn){
 
-            JOptionPane.showMessageDialog(null, "Logging completed");
-            setTitle("Client logged as: ..."); // z bazy danych będzie brane
+            if (database.loginUser(loginLog.getText(), String.valueOf(passwordLog.getPassword()))){
 
-            boxLogging.setVisible(false);
-            menuPanel.remove(boxLogging);
-            menuPanel.add(boxLoggedUser);
-            boxLoggedUser.setVisible(true);
+                JOptionPane.showMessageDialog(null, "You are successfully logged in", "", JOptionPane.INFORMATION_MESSAGE);
+                setTitle("Client logged as: " + loginLog.getText());
+
+                boxLogIn.setVisible(false);
+                menuPanel.remove(boxLogIn);
+                menuPanel.add(boxLoggedUser);
+                boxLoggedUser.setVisible(true);
+
+                loginLog.setText("");
+                passwordLog.setText("");
+            }
+            else
+                JOptionPane.showMessageDialog(null, "Incorrect login or password or you haven't yet a free account. Go to registration to create account or try to log in with proper data", "Log in failed", JOptionPane.ERROR_MESSAGE);
         }
 
         if (e.getSource() == goToRegistration){
 
-            boxLogging.setVisible(false);
-            menuPanel.remove(boxLogging);
+            boxLogIn.setVisible(false);
+            menuPanel.remove(boxLogIn);
             menuPanel.add(boxSignUp);
             boxSignUp.setVisible(true);
+
+            loginLog.setText("");
+            passwordLog.setText("");
         }
 
         if (e.getSource() == backBtn1){
-            boxLogging.setVisible(false);
-            menuPanel.remove(boxLogging);
+            boxLogIn.setVisible(false);
+            menuPanel.remove(boxLogIn);
             menuPanel.add(boxMenu);
             boxMenu.setVisible(true);
         }
@@ -580,12 +589,12 @@ public class MainFrame extends JFrame implements ActionListener{
 
             if (database.registerUser(loginReg.getText(), String.valueOf(passwordReg.getPassword()), firstNameReg.getText(), lastNameReg.getText(), emailReg.getText())){
 
-                JOptionPane.showMessageDialog(null, "Account successfully created!");
+                JOptionPane.showMessageDialog(null, "Account successfully created!", "", JOptionPane.INFORMATION_MESSAGE);
 
                 boxSignUp.setVisible(false);
                 menuPanel.remove(boxSignUp);
-                menuPanel.add(boxLogging);
-                boxLogging.setVisible(true);
+                menuPanel.add(boxLogIn);
+                boxLogIn.setVisible(true);
 
                 loginReg.setText("");
                 passwordReg.setText("");
@@ -594,15 +603,15 @@ public class MainFrame extends JFrame implements ActionListener{
                 emailReg.setText("");
             }
             else
-                JOptionPane.showMessageDialog(null, "User with this login has already exists! Change login to create account", "Account not created", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "User with this login has already exists! Change login to create account", "Registration failed", JOptionPane.ERROR_MESSAGE);
         }
 
         if (e.getSource() == backBtn2){
 
             boxSignUp.setVisible(false);
             menuPanel.remove(boxSignUp);
-            menuPanel.add(boxLogging);
-            boxLogging.setVisible(true);
+            menuPanel.add(boxLogIn);
+            boxLogIn.setVisible(true);
         }
 
         /* --------------------------------------------------------------------------------------------------------- */
@@ -663,7 +672,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == logOutBtn){
 
-            JOptionPane.showMessageDialog(null, "You are logged out. I hope we will see you soon ;)");
+            JOptionPane.showMessageDialog(null, "You are succesfully logged out. I hope we will see you soon ;)", "", JOptionPane.INFORMATION_MESSAGE);
             setTitle("Client not logged now");
 
             boxLoggedUser.setVisible(false);
@@ -695,16 +704,5 @@ public class MainFrame extends JFrame implements ActionListener{
             menuPanel.add(boxMenu);
             boxMenu.setVisible(true);
         }
-    }
-
-    /*
-    Methods to handle events - do it in gui
-     */
-
-    public void connectionError()
-    {
-        JOptionPane.showMessageDialog(null, "Loose utilities with server", "ERROR", JOptionPane.ERROR_MESSAGE);
-        System.out.println( "Connection error!" );
-        System.exit(0);
     }
 }

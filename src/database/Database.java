@@ -96,4 +96,21 @@ public class Database {
 
         return true;
     }
+
+    public boolean loginUser(String login, String password){
+
+        if (registeredUsers.size() == 0) {
+                return false;
+        }
+
+        if (registeredUsers.containsKey(login)){
+            if (registeredUsers.get(login).getPassword().equals(password)){
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
 }
