@@ -7,6 +7,7 @@ package gui;
 
 import client.Client;
 import database.Database;
+import utilities.Utilities;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -550,7 +551,11 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == loginBtn){
 
-            if (database.loginUser(loginLog.getText(), String.valueOf(passwordLog.getPassword()))){
+            // Haszowanie aby porównać hasła, z tym z bazy danych
+            String nonHashedPassword = String.valueOf(passwordLog.getPassword());
+            String hashedPassword = Utilities.passwordHashing(nonHashedPassword);
+
+            if (database.loginUser(loginLog.getText(), hashedPassword)){
 
                 JOptionPane.showMessageDialog(null, "You are successfully logged in", "", JOptionPane.INFORMATION_MESSAGE);
                 setTitle("Client logged as: " + loginLog.getText());
@@ -587,7 +592,11 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == createAccountBtn){
 
-            if (database.registerUser(loginReg.getText(), String.valueOf(passwordReg.getPassword()), firstNameReg.getText(), lastNameReg.getText(), emailReg.getText())){
+            // Haszowanie hasła
+            String nonHashedPassword = String.valueOf(passwordReg.getPassword());
+            String hashedPassword = Utilities.passwordHashing(nonHashedPassword);
+
+            if (database.registerUser(loginReg.getText(), hashedPassword, firstNameReg.getText(), lastNameReg.getText(), emailReg.getText())){
 
                 JOptionPane.showMessageDialog(null, "Account successfully created!", "", JOptionPane.INFORMATION_MESSAGE);
 

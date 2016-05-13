@@ -5,7 +5,7 @@
 
 package client;
 
-import utilities.ConnectionHandling;
+import utilities.Utilities;
 import gui.GamePanel;
 import gui.MainFrame;
 import io.KeyInput;
@@ -91,11 +91,11 @@ public class Client {
 
         } catch (IOException ex){
             if (out != null)
-                ConnectionHandling.closingSocketsAndStreams(out);
+                Utilities.closingSocketsAndStreams(out);
             if (in != null)
-                ConnectionHandling.closingSocketsAndStreams(in);
+                Utilities.closingSocketsAndStreams(in);
             if (clientSocket != null)
-                ConnectionHandling.closingSocketsAndStreams(clientSocket);
+                Utilities.closingSocketsAndStreams(clientSocket);
             throw new IOException("Client didn't connect with server", ex);
         }
 
@@ -116,9 +116,9 @@ public class Client {
 
                     System.out.println("Sprzatanko");
 
-                    ConnectionHandling.closingSocketsAndStreams(out); // zamykanie strumienia wyjściowego
-                    ConnectionHandling.closingSocketsAndStreams(in); // zamykanie strumienia wejściowego
-                    ConnectionHandling.closingSocketsAndStreams(clientSocket); // zamknięcie socketa
+                    Utilities.closingSocketsAndStreams(out); // zamykanie strumienia wyjściowego
+                    Utilities.closingSocketsAndStreams(in); // zamykanie strumienia wejściowego
+                    Utilities.closingSocketsAndStreams(clientSocket); // zamknięcie socketa
 
                     connected = false; // odłączenie klienta
 
@@ -152,8 +152,8 @@ public class Client {
     public void disconnect() {
 
         if (connected) {
-            ConnectionHandling.closingSocketsAndStreams(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli przez rzucenie wyjątku
-            ConnectionHandling.join(clientThread); // czekanie aż wątek się wykonana do końca
+            Utilities.closingSocketsAndStreams(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli przez rzucenie wyjątku
+            Utilities.join(clientThread); // czekanie aż wątek się wykonana do końca
         }
     }
 

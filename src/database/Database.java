@@ -6,7 +6,7 @@
 package database;
 
 
-import utilities.ConnectionHandling;
+import utilities.Utilities;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -91,7 +91,7 @@ public class Database {
         } finally {
 
             if (preparedStatement != null)
-                ConnectionHandling.closingStatementsInDatabases(preparedStatement);
+                Utilities.closingStatementsInDatabases(preparedStatement);
         }
 
         return true;

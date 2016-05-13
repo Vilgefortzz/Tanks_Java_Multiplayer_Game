@@ -5,7 +5,7 @@
 
 package server;
 
-import utilities.ConnectionHandling;
+import utilities.Utilities;
 import models.Player;
 
 import java.io.DataInputStream;
@@ -148,9 +148,9 @@ public class Server {
 
                 System.out.println("Witam ciebie");
                 // Zamknięcie strumieni dla klienta + socketa
-                ConnectionHandling.closingSocketsAndStreams(out);
-                ConnectionHandling.closingSocketsAndStreams(in);
-                ConnectionHandling.closingSocketsAndStreams(clientSockets.get(clientID));
+                Utilities.closingSocketsAndStreams(out);
+                Utilities.closingSocketsAndStreams(in);
+                Utilities.closingSocketsAndStreams(clientSockets.get(clientID));
 
                 // Usunięcie z mapy strumieni oraz socketów
                 dataOutputStreams.remove(clientID);
@@ -183,31 +183,31 @@ public class Server {
             // Zamykanie wszystkich strumieni wyjściowych
 
             for (DataOutputStream out : dataOutputStreams.values()){
-                ConnectionHandling.closingSocketsAndStreams(out);
+                Utilities.closingSocketsAndStreams(out);
             }
 
             // Zamykanie wszystkich strumieni wejściowych
 
             for (DataInputStream in : dataInputStreams.values()){
-                ConnectionHandling.closingSocketsAndStreams(in);
+                Utilities.closingSocketsAndStreams(in);
             }
 
             // Zamykanie wszystkich socketów
 
             for (Socket socket : clientSockets.values()){
-                ConnectionHandling.closingSocketsAndStreams(socket);
+                Utilities.closingSocketsAndStreams(socket);
             }
 
-            ConnectionHandling.closingSocketsAndStreams(serverSocket); // zamknięcie serverSocketa
+            Utilities.closingSocketsAndStreams(serverSocket); // zamknięcie serverSocketa
 
             // Czekanie, aż wątki klientów wykonają się do końca
 
             for (Thread thread : clientThreads){
 
-                ConnectionHandling.join(thread);
+                Utilities.join(thread);
             }
 
-            ConnectionHandling.join(serverThread); // czekanie aż wątek servera wykonana się  do końca
+            Utilities.join(serverThread); // czekanie aż wątek servera wykonana się  do końca
 
             started = false; // wyłączenie servera
         }
