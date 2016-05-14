@@ -97,7 +97,7 @@ połączą sie z serwerem i wejdą do gry).
     -> logowanie
     -> rejestracja
 
-[4.4] Mechanizm obsługi statystyk (raport - w ciągu ostatniego miesiąca jakiś tam uzytkownik miał jakieś tam statystyki)
+[4.4] Mechanizm obsługi statystyk (raport - w ciągu ostatniego miesiąca jakiś tam użytkownik miał jakieś tam statystyki)
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -123,11 +123,11 @@ połączą sie z serwerem i wejdą do gry).
 
 [6] Zaproponowane przez studenta
 
-[6.1] ~~Logika rozgrywki, kolizje, timer będzie używał wątku animacji~~ [ 19.04.16 ]
+[6.1] ~~Logika rozgrywki, kolizje, wątek aktualizujący obiekty na mapie(rysowanie)~~ [ 19.04.16 ]
 
 [6.2] ~~Obsługa pocisków~~ [ 19.04.16 ]
 
-[6.2] ~~Grafika~~ [ 15.03.16 ]
+[6.3] ~~Grafika~~ [ 15.03.16 ]
 
 	-> dodanie odpowiednich grafik związanych z tematyką gry
 	-> utworzenie przejrzystego menu głównego aplikacji

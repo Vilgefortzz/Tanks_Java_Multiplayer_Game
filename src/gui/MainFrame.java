@@ -25,6 +25,9 @@ public class MainFrame extends JFrame implements ActionListener{
     public static final int sizeX = 1366;
     public static final int sizeY = 768;
 
+    private Thread checking = null;
+    private boolean checkingPasswdStrength = false;
+
     // Klient, który posiada to okno
 
     private Client client = null;
@@ -75,6 +78,9 @@ public class MainFrame extends JFrame implements ActionListener{
     private JTextField firstNameReg;
     private JTextField lastNameReg;
     private JTextField emailReg;
+
+    private JProgressBar passwordStrength;
+    private JLabel passwordStrenghtInfo;
 
     // przyciski do menu pobocznego (zalogowany użytkownik)
 
@@ -356,6 +362,7 @@ public class MainFrame extends JFrame implements ActionListener{
     }
 
     private Box createSignUpMenu(){
+
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20));
 
@@ -388,7 +395,18 @@ public class MainFrame extends JFrame implements ActionListener{
         passwordReg.setMaximumSize(new Dimension(300, 30));
         box.add(passwordReg);
 
-        box.add(Box.createVerticalStrut(15));
+        box.add(Box.createVerticalStrut(10));
+        passwordStrength = new JProgressBar();
+        passwordStrength.setPreferredSize(new Dimension(250, 20));
+        passwordStrength.setMaximumSize(new Dimension(250, 20));
+        box.add(passwordStrength);
+
+        box.add(Box.createVerticalStrut(0));
+        passwordStrenghtInfo = new JLabel();
+        passwordStrenghtInfo.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
+        box.add(passwordStrenghtInfo);
+
+        box.add(Box.createVerticalStrut(30));
         firstNameWriteReg = new JLabel("First name:");
         firstNameWriteReg.setForeground(Color.WHITE);
         firstNameWriteReg.setFont(new Font("Arial", Font.BOLD, 15));
@@ -526,6 +544,83 @@ public class MainFrame extends JFrame implements ActionListener{
         return  backBtn;
     }
 
+    private void ThreadCheckingPasswordStrength(){
+
+        checking = new Thread(() -> {
+
+            String passwd;
+            int counter = 0;
+
+            while(checkingPasswdStrength){
+
+                passwd = String.valueOf(passwordReg.getPassword());
+
+                    if (passwd.length() > 6){
+                        counter++;
+                    }
+
+                    if (passwd.matches(".*[.,!@#$%^&*()_-].*")){
+                        counter++;
+                    }
+
+                    if (passwd.matches(".*[A-Z].*")){
+                        counter++;
+                    }
+
+                    if (passwd.matches(".*[1-9].*")){
+                        counter++;
+                    }
+
+                switch (counter){
+
+                    case 0:
+                        passwordStrength.setValue(0);
+                        passwordStrenghtInfo.setForeground(new Color(255, 0, 5));
+                        passwordStrenghtInfo.setText("Very weak");
+                        break;
+
+                    case 1:
+                        passwordStrength.setValue(25);
+                        passwordStrenghtInfo.setForeground(new Color(184, 5, 12));
+                        passwordStrenghtInfo.setText("Weak");
+                        break;
+
+                    case 2:
+                        passwordStrength.setValue(50);
+                        passwordStrenghtInfo.setForeground(new Color(196, 200, 38));
+                        passwordStrenghtInfo.setText("Medium");
+                        break;
+
+                    case 3:
+                        passwordStrength.setValue(75);
+                        passwordStrenghtInfo.setForeground(new Color(28, 138, 21));
+                        passwordStrenghtInfo.setText("Strong");
+                        break;
+
+                    case 4:
+                        passwordStrength.setValue(100);
+                        passwordStrenghtInfo.setForeground(new Color(45, 255, 7));
+                        passwordStrenghtInfo.setText("Very Strong");
+                        break;
+
+                    default:
+                        break;
+                }
+
+                counter = 0;
+            }
+        });
+
+        checkingPasswdStrength = true;
+        checking.start();
+    }
+
+    private void stopThreadCheckingPasswordStrength(){
+
+        checkingPasswdStrength = false;
+        Utilities.join(checking);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e){
 
@@ -567,6 +662,9 @@ public class MainFrame extends JFrame implements ActionListener{
 
                 loginLog.setText("");
                 passwordLog.setText("");
+
+                checkingPasswdStrength = false;
+                stopThreadCheckingPasswordStrength();
             }
             else
                 JOptionPane.showMessageDialog(null, "Incorrect login or password or you haven't yet a free account. Go to registration to create account or try to log in with proper data", "Log in failed", JOptionPane.ERROR_MESSAGE);
@@ -581,16 +679,26 @@ public class MainFrame extends JFrame implements ActionListener{
 
             loginLog.setText("");
             passwordLog.setText("");
+
+            // Stworzenie wątku sprawdzającego siłę hasła oraz wystartowanie wątku siły hasła
+            ThreadCheckingPasswordStrength();
         }
 
         if (e.getSource() == backBtn1){
+
             boxLogIn.setVisible(false);
             menuPanel.remove(boxLogIn);
             menuPanel.add(boxMenu);
             boxMenu.setVisible(true);
+
+            loginLog.setText("");
+            passwordLog.setText("");
         }
 
         if (e.getSource() == createAccountBtn){
+
+            // Sprawdzanie długości poszczególnych pól
+
 
             // Haszowanie hasła
             String nonHashedPassword = String.valueOf(passwordReg.getPassword());
@@ -610,6 +718,8 @@ public class MainFrame extends JFrame implements ActionListener{
                 firstNameReg.setText("");
                 lastNameReg.setText("");
                 emailReg.setText("");
+
+                stopThreadCheckingPasswordStrength();
             }
             else
                 JOptionPane.showMessageDialog(null, "User with this login has already exists! Change login to create account", "Registration failed", JOptionPane.ERROR_MESSAGE);
@@ -621,6 +731,14 @@ public class MainFrame extends JFrame implements ActionListener{
             menuPanel.remove(boxSignUp);
             menuPanel.add(boxLogIn);
             boxLogIn.setVisible(true);
+
+            loginReg.setText("");
+            passwordReg.setText("");
+            firstNameReg.setText("");
+            lastNameReg.setText("");
+            emailReg.setText("");
+
+            stopThreadCheckingPasswordStrength();
         }
 
         /* --------------------------------------------------------------------------------------------------------- */
