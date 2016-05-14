@@ -7,7 +7,8 @@ package gui;
 
 import client.Client;
 import database.Database;
-import utilities.Utilities;
+import regexes.*;
+import utilities.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -544,6 +545,75 @@ public class MainFrame extends JFrame implements ActionListener{
         return  backBtn;
     }
 
+    private boolean checkLoginCorrectness(){
+
+        boolean result = false;
+
+        LoginValidator loginValidator = new LoginValidator();
+
+        if (loginValidator.validate(loginReg.getText()))
+            result = true;
+
+        return result;
+    }
+
+    private boolean checkPasswordCorrectness(){
+
+        boolean result = false;
+
+        PasswordValidator passwordValidator = new PasswordValidator();
+
+        if (passwordValidator.validate(String.valueOf(passwordReg.getPassword())))
+            result = true;
+
+        return result;
+    }
+
+    private boolean checkFirstNameCorrectness(){
+
+        boolean result = false;
+
+        FirstNameValidator firstNameValidator = new FirstNameValidator();
+
+        if (firstNameValidator.validate(firstNameReg.getText()))
+            result = true;
+
+        return result;
+    }
+
+    private boolean checkLastNameCorrectness(){
+
+        boolean result = false;
+
+        LastNameValidator lastNameValidator = new LastNameValidator();
+
+        if (lastNameValidator.validate(lastNameReg.getText()))
+            result = true;
+
+        return result;
+    }
+
+    private boolean checkEmailCorrectness(){
+
+        boolean result = false;
+
+        EmailValidator emailValidator = new EmailValidator();
+
+        if (emailValidator.validate(emailReg.getText()))
+            result = true;
+
+        return result;
+    }
+
+    private boolean checkFieldsCorrectness(){
+
+        if (checkLoginCorrectness() && checkPasswordCorrectness() && checkFirstNameCorrectness() &&
+                checkLastNameCorrectness() && checkEmailCorrectness())
+            return true;
+        else
+            return false;
+    }
+
     private void ThreadCheckingPasswordStrength(){
 
         checking = new Thread(() -> {
@@ -559,7 +629,7 @@ public class MainFrame extends JFrame implements ActionListener{
                         counter++;
                     }
 
-                    if (passwd.matches(".*[.,!@#$%^&*()_-].*")){
+                    if (passwd.matches(".*[!@#$%&*+=:;,.?<>_-].*")){
                         counter++;
                     }
 
@@ -697,32 +767,36 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == createAccountBtn){
 
-            // Sprawdzanie długości poszczególnych pól
+            // Sprawdzanie poprawności danych wprowadzonych dla poszczególnych pól
 
+            if (checkFieldsCorrectness()){
 
-            // Haszowanie hasła
-            String nonHashedPassword = String.valueOf(passwordReg.getPassword());
-            String hashedPassword = Utilities.passwordHashing(nonHashedPassword);
+                // Haszowanie hasła
+                String nonHashedPassword = String.valueOf(passwordReg.getPassword());
+                String hashedPassword = Utilities.passwordHashing(nonHashedPassword);
 
-            if (database.registerUser(loginReg.getText(), hashedPassword, firstNameReg.getText(), lastNameReg.getText(), emailReg.getText())){
+                if (database.registerUser(loginReg.getText(), hashedPassword, firstNameReg.getText(), lastNameReg.getText(), emailReg.getText())){
 
-                JOptionPane.showMessageDialog(null, "Account successfully created!", "", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Account successfully created!", "", JOptionPane.INFORMATION_MESSAGE);
 
-                boxSignUp.setVisible(false);
-                menuPanel.remove(boxSignUp);
-                menuPanel.add(boxLogIn);
-                boxLogIn.setVisible(true);
+                    boxSignUp.setVisible(false);
+                    menuPanel.remove(boxSignUp);
+                    menuPanel.add(boxLogIn);
+                    boxLogIn.setVisible(true);
 
-                loginReg.setText("");
-                passwordReg.setText("");
-                firstNameReg.setText("");
-                lastNameReg.setText("");
-                emailReg.setText("");
+                    loginReg.setText("");
+                    passwordReg.setText("");
+                    firstNameReg.setText("");
+                    lastNameReg.setText("");
+                    emailReg.setText("");
 
-                stopThreadCheckingPasswordStrength();
+                    stopThreadCheckingPasswordStrength();
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "User with this login has already exists! Change login to create account", "Registration failed", JOptionPane.ERROR_MESSAGE);
             }
             else
-                JOptionPane.showMessageDialog(null, "User with this login has already exists! Change login to create account", "Registration failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Check your data format: length, email format correctness, uppercases", "Invalid data format", JOptionPane.ERROR_MESSAGE);
         }
 
         if (e.getSource() == backBtn2){
