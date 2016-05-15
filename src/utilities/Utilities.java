@@ -50,7 +50,7 @@ public class Utilities {
         try{
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(nonHashPassword.getBytes("UTF-8"));
-            StringBuffer hexString = new StringBuffer();
+            StringBuilder hexString = new StringBuilder();
 
             for (byte aHash : hash) {
                 String hex = Integer.toHexString(0xff & aHash);

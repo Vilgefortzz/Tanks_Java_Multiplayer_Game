@@ -36,6 +36,7 @@ public class MainFrame extends JFrame implements ActionListener{
     // Baza danych
 
     private Database database = null;
+    private String yourLogin;
 
     // Panele 1) menu główne + poboczne 2) właściwa gra
 
@@ -212,6 +213,10 @@ public class MainFrame extends JFrame implements ActionListener{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getYourLogin() {
+        return yourLogin;
     }
 
     public GamePanel getGamePanel() {
@@ -723,7 +728,8 @@ public class MainFrame extends JFrame implements ActionListener{
             if (database.loginUser(loginLog.getText(), hashedPassword)){
 
                 JOptionPane.showMessageDialog(null, "You are successfully logged in", "", JOptionPane.INFORMATION_MESSAGE);
-                setTitle("Client logged as: " + loginLog.getText());
+                yourLogin = loginLog.getText();
+                setTitle("Client logged as: " + yourLogin);
 
                 boxLogIn.setVisible(false);
                 menuPanel.remove(boxLogIn);
@@ -732,9 +738,6 @@ public class MainFrame extends JFrame implements ActionListener{
 
                 loginLog.setText("");
                 passwordLog.setText("");
-
-                checkingPasswdStrength = false;
-                stopThreadCheckingPasswordStrength();
             }
             else
                 JOptionPane.showMessageDialog(null, "Incorrect login or password or you haven't yet a free account. Go to registration to create account or try to log in with proper data", "Log in failed", JOptionPane.ERROR_MESSAGE);

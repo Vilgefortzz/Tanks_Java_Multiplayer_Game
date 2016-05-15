@@ -17,10 +17,6 @@ public class KeyInput extends KeyAdapter{
 
     private Player toControlPlayer; // tylko do wysyłania odpowiednich ruchów gracza
 
-    public Player getToControlPlayer() {
-        return toControlPlayer;
-    }
-
     public void setToControlPlayer(Player toControlPlayer) {
         this.toControlPlayer = toControlPlayer;
     }

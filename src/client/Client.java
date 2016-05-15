@@ -15,7 +15,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Random;
+
+import static database.Database.registeredUsers;
 
 public class Client {
 
@@ -99,7 +100,9 @@ public class Client {
             throw new IOException("Client didn't connect with server", ex);
         }
 
-        myPlayer = new Player(new Random().nextInt(5000) + 1);
+        // Stworzenie playera o unikalnym id przynależnym do niego z bazy danych
+        myPlayer = new Player(registeredUsers.get(frame.getYourLogin()).getId());
+        System.out.println("Player id: " + myPlayer.getId());
         keyboard.setToControlPlayer(myPlayer);
 
         sendYourId(myPlayer.getId()); // wysłanie do serwera, który go zapamięta (WAŻNE!!)

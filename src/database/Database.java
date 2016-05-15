@@ -5,7 +5,6 @@
 
 package database;
 
-
 import utilities.Utilities;
 
 import java.sql.*;
@@ -20,7 +19,7 @@ public class Database {
 
     private Connection connection = null;
     private Statement statement = null;
-    private Map<String, User> registeredUsers = null; // zarejestrowani użytkownicy w bazie danych < login, User >
+    public static Map<String, User> registeredUsers = null; // zarejestrowani użytkownicy w bazie danych < login, User >
 
     public void connectToDatabase() throws SQLException {
 
@@ -42,17 +41,19 @@ public class Database {
         registeredUsers = new HashMap<>();
 
         ResultSet result = statement.executeQuery("SELECT * FROM `tanks`.user");
+        int id;
         String login, password, firstName, lastName, email;
 
         while (result.next()) {
 
+            id = result.getInt("user_id");
             login = result.getString("login");
             password = result.getString("password");
             firstName = result.getString("first_name");
             lastName = result.getString("last_name");
             email = result.getString("email");
 
-            registeredUsers.put(login, new User(login, password, firstName, lastName, email));
+            registeredUsers.put(login, new User(id, login, password, firstName, lastName, email));
         }
     }
 
@@ -62,8 +63,6 @@ public class Database {
             if (registeredUsers.containsKey(login))
                 return false;
         }
-
-        registeredUsers.put(login, new User(login, password, firstName, lastName, email));
 
         PreparedStatement preparedStatement = null;
         String sqlCommand = "INSERT INTO `tanks`.user"
@@ -81,6 +80,11 @@ public class Database {
             preparedStatement.setString(5, email);
 
             preparedStatement.executeUpdate();
+
+
+            ResultSet result = statement.executeQuery("SELECT `user_id` FROM `tanks`.user WHERE `login`='" + login + "'");
+            int id = result.getInt("user_id");
+            registeredUsers.put(login, new User(id, login, password, firstName, lastName, email));
 
         } catch (SQLException e) {
 
