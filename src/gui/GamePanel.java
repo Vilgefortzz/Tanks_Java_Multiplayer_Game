@@ -79,14 +79,18 @@ public class GamePanel extends JPanel{
         backToPlayroom = new JButton("Go to the playroom");
         backToPlayroom.setForeground(Color.WHITE);
         backToPlayroom.setBackground(Color.BLACK);
-        backToPlayroom.setFont(new Font("Arial", Font.BOLD, 10));
+        backToPlayroom.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
 
         add(backToPlayroom, BorderLayout.NORTH);
 
         backToPlayroom.addActionListener(e -> SwingUtilities.invokeLater(() -> {
 
             Client klient = frame.getClient();
-            klient.disconnect();
+
+            // Dodawanie statystyk do bazy danych w momencie jak gracz opuści grę
+            if (frame.getDatabase().addStats(myPlayer.getId(), myPlayer.getDestroyed(), myPlayer.getDeaths())) {
+                klient.disconnect();
+            }
         }));
     }
 

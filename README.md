@@ -65,7 +65,7 @@ połączą sie z serwerem i wejdą do gry).
 		
 [2.3] Plik z logami klienta i serwera (klasa do obsługi logów sprzed 2 tygodni np.)
 
-[2.4] Zapis i wczytywanie stanu gry (punktacja, czas, obrażenia, ilość czołgów, które zniszczyłem itp.)
+[2.4] Zapis i wczytywanie stanu gry (punktacja, czas, ilość graczy, czołgi które zniszczyłem, ile respawnów itp.)
 
 ---------------------------------------------------------------------------------------------------------------------
 

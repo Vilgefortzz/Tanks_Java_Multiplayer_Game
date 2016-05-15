@@ -65,13 +65,18 @@ public class Database {
         }
 
         PreparedStatement preparedStatement = null;
-        String sqlCommand = "INSERT INTO `tanks`.user"
+
+        String sqlCommand1 = "INSERT INTO `tanks`.`user`"
                 + "(login, password, first_name, last_name, email) VALUES"
                 + "(?,?,?,?,?)";
 
+        String sqlCommand2 = "INSERT INTO `tanks`.`stats`"
+                + "(user_id) VALUES"
+                + "(?)";
+
         try {
 
-            preparedStatement = connection.prepareStatement(sqlCommand);
+            preparedStatement = connection.prepareStatement(sqlCommand1);
 
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, password);
@@ -81,10 +86,19 @@ public class Database {
 
             preparedStatement.executeUpdate();
 
+            ResultSet result = statement.executeQuery("SELECT `user_id` FROM `tanks`.`user` WHERE `login`='" + login + "'");
+            int id = 0;
+            if (result.next()) {
+                id = result.getInt("user_id");
+                registeredUsers.put(login, new User(id, login, password, firstName, lastName, email));
+            }
 
-            ResultSet result = statement.executeQuery("SELECT `user_id` FROM `tanks`.user WHERE `login`='" + login + "'");
-            int id = result.getInt("user_id");
-            registeredUsers.put(login, new User(id, login, password, firstName, lastName, email));
+            // Dodanie usera do tabeli stats z zerowymi statystykami
+            preparedStatement = connection.prepareStatement(sqlCommand2);
+
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
 
@@ -101,20 +115,56 @@ public class Database {
         return true;
     }
 
-    public boolean loginUser(String login, String password){
+    public boolean loginUser(String login, String password) {
 
         if (registeredUsers.size() == 0) {
-                return false;
+            return false;
         }
 
-        if (registeredUsers.containsKey(login)){
-            if (registeredUsers.get(login).getPassword().equals(password)){
+        if (registeredUsers.containsKey(login)) {
+            if (registeredUsers.get(login).getPassword().equals(password)) {
                 return true;
-            }
-            else
+            } else
                 return false;
-        }
-        else
+        } else
             return false;
+    }
+
+
+    public boolean addStats(int id, int destroyed, int deaths) {
+
+        PreparedStatement preparedStatement = null;
+        String sqlCommand = "UPDATE `tanks`.`stats` SET `destroyed`= ?, `deaths` = ? WHERE `user_id`= ?";
+
+        int previousDestroyed = 0;
+        int previousDeaths = 0;
+
+        try {
+
+            // Zczytanie wartości sprzed aktualizacji
+            ResultSet result = statement.executeQuery("SELECT * FROM `tanks`.`stats` WHERE `user_id`='" + id + "'");
+            if (result.next()) {
+                previousDestroyed = result.getInt("destroyed");
+                previousDeaths = result.getInt("deaths");
+            }
+
+            int actualDestroyed = destroyed + previousDestroyed;
+            int actualDeaths = deaths + previousDeaths;
+
+            preparedStatement = connection.prepareStatement(sqlCommand);
+
+            preparedStatement.setInt(1, actualDestroyed);
+            preparedStatement.setInt(2, actualDeaths);
+            preparedStatement.setInt(3, id);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+
+            System.err.println("not assigned stats to user");
+            return false;
+        }
+
+        return true;
     }
 }

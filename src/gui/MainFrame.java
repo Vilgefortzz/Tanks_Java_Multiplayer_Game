@@ -215,6 +215,10 @@ public class MainFrame extends JFrame implements ActionListener{
         }
     }
 
+    public Database getDatabase() {
+        return database;
+    }
+
     public String getYourLogin() {
         return yourLogin;
     }

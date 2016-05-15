@@ -211,11 +211,6 @@ public class Player extends Sprite {
                 orientation = 3;
                 dx = 2;
             }
-
-            else if (key == KeyEvent.VK_ESCAPE){
-
-                System.exit(0);
-            }
     }
 
     public void keyReleased(int key) {

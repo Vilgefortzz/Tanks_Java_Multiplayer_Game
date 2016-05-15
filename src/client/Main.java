@@ -28,7 +28,8 @@ public class Main {
 
             frame.setTitle("Client not logged now");
             frame.setSize(sizeX, sizeY);
-            frame.setResizable(true);
+            frame.setResizable(false);
+            frame.setUndecorated(true);
 
             frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
