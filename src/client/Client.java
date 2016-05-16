@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import static database.Database.registeredUsers;
+import static gui.MainFrame.yourLogin;
 
 public class Client {
 
@@ -101,7 +102,7 @@ public class Client {
         }
 
         // Stworzenie playera o unikalnym id przynależnym do niego z bazy danych
-        myPlayer = new Player(registeredUsers.get(frame.getYourLogin()).getId());
+        myPlayer = new Player(registeredUsers.get(yourLogin).getId());
         System.out.println("Player id: " + myPlayer.getId());
         keyboard.setToControlPlayer(myPlayer);
 

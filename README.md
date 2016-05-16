@@ -75,7 +75,7 @@ połączą sie z serwerem i wejdą do gry).
 
 [3.2] ~~Ruch gracza + kolizje (wątek animacji)~~ [ 05.04.16 ]
 
-[3.3] ~~Utworzenie wątku serwera(akceptujący) + wątki dla każdego klienta + mechanizm bezpiecznego zatrzymywania wątku(join, flagi podtrzymujące)~~ [ 26.04.16 ]
+[3.3] ~~Utworzenie wątku serwera (akceptujący) + wątki dla każdego klienta + mechanizm bezpiecznego zatrzymywania wątku (join, flagi podtrzymujące)~~ [ 26.04.16 ]
 
 [3.4] ~~Wątek do każdego klienta (synchronizowanie obiektów i bezpieczne przerwania)~~ [ 10.05.16 ]
 
@@ -83,7 +83,7 @@ połączą sie z serwerem i wejdą do gry).
 
 [4] Bazy danych: JDBC dla: MySQL
 
-[4.1] Zaprojektowanie bazy danych użytkowników, połączenie z bazą za pomocą JDBC(min. 3 tabele)
+[4.1] ~~Zaprojektowanie bazy danych użytkowników, połączenie z bazą za pomocą JDBC~~ [ 17.05.16 ]
 
     -> łączenie z bazą danych
     -> wstawianie danych do bazy
@@ -115,7 +115,7 @@ połączą sie z serwerem i wejdą do gry).
 	-> wysyłanie komunikatów do serwera i oczekiwanie na odpowiednią odpowiedź w zależności od wysłanej flagi.
 	-> wykonanie odpowiedniej operacji w zależności od wysłanej informacji zwrotnej od serwera.
 
-[5.3] Ustawienie połączenia wielu klientów poprzez serwer
+[5.3] ~~Ustawienie połączenia wielu klientów poprzez serwer, logika server-klient w grze~~ [ 17.05.16 ]
 
 [5.4] ~~Protokół komunikacji DataInputStream, DataOutputStream~~ [ 26.04.16 ]
 
@@ -132,6 +132,8 @@ połączą sie z serwerem i wejdą do gry).
 	-> dodanie odpowiednich grafik związanych z tematyką gry
 	-> utworzenie przejrzystego menu głównego aplikacji
 	-> zmiana stylu buttonów na przyjemny dla wzroku
+	
+[6.4] ~~Stworzenie tabeli ze statystykami użytkowników (sortowanie wyników itp.)~~ [ 17.05.16 ]
 
 ---------------------------------------------------------------------------------------------------------------------
 

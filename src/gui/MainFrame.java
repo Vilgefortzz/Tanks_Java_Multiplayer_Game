@@ -38,7 +38,7 @@ public class MainFrame extends JFrame implements ActionListener{
     // Baza danych
 
     private Database database = null;
-    private String yourLogin;
+    public static String yourLogin;
 
     // Panele 1) menu główne + poboczne 2) właściwa gra
 
@@ -217,10 +217,6 @@ public class MainFrame extends JFrame implements ActionListener{
 
     public Database getDatabase() {
         return database;
-    }
-
-    public String getYourLogin() {
-        return yourLogin;
     }
 
     public GamePanel getGamePanel() {
@@ -713,14 +709,14 @@ public class MainFrame extends JFrame implements ActionListener{
 
         // Nagłowki dla tabeli (nazwy kolumn)
         String[] columns = new String[] {
-                "Login", "Destroyed Tanks", "Number of deaths"
+                "Login", "Destroyed Tanks", "Number of deaths", "Difference"
         };
 
-        // Dane do tabeli (tablica 2-wymiarowa - wiersz, kolumna)
+        // Dane do tabeli z bazy danych (tablica 2-wymiarowa - wiersz, kolumna)
         Object[][] data = database.enterDataToTable();
 
         final Class[] columnClass = new Class[] {
-                String.class, Integer.class, Integer.class
+                String.class, Integer.class, Integer.class, Integer.class
         };
 
         // Stworzenie modelu z danymi
@@ -752,6 +748,14 @@ public class MainFrame extends JFrame implements ActionListener{
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         rankTable.setDefaultRenderer(String.class, centerRenderer);
         rankTable.setDefaultRenderer(Integer.class, centerRenderer);
+
+        // Umożliwienie sortowania wierszy w.g odpowiednich kryteriów
+        rankTable.setAutoCreateRowSorter(true);
+
+        // Podświetlenie wybranego wiersza
+        rankTable.addColumnSelectionInterval(0,3);
+        rankTable.setSelectionBackground(new Color(225, 226, 16));
+        rankTable.setSelectionForeground(new Color(0,0,0));
     }
 
     @Override
