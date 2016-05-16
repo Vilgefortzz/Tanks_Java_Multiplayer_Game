@@ -133,8 +133,8 @@ public class Database {
 
     public boolean addStats(int id, int destroyed, int deaths) {
 
-        PreparedStatement preparedStatement = null;
-        String sqlCommand = "UPDATE `tanks`.`stats` SET `destroyed`= ?, `deaths` = ? WHERE `user_id`= ?";
+        PreparedStatement preparedStatement;
+        String sqlCommand = "UPDATE tanks.stats SET destroyed = ?, deaths = ? WHERE user_id = ?";
 
         int previousDestroyed = 0;
         int previousDeaths = 0;
@@ -142,7 +142,7 @@ public class Database {
         try {
 
             // Zczytanie wartości sprzed aktualizacji
-            ResultSet result = statement.executeQuery("SELECT * FROM `tanks`.`stats` WHERE `user_id`='" + id + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM tanks.stats WHERE user_id = '" + id + "'");
             if (result.next()) {
                 previousDestroyed = result.getInt("destroyed");
                 previousDeaths = result.getInt("deaths");
@@ -166,5 +166,48 @@ public class Database {
         }
 
         return true;
+    }
+
+    public Object[][] enterDataToTable() {
+
+        int numberOfPlayers = 0;
+        int indexRow = 0;
+        int indexCol = 0;
+        String login;
+        int destroyed, deaths;
+        Object[][] data;
+
+        try {
+
+            ResultSet rezultat = statement.executeQuery("SELECT * FROM tanks.stats");
+
+            while(rezultat.next()) {
+                numberOfPlayers++;
+            }
+
+            data = new Object[numberOfPlayers][3];
+
+            ResultSet result = statement.executeQuery("SELECT u.login, s.destroyed, s.deaths FROM tanks.user as u" +
+                    " INNER JOIN tanks.stats as s" +
+                    " WHERE u.user_id = s.user_id");
+
+            while(result.next()) {
+
+                login = result.getString("login");
+                data[indexRow][indexCol++] = login;
+                destroyed = result.getInt("destroyed");
+                data[indexRow][indexCol++] = destroyed;
+                deaths = result.getInt("deaths");
+                data[indexRow][indexCol] = deaths;
+
+                indexRow++;
+                indexCol = 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+            return data;
     }
 }

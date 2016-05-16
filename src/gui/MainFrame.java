@@ -12,6 +12,8 @@ import utilities.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,6 +97,7 @@ public class MainFrame extends JFrame implements ActionListener{
     // przyciski do menu pobocznego (statystyki, wyniki)
 
     private JLabel rank;
+    private JTable rankTable;
     private JButton backBtn3;
 
     // przyciski do menu pobocznego (sterowanie)
@@ -140,10 +143,9 @@ public class MainFrame extends JFrame implements ActionListener{
         boxLogIn = createLogInMenu();
         boxSignUp = createSignUpMenu();
         boxLoggedUser = createLoggedUserMenu();
-        boxStats = createStatsMenu();
         boxHelp = createHelpMenu();
 
-        // Dodanie akcji do buttonów
+        // Dodanie akcji do buttonów (oprócz statystyk, które są boxem zmiennym aktualizowanym)
 
         signInBtn.addActionListener(this);
         creditsBtn.addActionListener(this);
@@ -160,8 +162,6 @@ public class MainFrame extends JFrame implements ActionListener{
         statsBtn.addActionListener(this);
         helpBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
-
-        backBtn3.addActionListener(this);
 
         backBtn4.addActionListener(this);
 
@@ -246,7 +246,7 @@ public class MainFrame extends JFrame implements ActionListener{
         // Stworzenie napisu głównego
 
         title = new JLabel("TANKS - MULTIPLAYER");
-        title.setFont(new Font("Courier New", Font.BOLD, 100));
+        title.setFont(new Font("Comic Sans MS", Font.BOLD, 100));
         title.setForeground(Color.WHITE);
         box.add(title);
 
@@ -317,7 +317,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         logIn = new JLabel("LOG IN");
         logIn.setForeground(Color.WHITE);
-        logIn.setFont(new Font("Courier New", Font.BOLD, 75));
+        logIn.setFont(new Font("Comic Sans MS", Font.BOLD, 75));
         box.add(logIn);
 
         box.add(Box.createVerticalStrut(10));
@@ -349,14 +349,14 @@ public class MainFrame extends JFrame implements ActionListener{
         loginBtn.setFont(new Font("Arial", Font.BOLD, 20));
         box.add(loginBtn);
 
-        box.add(Box.createVerticalStrut(20));
+        box.add(Box.createVerticalStrut(50));
         registrationInfo = new JLabel("<html>You don't have an account yet?" +
                 "<br> Don't think twice,<br>click the button below -></html>");
-        registrationInfo.setForeground(new Color(246, 236, 218));
-        registrationInfo.setFont(new Font("Courier New", Font.BOLD, 20));
+        registrationInfo.setForeground(new Color(225, 226, 16));
+        registrationInfo.setFont(new Font("Arial", Font.ITALIC, 18));
         box.add(registrationInfo);
 
-        box.add(Box.createVerticalStrut(10));
+        box.add(Box.createVerticalStrut(12));
         goToRegistration = new JButton("Create an account for FREE");
         goToRegistration.setForeground(Color.WHITE);
         goToRegistration.setBackground(Color.BLACK);
@@ -378,7 +378,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         registration = new JLabel("REGISTRATION");
         registration.setForeground(Color.WHITE);
-        registration.setFont(new Font("Courier New", Font.BOLD, 75));
+        registration.setFont(new Font("Comic Sans MS", Font.BOLD, 75));
         box.add(registration);
 
         box.add(Box.createVerticalStrut(10));
@@ -405,18 +405,18 @@ public class MainFrame extends JFrame implements ActionListener{
         passwordReg.setMaximumSize(new Dimension(300, 30));
         box.add(passwordReg);
 
-        box.add(Box.createVerticalStrut(10));
+        box.add(Box.createVerticalStrut(20));
         passwordStrength = new JProgressBar();
-        passwordStrength.setPreferredSize(new Dimension(250, 20));
-        passwordStrength.setMaximumSize(new Dimension(250, 20));
+        passwordStrength.setPreferredSize(new Dimension(220, 15));
+        passwordStrength.setMaximumSize(new Dimension(220, 15));
         box.add(passwordStrength);
 
-        box.add(Box.createVerticalStrut(0));
+        box.add(Box.createVerticalStrut(5));
         passwordStrenghtInfo = new JLabel();
         passwordStrenghtInfo.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
         box.add(passwordStrenghtInfo);
 
-        box.add(Box.createVerticalStrut(30));
+        box.add(Box.createVerticalStrut(40));
         firstNameWriteReg = new JLabel("First name:");
         firstNameWriteReg.setForeground(Color.WHITE);
         firstNameWriteReg.setFont(new Font("Arial", Font.BOLD, 15));
@@ -467,16 +467,16 @@ public class MainFrame extends JFrame implements ActionListener{
     }
 
     private Box createLoggedUserMenu(){
+
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20));
 
         playroom = new JLabel("Playroom");
-        playroom.setForeground(new Color(86, 192, 46));
+        playroom.setForeground(new Color(67, 209, 17));
         playroom.setFont(new Font("Comic Sans MS", Font.BOLD, 80));
         box.add(playroom);
 
         box.add(Box.createVerticalStrut(6));
-
         playBtn = new JButton("Play");
         playBtn.setForeground(Color.WHITE);
         playBtn.setBackground(Color.BLACK);
@@ -484,7 +484,6 @@ public class MainFrame extends JFrame implements ActionListener{
         box.add(playBtn);
 
         box.add(Box.createVerticalStrut(6));
-
         statsBtn = new JButton("Stats");
         statsBtn.setForeground(Color.WHITE);
         statsBtn.setBackground(Color.BLACK);
@@ -509,17 +508,27 @@ public class MainFrame extends JFrame implements ActionListener{
     }
 
     private Box createStatsMenu(){
+
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20));
 
-        rank = new JLabel("RANK");
+        rank = new JLabel("GLOBAL STATISTICS");
         rank.setForeground(Color.WHITE);
-        rank.setFont(new Font("Courier New", Font.BOLD, 75));
+        rank.setFont(new Font("Comic Sans MS", Font.BOLD, 75));
         box.add(rank);
 
-        box.add(Box.createVerticalStrut(6));
+        box.add(Box.createVerticalStrut(10));
 
+        // Stworzenie tabeli ze statystykami
+        prepareStatsTable();
+
+        // Dodanie paska przewijającego do tabeli oraz do boxa
+        box.add(new JScrollPane(rankTable));
+
+        box.add(Box.createVerticalStrut(6));
         backBtn3 = backButton();
+        // Dodanie akcji za każdym razem do przycisku wstecz
+        backBtn3.addActionListener(this);
         box.add(backBtn3);
 
         return box;
@@ -700,6 +709,51 @@ public class MainFrame extends JFrame implements ActionListener{
         Utilities.join(checking);
     }
 
+    private void prepareStatsTable(){
+
+        // Nagłowki dla tabeli (nazwy kolumn)
+        String[] columns = new String[] {
+                "Login", "Destroyed Tanks", "Number of deaths"
+        };
+
+        // Dane do tabeli (tablica 2-wymiarowa - wiersz, kolumna)
+        Object[][] data = database.enterDataToTable();
+
+        final Class[] columnClass = new Class[] {
+                String.class, Integer.class, Integer.class
+        };
+
+        // Stworzenie modelu z danymi
+        DefaultTableModel model = new DefaultTableModel(data, columns) {
+
+            @Override
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex)
+            {
+                return columnClass[columnIndex];
+            }
+
+        };
+
+        // Stworzenie tabeli na podstawie modelu (początkowo pusta)
+        rankTable = new JTable(model);
+
+        // Wyśrodkowanie nazw kolum (headerów)
+        ((DefaultTableCellRenderer)rankTable.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Ustawienie wyśrodkowania danych gromadzonych w tabeli
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        rankTable.setDefaultRenderer(String.class, centerRenderer);
+        rankTable.setDefaultRenderer(Integer.class, centerRenderer);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e){
 
@@ -866,6 +920,9 @@ public class MainFrame extends JFrame implements ActionListener{
 
             boxLoggedUser.setVisible(false);
             menuPanel.remove(boxLoggedUser);
+
+            boxStats = createStatsMenu();
+
             menuPanel.add(boxStats);
             boxStats.setVisible(true);
         }
