@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.LoadImages.*;
@@ -33,7 +34,7 @@ public class Server {
      */
 
     private Thread serverThread = null;
-    private ArrayList<Thread> clientThreads = null; // wątki dla każdego klienta, aby można było je pozamykać
+    private List<Thread> clientThreads = null; // wątki dla każdego klienta, aby można było je pozamykać
 
     /*
     Sockety do komunikacji
@@ -66,15 +67,17 @@ public class Server {
         return running;
     }
 
-    public void start(int port) throws IOException{
+    public synchronized void start(int port) throws IOException{
 
         if (started){
+            // TODO LOGS tutaj
             throw new IOException("Server is started, you can't start it again");
         }
 
         try {
             serverSocket = new ServerSocket(port); // utworzenie serverSocketa na danym porcie
         } catch (IOException ex){
+            // TODO LOGS tutaj
             throw new IOException("Error to create server", ex);
         }
 
@@ -101,6 +104,7 @@ public class Server {
                 try {
 
                     Socket clientSocket = serverSocket.accept();
+                    // TODO LOGS tutaj
                     System.out.println("Polaczono z klientem");
 
                     DataOutputStream outstream = new DataOutputStream(clientSocket.getOutputStream());
@@ -115,6 +119,7 @@ public class Server {
 
                 } catch (IOException e){
 
+                    // TODO LOGS tutaj
                     System.out.println("Client didn't connect to server");
 
                     // Nie trzeba zamykać strumieni bo były to zmienne lokalne
@@ -132,21 +137,51 @@ public class Server {
         Thread clientThread = new Thread(() -> {
 
             int playerID = 0;
+            boolean createdProperly = true;
+
             try {
                 playerID = in.readInt();
+                System.out.println("ID: " + playerID);
             } catch (IOException e) {
-                e.printStackTrace();
+                // TODO LOGS tutaj
+                System.err.println("Client not created properly");
+                createdProperly = false;
             }
-            System.out.println("playerID: " + playerID);
 
-            try {
-                eventListening(in, clientID); // pętla nasłuchująca eventy od konkretnego klienta
-            } catch (IOException e) {
-                System.out.println("Client left the game");
+            if (createdProperly){
+
+                try {
+                    eventListening(in, clientID); // pętla nasłuchująca eventy od konkretnego klienta
+                } catch (IOException e) {
+                    // TODO LOGS tutaj
+                    System.out.println("Client left the game");
+                }
+                finally {
+
+                    // Zamknięcie strumieni dla klienta + socketa
+                    Utilities.closingSocketsAndStreams(out);
+                    Utilities.closingSocketsAndStreams(in);
+                    Utilities.closingSocketsAndStreams(clientSockets.get(clientID));
+
+                    // Usunięcie z mapy strumieni oraz socketów
+                    dataOutputStreams.remove(clientID);
+                    dataInputStreams.remove(clientID);
+                    clientSockets.remove(clientID);
+
+                    registeredClients.remove(playerID);
+
+                    // Powiadomienie pozostałych klientów o odejściu konkretnego klienta
+                    try {
+                        for (DataOutputStream outputStream : dataOutputStreams.values()){
+                            sendUnRegisterInfo(outputStream, playerID);
+                        }
+                    } catch (IOException e1) {
+                        System.err.println("Notification others is failed!!!");
+                    }
+                }
             }
-            finally {
+            else {
 
-                System.out.println("Witam ciebie");
                 // Zamknięcie strumieni dla klienta + socketa
                 Utilities.closingSocketsAndStreams(out);
                 Utilities.closingSocketsAndStreams(in);
@@ -156,17 +191,6 @@ public class Server {
                 dataOutputStreams.remove(clientID);
                 dataInputStreams.remove(clientID);
                 clientSockets.remove(clientID);
-
-                registeredClients.remove(playerID);
-
-                // Powiadomienie pozostałych klientów o odejściu konkretnego klienta
-                try {
-                    for (DataOutputStream outputStream : dataOutputStreams.values()){
-                        sendUnRegisterInfo(outputStream, playerID);
-                    }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
             }
         });
 
@@ -174,38 +198,29 @@ public class Server {
         clientThread.start(); // startowanie wątku klienta
     }
 
-    public void stop()
-    {
-        if (started)
-        {
+    public synchronized void stop() {
+
+        if (started) {
+
             running = false; // zatrzymanie pętli
 
             // Zamykanie wszystkich strumieni wyjściowych
 
-            for (DataOutputStream out : dataOutputStreams.values()){
-                Utilities.closingSocketsAndStreams(out);
-            }
+            dataOutputStreams.values().forEach(Utilities::closingSocketsAndStreams);
 
             // Zamykanie wszystkich strumieni wejściowych
 
-            for (DataInputStream in : dataInputStreams.values()){
-                Utilities.closingSocketsAndStreams(in);
-            }
+            dataInputStreams.values().forEach(Utilities::closingSocketsAndStreams);
 
             // Zamykanie wszystkich socketów
 
-            for (Socket socket : clientSockets.values()){
-                Utilities.closingSocketsAndStreams(socket);
-            }
+            clientSockets.values().forEach(Utilities::closingSocketsAndStreams);
 
             Utilities.closingSocketsAndStreams(serverSocket); // zamknięcie serverSocketa
 
             // Czekanie, aż wątki klientów wykonają się do końca
 
-            for (Thread thread : clientThreads){
-
-                Utilities.join(thread);
-            }
+            clientThreads.forEach(Utilities::join);
 
             Utilities.join(serverThread); // czekanie aż wątek servera wykonana się  do końca
 
@@ -220,8 +235,8 @@ public class Server {
             // rodzaj komunikatu
             int communique = in.readInt();
 
-            switch (communique)
-            {
+            switch (communique) {
+
                 case 1:
                     registerHandling(in);
                     break;
@@ -263,12 +278,14 @@ public class Server {
         out.writeInt(orientation);
         out.writeInt(x);
         out.writeInt(y);
+        out.flush();
     }
 
     private synchronized void sendUnRegisterInfo(DataOutputStream out, int id) throws IOException {
 
         out.writeInt(2);
         out.writeInt(id);
+        out.flush();
         System.out.println("Wysylam do pozostalych o odejsciu");
     }
 
@@ -279,6 +296,7 @@ public class Server {
         out.writeInt(orientation);
         out.writeInt(dx);
         out.writeInt(dy);
+        out.flush();
     }
 
     private synchronized void sendFireInfo(DataOutputStream out, int id, int orientation) throws IOException {
@@ -286,12 +304,14 @@ public class Server {
         out.writeInt(4);
         out.writeInt(id);
         out.writeInt(orientation);
+        out.flush();
     }
 
     private synchronized void sendCollisionTankWithWallInfo(DataOutputStream out, int id) throws IOException {
 
         out.writeInt(5);
         out.writeInt(id);
+        out.flush();
     }
 
     private synchronized void sendRespawnInfo(DataOutputStream out, int id, int x, int y) throws IOException {
@@ -300,12 +320,14 @@ public class Server {
         out.writeInt(id);
         out.writeInt(x);
         out.writeInt(y);
+        out.flush();
     }
 
     private synchronized void sendDestroyedByInfo(DataOutputStream out, int id) throws IOException {
 
         out.writeInt(7);
         out.writeInt(id);
+        out.flush();
     }
 
     private void registerHandling(DataInputStream in) throws IOException {

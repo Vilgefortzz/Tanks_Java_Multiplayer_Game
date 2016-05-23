@@ -88,7 +88,7 @@ public class Database {
 
             preparedStatement.executeUpdate();
 
-            ResultSet result = statement.executeQuery("SELECT `user_id` FROM `tanks`.`user` WHERE `login`='" + login + "'");
+            ResultSet result = statement.executeQuery("SELECT user_id FROM tanks.user WHERE login = '" + login + "'");
             int id = 0;
             if (result.next()) {
                 id = result.getInt("user_id");
@@ -105,7 +105,6 @@ public class Database {
         } catch (SQLException e) {
 
             System.err.println("Can't insert new user to database");
-            e.printStackTrace();
             return false;
 
         } finally {
@@ -135,8 +134,8 @@ public class Database {
 
     public boolean addStats(int id, int destroyed, int deaths) {
 
-        PreparedStatement preparedStatement;
-        String sqlCommand = "UPDATE tanks.stats SET destroyed = ?, deaths = ?, difference = ? WHERE user_id = ?";
+        PreparedStatement preparedStatement = null;
+        String sqlCommand = "UPDATE tanks.stats SET destroyed = ? , deaths = ? , difference = ? WHERE user_id = ?";
 
         int previousDestroyed = 0;
         int previousDeaths = 0;
@@ -169,6 +168,11 @@ public class Database {
 
             System.err.println("Not assigned stats to user");
             return false;
+
+        } finally {
+
+            if (preparedStatement != null)
+                Utilities.closingStatementsInDatabases(preparedStatement);
         }
 
         return true;
@@ -193,7 +197,8 @@ public class Database {
 
             data = new Object[numberOfPlayers][4];
 
-            ResultSet result = statement.executeQuery("SELECT u.login, s.destroyed, s.deaths, s.difference FROM tanks.user as u" +
+            ResultSet result = statement.executeQuery("SELECT u.login, s.destroyed, s.deaths, s.difference " +
+                    "FROM tanks.user as u" +
                     " INNER JOIN tanks.stats as s" +
                     " WHERE u.user_id = s.user_id");
 

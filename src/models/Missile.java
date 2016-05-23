@@ -5,7 +5,6 @@
 
 package models;
 
-
 import java.awt.*;
 import java.util.Map;
 
@@ -16,8 +15,8 @@ import static io.LoadImages.*;
 
 public class Missile extends Sprite{
 
-    private int damage = 5;
-    private final int MISSILE_SPEED = 6;
+    private int damage = 1;
+    private final int MISSILE_SPEED = 8;
     private int orientation;
     private int ownerID;
 
@@ -56,9 +55,7 @@ public class Missile extends Sprite{
     }
 
     public void hitPlayers(Map<Integer, Player> players) {
-        for (Player player : players.values())
-            if (getBounds().intersects(player.getBounds()))
-                hitPlayer(player);
+        players.values().stream().filter(player -> getBounds().intersects(player.getBounds())).forEachOrdered(this::hitPlayer);
     }
 
     private void hitPlayer(Player player) {
@@ -67,7 +64,7 @@ public class Missile extends Sprite{
 
             myPlayer.setHp(myPlayer.getHp() - damage); // traci życie
 
-            if (myPlayer.getHp() <= 0){
+            if (myPlayer.getHp() == 0){
 
                 Player tempPlayer = new Player(myPlayer.getId()); // stworzenie na nowej pozycji gracza tego samego
 

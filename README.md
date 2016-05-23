@@ -63,7 +63,7 @@ połączą sie z serwerem i wejdą do gry).
 
 [2.2] ~~Wczytywanie mapy~~ [ 22.03.16 ]
 		
-[2.3] Plik z logami klienta i serwera (klasa do obsługi logów sprzed 2 tygodni np.)
+[2.3] Plik z logami klienta i serwera (obsługa logów sprzed 2 tygodni, paczkowanie plików - rozmiar)
 
 [2.4] Zapis i wczytywanie stanu gry (punktacja, czas, ilość graczy, czołgi które zniszczyłem, ile respawnów itp.)
 
@@ -90,9 +90,9 @@ połączą sie z serwerem i wejdą do gry).
     -> wczytywanie danych z bazy do listy
     -> zamykanie połączenia
 
-[4.2] Mechanizm walidacji (regexy - java regexy + siła hasła)
+[4.2] ~~Mechanizm walidacji (regexy - java regexy + siła hasła)~~ [ 24.05.16 ]
 
-[4.3] Logika autoryzacji
+[4.3] ~~Logika autoryzacji~~ [ 24.05.16 ]
 
     -> logowanie
     -> rejestracja

@@ -37,7 +37,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
     // Baza danych
 
-    private Database database = null;
+    public static Database database = null;
     public static String yourLogin;
 
     // Panele 1) menu główne + poboczne 2) właściwa gra
@@ -171,7 +171,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         menuPanel = new MenuPanel();
         menuPanel.add(boxMenu);
-        gamePanel = new GamePanel(this, menuPanel);
+        gamePanel = new GamePanel(this);
 
         // Rozpoczęcie (menu główne)
 
@@ -537,7 +537,8 @@ public class MainFrame extends JFrame implements ActionListener{
         helpText = new JLabel("<html>You are driving a tank. Your goal is to eliminate " +
                 "other tanks.<br><br>1) Sign up entering your login and password" +
                 "<br><br>2) After registration sign in" +
-                "<br><br>3) Now you can join to the game<br><br>Your stats are remembered.<br><br>To move use:<br><br>W - up<br>A - left" +
+                "<br><br>3) Now you can join to the game<br><br>Your stats are remembered.<br><br>To move use:" +
+                "<br><br>W - up<br>A - left" +
                 "<br>S - down<br>D - right" + "<br><br>L - Attack<br><br>Gl and Hf</html>");
         helpText.setFont(new Font("Courier New", Font.BOLD, 26));
         helpText.setForeground(Color.WHITE);
@@ -789,7 +790,9 @@ public class MainFrame extends JFrame implements ActionListener{
 
             if (database.loginUser(loginLog.getText(), hashedPassword)){
 
-                JOptionPane.showMessageDialog(null, "You are successfully logged in", "", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "You are successfully logged in",
+                        "", JOptionPane.INFORMATION_MESSAGE);
+
                 yourLogin = loginLog.getText();
                 setTitle("Client logged as: " + yourLogin);
 
@@ -802,7 +805,9 @@ public class MainFrame extends JFrame implements ActionListener{
                 passwordLog.setText("");
             }
             else
-                JOptionPane.showMessageDialog(null, "Incorrect login or password or you haven't yet a free account. Go to registration to create account or try to log in with proper data", "Log in failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Incorrect login or password or you haven't yet a free account. " +
+                        "Go to registration to create account or try to log in with proper data",
+                        "Log in failed", JOptionPane.ERROR_MESSAGE);
         }
 
         if (e.getSource() == goToRegistration){
@@ -840,9 +845,11 @@ public class MainFrame extends JFrame implements ActionListener{
                 String nonHashedPassword = String.valueOf(passwordReg.getPassword());
                 String hashedPassword = Utilities.passwordHashing(nonHashedPassword);
 
-                if (database.registerUser(loginReg.getText(), hashedPassword, firstNameReg.getText(), lastNameReg.getText(), emailReg.getText())){
+                if (database.registerUser(loginReg.getText(), hashedPassword, firstNameReg.getText(),
+                        lastNameReg.getText(), emailReg.getText())){
 
-                    JOptionPane.showMessageDialog(null, "Account successfully created!", "", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Account successfully created! You can now log in",
+                            "ACCOUNT CREATED", JOptionPane.INFORMATION_MESSAGE);
 
                     boxSignUp.setVisible(false);
                     menuPanel.remove(boxSignUp);
@@ -858,10 +865,14 @@ public class MainFrame extends JFrame implements ActionListener{
                     stopThreadCheckingPasswordStrength();
                 }
                 else
-                    JOptionPane.showMessageDialog(null, "User with this login has already exists! Change login to create account", "Registration failed", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "User with this login has already exists!" +
+                            " Change login to create account",
+                            "Registration failed", JOptionPane.ERROR_MESSAGE);
             }
             else
-                JOptionPane.showMessageDialog(null, "Check your data format: length, email format correctness, uppercases", "Invalid data format", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Check your data format: " +
+                        "length, email format correctness, uppercases",
+                        "Invalid data format", JOptionPane.ERROR_MESSAGE);
         }
 
         if (e.getSource() == backBtn2){
@@ -893,9 +904,12 @@ public class MainFrame extends JFrame implements ActionListener{
             final String HOST = "localhost";
             final int PORT = 8080;
 
+            System.out.println("Wchodze poczatek");
+
             try {
 
                 client.connect(HOST, PORT);
+                System.out.println("Wchodze srodek");
 
             } catch (IOException ex) {
 
@@ -905,6 +919,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
             if (client.isConnected()){
 
+                System.out.println("Wchodze koniec");
                 boxLoggedUser.setVisible(false);
                 menuPanel.remove(boxLoggedUser);
                 menuPanel.setVisible(false);
@@ -916,7 +931,7 @@ public class MainFrame extends JFrame implements ActionListener{
                 add(gamePanel);
                 gamePanel.requestFocusInWindow();
 
-                gamePanel.runRepaintingThread(); // ustawienie flagi animating na true + uruchomienie wątku rysującego świat
+                gamePanel.runGameLoopThread(); // ustawienie flagi looping na true + uruchomienie wątku gameLoop
             }
         }
 
@@ -941,7 +956,8 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == logOutBtn){
 
-            JOptionPane.showMessageDialog(null, "You are succesfully logged out. I hope we will see you soon ;)", "", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "You are succesfully logged out. I hope we will see you soon ;)",
+                    "", JOptionPane.INFORMATION_MESSAGE);
             setTitle("Client not logged now");
 
             boxLoggedUser.setVisible(false);

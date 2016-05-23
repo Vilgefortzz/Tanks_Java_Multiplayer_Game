@@ -5,47 +5,30 @@
 
 package io;
 
-import models.Player;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import static client.Client.sendYourFire;
-import static client.Client.sendYourMove;
-
 public class KeyInput extends KeyAdapter{
 
-    private Player toControlPlayer; // tylko do wysyłania odpowiednich ruchów gracza
+    public static boolean[] keys = new boolean[120];
+    public static boolean up, down, left, right, fire, esc = false;
 
-    public void setToControlPlayer(Player toControlPlayer) {
-        this.toControlPlayer = toControlPlayer;
+    public void update() {
+
+        up = keys[KeyEvent.VK_W];
+        down = keys[KeyEvent.VK_S];
+        left = keys[KeyEvent.VK_A];
+        right = keys[KeyEvent.VK_D];
+        fire = keys[KeyEvent.VK_L];
+        esc = keys[KeyEvent.VK_ESCAPE];
     }
 
     public void keyPressed(KeyEvent e) {
-
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_L){
-
-            // Wysłanie informacji serwerowi o oddaniu strzału przez konkretnego klienta
-            sendYourFire(toControlPlayer.getId(), toControlPlayer.getOrientation());
-        }
-        else{
-
-            toControlPlayer.keyMoving(key);
-            // Wysłanie informacji serwerowi o ruchu konkretnego klienta
-            sendYourMove(toControlPlayer.getId(), toControlPlayer.getOrientation(), toControlPlayer.getDx(), toControlPlayer.getDy());
-        }
+        keys[e.getKeyCode()] = true;
     }
 
     public void keyReleased(KeyEvent e) {
-
-        int key = e.getKeyCode();
-
-        toControlPlayer.keyReleased(key);
-
-        // Wysłanie informacji serwerowi o ruchu konkretnego klienta
-
-        sendYourMove(toControlPlayer.getId(), toControlPlayer.getOrientation(), toControlPlayer.getDx(), toControlPlayer.getDy());
+        keys[e.getKeyCode()] = false;
     }
 }

@@ -7,7 +7,7 @@ package models;
 
 import java.awt.*;
 
-public class Sprite{
+public abstract class Sprite{
 
     // Parametry
 
@@ -37,7 +37,7 @@ public class Sprite{
         this.height = mainImage.getHeight(null);
     }
 
-    public Image getMainImage() {
+    protected Image getMainImage() {
         return mainImage;
     }
 

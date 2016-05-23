@@ -8,7 +8,6 @@ package client;
 import utilities.Utilities;
 import gui.GamePanel;
 import gui.MainFrame;
-import io.KeyInput;
 import models.Player;
 
 import java.io.DataInputStream;
@@ -53,7 +52,6 @@ public class Client {
 
     private MainFrame frame = null;
     private GamePanel game = null;
-    private KeyInput keyboard = null; // obsługa klawiatury
 
     /*
     Client dostaje playera do gry
@@ -68,7 +66,6 @@ public class Client {
 
         this.frame = frame;
         this.game = game;
-        keyboard = game.getKeyboard();
     }
 
     public boolean isConnected() {
@@ -77,6 +74,10 @@ public class Client {
 
     public boolean isRunning() {
         return running;
+    }
+
+    private MainFrame getFrame() {
+        return frame;
     }
 
     public void connect(String host, int port) throws IOException{
@@ -104,12 +105,13 @@ public class Client {
         // Stworzenie playera o unikalnym id przynależnym do niego z bazy danych
         myPlayer = new Player(registeredUsers.get(yourLogin).getId());
         System.out.println("Player id: " + myPlayer.getId());
-        keyboard.setToControlPlayer(myPlayer);
+        myPlayer.setClient(this);
+        myPlayer.setFrame(this.getFrame());
 
         sendYourId(myPlayer.getId()); // wysłanie do serwera, który go zapamięta (WAŻNE!!)
 
-        this.clientThread = new Thread(() ->
-        {
+        this.clientThread = new Thread(() -> {
+
                 try {
                     while (running){
                         eventListening();
@@ -118,13 +120,17 @@ public class Client {
                     running = false; // zatrzymanie pętli
                 } finally {
 
-                    System.out.println("Sprzatanko");
+                    System.out.println("Sprzatanie po kliencie");
 
                     Utilities.closingSocketsAndStreams(out); // zamykanie strumienia wyjściowego
                     Utilities.closingSocketsAndStreams(in); // zamykanie strumienia wejściowego
                     Utilities.closingSocketsAndStreams(clientSocket); // zamknięcie socketa
 
                     connected = false; // odłączenie klienta
+
+                    game.setLooping(false); // wątek rysujący przestaje działać
+                    Utilities.join(game.gameLoop);
+                    game.cleanGamePanel(); // usunięcie wszystkich playerów z listy
 
                     game.setVisible(false);
                     frame.remove(game);
@@ -133,10 +139,8 @@ public class Client {
                     frame.boxLoggedUser.setVisible(true);
                     frame.getMenuPanel().add(frame.boxLoggedUser);
 
+                    frame.setTitle("Client logged as: " + yourLogin);
                     frame.add(frame.getMenuPanel());
-
-                    game.deletePlayers(); // usunięcie wszystkich playerów z listy
-                    game.setAnimating(false); // wątek rysujący przestaje działać
                 }
         });
 
@@ -145,19 +149,15 @@ public class Client {
         clientThread.start();
 
         // Wysłanie informacji serwerowi o utworzonym graczu
-        try {
-            sendYourRegister(myPlayer.getId(), myPlayer.getOrientation(), myPlayer.getX(), myPlayer.getY());
-            System.out.println("Wysylam");
-        } catch (IOException e){
-            throw new IOException("Loose connection, cannot send information about new player to another clients", e);
-        }
+        sendYourRegister(myPlayer.getId(), myPlayer.getOrientation(), myPlayer.getX(), myPlayer.getY());
+        System.out.println("Wysylam");
     }
 
     public void disconnect() {
 
         if (connected) {
-            Utilities.closingSocketsAndStreams(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli przez rzucenie wyjątku
-            Utilities.join(clientThread); // czekanie aż wątek się wykonana do końca
+            Utilities.closingSocketsAndStreams(in); // zamknięcie strumienia wejściowego czyli wyskoczenie z pętli
+                                                    // przez rzucenie wyjątku
         }
     }
 
@@ -166,8 +166,8 @@ public class Client {
         // rodzaj komunikatu
         int communique = in.readInt();
 
-        switch (communique)
-        {
+        switch (communique) {
+
             case 1:
                 registerHandling();
                 break;
@@ -204,22 +204,40 @@ public class Client {
     private void sendYourId(int id) throws IOException {
 
         // Wysłanie serwerowi głównego id aby serwer zapamiętał go
-        out.writeInt(id);
+        try {
+            out.writeInt(id);
+            out.flush();
+        } catch (IOException e) {
+            // TODO LOGS writing
+            throw new IOException("Loose connection, cannot send information about id of new player to server", e);
+        }
     }
 
     private void sendYourRegister(int id, int orientation, int x, int y) throws IOException {
 
-        out.writeInt(1);
-        out.writeInt(id);
-        out.writeInt(orientation);
-        out.writeInt(x);
-        out.writeInt(y);
+        try {
+            out.writeInt(1);
+            out.writeInt(id);
+            out.writeInt(orientation);
+            out.writeInt(x);
+            out.writeInt(y);
+            out.flush();
+        } catch (IOException e) {
+            // TODO LOGS writing
+            throw new IOException("Loose connection, cannot send information about new player to another clients", e);
+        }
     }
 
-    public void sendYourUnRegister(int id) throws IOException {
+    public void sendYourUnRegister(int id) {
 
-        out.writeInt(2);
-        out.writeInt(id);
+        try {
+            out.writeInt(2);
+            out.writeInt(id);
+            out.flush();
+        } catch (IOException e) {
+            // TODO LOGS writing
+            e.printStackTrace();
+        }
     }
 
     public static void sendYourMove(int id, int orientation, int dx, int dy){
@@ -230,7 +248,9 @@ public class Client {
             out.writeInt(orientation);
             out.writeInt(dx);
             out.writeInt(dy);
+            out.flush();
         } catch (IOException e) {
+            // TODO LOGS writing
             e.printStackTrace();
         }
     }
@@ -242,7 +262,7 @@ public class Client {
             out.writeInt(id);
             out.writeInt(orientation);
         } catch (IOException e) {
-            e.printStackTrace();
+            // TODO LOGS writing
         }
     }
 
@@ -252,6 +272,7 @@ public class Client {
             out.writeInt(5);
             out.writeInt(id);
         } catch (IOException e) {
+            // TODO LOGS writing
             e.printStackTrace();
         }
     }
@@ -264,6 +285,7 @@ public class Client {
             out.writeInt(x);
             out.writeInt(y);
         } catch (IOException e) {
+            // TODO LOGS writing
             e.printStackTrace();
         }
     }
@@ -274,6 +296,7 @@ public class Client {
             out.writeInt(7);
             out.writeInt(id);
         } catch (IOException e) {
+            // TODO LOGS writing
             e.printStackTrace();
         }
     }

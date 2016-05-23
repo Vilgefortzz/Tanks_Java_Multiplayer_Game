@@ -5,11 +5,21 @@
 
 package models;
 
+import client.Client;
+import gui.MainFrame;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
+import java.util.List;
 
+import static client.Client.sendYourFire;
+import static client.Client.sendYourMove;
 import static gui.GamePanel.walls;
+import static gui.MainFrame.database;
+import static gui.MainFrame.yourLogin;
+import static io.KeyInput.*;
 import static io.LoadImages.*;
 
 public class Player extends Sprite {
@@ -32,8 +42,10 @@ public class Player extends Sprite {
     private int deaths = 0;
     private int dx;
     private int dy;
-    private ArrayList<Missile> missiles = null;
+    private List<Missile> missiles = null;
 
+    private Client client = null;
+    private MainFrame frame = null;
 
     // Konstruktor do losowego generowania
     public Player(int id) {
@@ -67,6 +79,14 @@ public class Player extends Sprite {
         getImageDimensions();
     }
 
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setFrame(MainFrame frame) {
+        this.frame = frame;
+    }
+
     public int getId() {
         return id;
     }
@@ -87,7 +107,7 @@ public class Player extends Sprite {
 
     public int getDy() {return dy;}
 
-    public ArrayList<Missile> getMissiles() {
+    public List<Missile> getMissiles() {
         return missiles;
     }
 
@@ -133,11 +153,8 @@ public class Player extends Sprite {
 
                 isIntersection = false;
 
-                this.x = new Random().nextInt(1330 - this.width);
-                this.y = new Random().nextInt(740 - this.height);
-
-                System.out.println(this.x);
-                System.out.println(this.y);
+                this.x = new Random().nextInt(1239) + 48;
+                this.y = new Random().nextInt(615) + 72;
 
                 for (Wall wall1 : walls) {
 
@@ -154,6 +171,7 @@ public class Player extends Sprite {
     }
 
     public void updateMovement() {
+
         x += dx;
         y += dy;
     }
@@ -186,46 +204,71 @@ public class Player extends Sprite {
         missiles.add(new Missile(1, x - 11, y + height/2 - 5, id));
     }
 
-    public void keyMoving(int key) {
+    public void tankMovement() {
 
-            if (key == KeyEvent.VK_S){
+            if (down){
 
                 orientation = 4;
-                dy = 2;
+                dy = 1;
+                dx = 0;
+                // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+                sendYourMove(id, orientation, dx, dy);
             }
 
-            else if (key == KeyEvent.VK_A){
+            if (left){
 
                 orientation = 1;
-                dx = -2;
+                dx = -1;
+                dy = 0;
+                // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+                sendYourMove(id, orientation, dx, dy);
             }
 
-            else if (key == KeyEvent.VK_W){
+            if (up){
 
                 orientation = 2;
-                dy = -2;
+                dy = -1;
+                dx = 0;
+                // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+                sendYourMove(id, orientation, dx, dy);
             }
 
-            else if (key == KeyEvent.VK_D){
+            if (right){
 
                 orientation = 3;
-                dx = 2;
+                dx = 1;
+                dy = 0;
+                // Wysłanie informacji serwerowi o ruchu konkretnego klienta
+                sendYourMove(id, orientation, dx, dy);
             }
-    }
 
-    public void keyReleased(int key) {
+            if (fire){
 
-        if (key == KeyEvent.VK_W)
-            dy = 0;
+                // Wysłanie informacji serwerowi o oddaniu strzału przez konkretnego klienta
+                sendYourFire(id, orientation);
+            }
 
-        if (key == KeyEvent.VK_A)
-            dx = 0;
+            if (esc){
 
-        if (key == KeyEvent.VK_D)
-            dx = 0;
+                if (JOptionPane.showConfirmDialog(null, "Do you want to leave the game???", "PAUSE",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 
-        if (key == KeyEvent.VK_S)
-            dy = 0;
+                    // Dodawanie statystyk do bazy danych w momencie jak gracz opuści grę
+                    if (database.addStats(id, destroyed, deaths)) {
+
+                        System.out.println("Udalo sie zapisac dane");
+                    }
+                    else{
+                        // TODO LOGS writing nie udalo sie zapisac danych
+                        System.out.println("Nie udalo sie zapisac danych");
+                    }
+
+                    esc = keys[KeyEvent.VK_ESCAPE] = false;
+                    client.disconnect();
+                }
+                else
+                    esc = keys[KeyEvent.VK_ESCAPE] = false;
+            }
     }
 
     public void draw( Graphics2D g2d )
