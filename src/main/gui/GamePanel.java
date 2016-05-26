@@ -19,7 +19,7 @@ import java.util.List;
 import static main.client.Client.myPlayer;
 import static main.client.Client.sendYourCollisionTankWithWall;
 import static main.gui.MainFrame.yourLogin;
-import static main.io.LoadImages.*;
+import static main.io.Images.*;
 
 public class GamePanel extends JPanel{
 
@@ -268,11 +268,11 @@ public class GamePanel extends JPanel{
 
         if (orientation == 1)
             players.get(id).shootLeft();
-        else if (orientation == 2)
+        if (orientation == 2)
             players.get(id).shootUP();
-        else if (orientation == 3)
+        if (orientation == 3)
             players.get(id).shootRight();
-        else
+        if (orientation == 4)
             players.get(id).shootDown();
     }
 

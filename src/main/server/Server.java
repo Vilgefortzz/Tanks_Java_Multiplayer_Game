@@ -5,8 +5,8 @@
 
 package main.server;
 
-import main.utilities.Utilities;
 import main.models.Player;
+import main.utilities.Utilities;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -15,10 +15,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static main.io.LoadImages.*;
+import static main.io.Images.*;
+import static main.logs.Logs.log;
+import static main.utilities.Utilities.closingSocketsAndStreams;
+import static main.utilities.Utilities.join;
 
 public class Server {
 
@@ -26,7 +28,10 @@ public class Server {
     Informacje o stanie serwera
      */
 
-    private boolean started = false; // informacja(czy włączony czy nie)
+    public static boolean started = false; // informacja(czy włączony czy nie) - statyczna aby uniemożliwić połączenie
+                                            // dwóch serwerów jednocześnie. Tak naprawdę i tak jest to obsłużone
+                                            // ponieważ dany port jest już zajęty, ale w tym przypadku niemożliwe jest
+                                            // stworzenie dwóch serverów jednocześnie na innych portach
     private boolean running = false; // informacja (czy pracuje czy nie)
 
     /*
@@ -34,7 +39,6 @@ public class Server {
      */
 
     private Thread serverThread = null;
-    private List<Thread> clientThreads = null; // wątki dla każdego klienta, aby można było je pozamykać
 
     /*
     Sockety do komunikacji
@@ -70,15 +74,13 @@ public class Server {
     public synchronized void start(int port) throws IOException{
 
         if (started){
-            // TODO LOGS tutaj
             throw new IOException("Server is started, you can't start it again");
         }
 
         try {
             serverSocket = new ServerSocket(port); // utworzenie serverSocketa na danym porcie
         } catch (IOException ex){
-            // TODO LOGS tutaj
-            throw new IOException("Error to create main.server", ex);
+            throw new IOException("Error to create server", ex);
         }
 
         started = true;
@@ -92,7 +94,6 @@ public class Server {
         registeredClients = new HashMap<>();
         dataOutputStreams = new HashMap<>();
         dataInputStreams = new HashMap<>();
-        clientThreads = new ArrayList<>(); // stworzenie wątków
 
         createTankOrientationMap(); // stworzenie mapy z klasy pomocniczej ( mam teraz tankOrientationMap )
         createMissileOrientationMap(); // stworzenie mapy z klasy pomocniczej ( mam teraz missileOrientationMap )
@@ -104,8 +105,6 @@ public class Server {
                 try {
 
                     Socket clientSocket = serverSocket.accept();
-                    // TODO LOGS tutaj
-                    System.out.println("Polaczono z klientem");
 
                     DataOutputStream outstream = new DataOutputStream(clientSocket.getOutputStream());
                     DataInputStream instream = new DataInputStream(clientSocket.getInputStream());
@@ -114,22 +113,24 @@ public class Server {
                     dataInputStreams.put(clientID, instream);
                     clientSockets.put(clientID, clientSocket);
 
+                    log("server", "Server connected with the new client");
+                    //System.out.println("Connect with client");
+
                     createAndRunClientThread(clientID, dataInputStreams.get(clientID), dataOutputStreams.get(clientID));
                     clientID++;
 
                 } catch (IOException e){
 
-                    // TODO LOGS tutaj
-                    System.out.println("Client didn't connect to main.server");
+                    log("server", "Server don't accept any connections");
+                    //System.out.println("Client cannot connect to server");
 
-                    // Nie trzeba zamykać strumieni bo były to zmienne lokalne
-
+                    // Nie udało się to zwiększam o jeden clientID i server dalej działa jeżeli running jest true
                     clientID++;
                 }
             }
         });
 
-        serverThread.start(); // startowanie wątku servera(akceptujący)
+        serverThread.start(); // startowanie wątku servera (akceptujący)
     }
 
     private void createAndRunClientThread(int clientID, DataInputStream in, DataOutputStream out){
@@ -137,14 +138,16 @@ public class Server {
         Thread clientThread = new Thread(() -> {
 
             int playerID = 0;
+            String playerLogin = null;
             boolean createdProperly = true;
 
             try {
                 playerID = in.readInt();
-                System.out.println("ID: " + playerID);
+                playerLogin = in.readUTF();
+                //System.out.println("ID: " + playerID + " LOGIN: " + playerLogin);
             } catch (IOException e) {
-                // TODO LOGS tutaj
-                System.err.println("Client not created properly");
+                log("server", "Client's informations are not received");
+                //System.err.println("Client not created properly");
                 createdProperly = false;
             }
 
@@ -153,15 +156,15 @@ public class Server {
                 try {
                     eventListening(in, clientID); // pętla nasłuchująca eventy od konkretnego klienta
                 } catch (IOException e) {
-                    // TODO LOGS tutaj
-                    System.out.println("Client left the game");
+                    log("server", "Loose connection with client: " + playerLogin);
+                    //System.out.println("Client left the game");
                 }
                 finally {
 
                     // Zamknięcie strumieni dla klienta + socketa
-                    Utilities.closingSocketsAndStreams(out);
-                    Utilities.closingSocketsAndStreams(in);
-                    Utilities.closingSocketsAndStreams(clientSockets.get(clientID));
+                    closingSocketsAndStreams(out);
+                    closingSocketsAndStreams(in);
+                    closingSocketsAndStreams(clientSockets.get(clientID));
 
                     // Usunięcie z mapy strumieni oraz socketów
                     dataOutputStreams.remove(clientID);
@@ -176,16 +179,17 @@ public class Server {
                             sendUnRegisterInfo(outputStream, playerID);
                         }
                     } catch (IOException e1) {
-                        System.err.println("Notification others is failed!!!");
+                        //System.err.println("Notification others is failed!!!");
+                        log("server", "Notification others is failed!!!");
                     }
                 }
             }
             else {
 
                 // Zamknięcie strumieni dla klienta + socketa
-                Utilities.closingSocketsAndStreams(out);
-                Utilities.closingSocketsAndStreams(in);
-                Utilities.closingSocketsAndStreams(clientSockets.get(clientID));
+                closingSocketsAndStreams(out);
+                closingSocketsAndStreams(in);
+                closingSocketsAndStreams(clientSockets.get(clientID));
 
                 // Usunięcie z mapy strumieni oraz socketów
                 dataOutputStreams.remove(clientID);
@@ -194,15 +198,14 @@ public class Server {
             }
         });
 
-        clientThreads.add(clientThread); // dodanie wątku klienta na listę wątków
-        clientThread.start(); // startowanie wątku klienta
+        clientThread.start(); // startowanie wątku dla każdego połączonego klienta
     }
 
     public synchronized void stop() {
 
         if (started) {
 
-            running = false; // zatrzymanie pętli
+            running = false; // zatrzymanie pętli dla wątków servera
 
             // Zamykanie wszystkich strumieni wyjściowych
 
@@ -215,14 +218,9 @@ public class Server {
             // Zamykanie wszystkich socketów
 
             clientSockets.values().forEach(Utilities::closingSocketsAndStreams);
+            closingSocketsAndStreams(serverSocket); // zamknięcie serverSocketa
 
-            Utilities.closingSocketsAndStreams(serverSocket); // zamknięcie serverSocketa
-
-            // Czekanie, aż wątki klientów wykonają się do końca
-
-            clientThreads.forEach(Utilities::join);
-
-            Utilities.join(serverThread); // czekanie aż wątek servera wykonana się  do końca
+            join(serverThread); // czekanie aż wątek servera wykonana się do końca
 
             started = false; // wyłączenie servera
         }
@@ -230,7 +228,7 @@ public class Server {
 
     private void eventListening(DataInputStream in, int clientID) throws IOException {
 
-        while (true){
+        while (running){
 
             // rodzaj komunikatu
             int communique = in.readInt();
@@ -286,7 +284,7 @@ public class Server {
         out.writeInt(2);
         out.writeInt(id);
         out.flush();
-        System.out.println("Wysylam do pozostalych o odejsciu");
+        //System.out.println("Wysylam do pozostalych o odejsciu");
     }
 
     private synchronized void sendMoveInfo(DataOutputStream out, int id, int orientation, int dx, int dy) throws IOException {
@@ -425,7 +423,6 @@ public class Server {
             sendDestroyedByInfo(out, id);
         }
     }
-
 
     /*
     Collisions

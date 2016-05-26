@@ -61,9 +61,9 @@ połączą sie z serwerem i wejdą do gry).
     -> na jakim porcie jest rozgrywka, ile czołgów, użytkownik który łączy się na serwerze
     -> konfiguracja serwera i klienta
 
-[2.2] ~~Wczytywanie mapy~~ [ 22.03.16 ]
+[2.2] ~~Wczytywanie mapy z pliku~~ [ 22.03.16 ]
 		
-[2.3] Plik z logami klienta i serwera (obsługa logów sprzed 2 tygodni, paczkowanie plików - rozmiar)
+[2.3] ~~Plik z logami klienta i serwera~~ [ 31.05.16 ]
 
 [2.4] Zapis i wczytywanie stanu gry (punktacja, czas, ilość graczy, czołgi które zniszczyłem, ile respawnów itp.)
 

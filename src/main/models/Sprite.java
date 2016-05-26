@@ -6,6 +6,7 @@
 package main.models;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public abstract class Sprite{
 
@@ -15,7 +16,7 @@ public abstract class Sprite{
     protected int y;
     protected boolean vis;
 
-    protected Image mainImage = null;
+    protected BufferedImage mainImage = null;
     protected int width;
     protected int height;
 
@@ -41,7 +42,7 @@ public abstract class Sprite{
         return mainImage;
     }
 
-    public void setMainImage(Image mainImage) {
+    public void setMainImage(BufferedImage mainImage) {
         this.mainImage = mainImage;
     }
 

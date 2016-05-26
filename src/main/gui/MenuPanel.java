@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 public class MenuPanel extends JPanel {
@@ -19,9 +18,10 @@ public class MenuPanel extends JPanel {
     public MenuPanel() {
 
         try {
-        backgroundImg = ImageIO.read(new File("res\\tanks1366x768.jpg"));
+        backgroundImg = ImageIO.read(getClass().getResource("/tanks1366x768.jpg"));
         }  catch (IOException e) {
-        e.printStackTrace();
+            System.out.println("Cannot set the background image!");
+            System.exit(0);
         }
     }
 

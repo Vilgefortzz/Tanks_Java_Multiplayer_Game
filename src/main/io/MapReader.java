@@ -5,9 +5,7 @@
 
 package main.io;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class MapReader {
@@ -18,8 +16,9 @@ public class MapReader {
 
         try {
             readFile(mapFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | NullPointerException e) {
+            System.err.println("Loaded the map is failed!!");
+            System.exit(0);
         }
     }
 
@@ -27,16 +26,17 @@ public class MapReader {
         return lines;
     }
 
-    private void readFile(String filename) throws IOException {
+    private void readFile(String fileName) throws IOException, NullPointerException {
 
         lines = new ArrayList<>();
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("res\\maps\\" + filename))) {
-
-            do {
+        try (
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                        this.getClass().getResourceAsStream("/maps/" + fileName)))
+        ) {
+            while (bufferedReader.ready()){
                 lines.add(bufferedReader.readLine());
-
-            } while (bufferedReader.ready());
+            }
         }
     }
 }

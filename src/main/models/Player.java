@@ -6,7 +6,6 @@
 package main.models;
 
 import main.client.Client;
-import main.gui.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,12 +13,14 @@ import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.List;
 
+import static main.client.Client.database;
 import static main.client.Client.sendYourFire;
 import static main.client.Client.sendYourMove;
 import static main.gui.GamePanel.walls;
-import static main.gui.MainFrame.database;
+import static main.gui.MainFrame.yourLogin;
 import static main.io.KeyInput.*;
-import static main.io.LoadImages.*;
+import static main.io.Images.*;
+import static main.logs.Logs.log;
 
 public class Player extends Sprite {
 
@@ -44,7 +45,6 @@ public class Player extends Sprite {
     private List<Missile> missiles = null;
 
     private Client client = null;
-    private MainFrame frame = null;
 
     // Konstruktor do losowego generowania
     public Player(int id) {
@@ -80,10 +80,6 @@ public class Player extends Sprite {
 
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    public void setFrame(MainFrame frame) {
-        this.frame = frame;
     }
 
     public int getId() {
@@ -210,6 +206,7 @@ public class Player extends Sprite {
                 orientation = 4;
                 dy = 1;
                 dx = 0;
+
                 // Wysłanie informacji serwerowi o ruchu konkretnego klienta
                 sendYourMove(id, orientation, dx, dy);
             }
@@ -219,6 +216,7 @@ public class Player extends Sprite {
                 orientation = 1;
                 dx = -1;
                 dy = 0;
+
                 // Wysłanie informacji serwerowi o ruchu konkretnego klienta
                 sendYourMove(id, orientation, dx, dy);
             }
@@ -228,6 +226,7 @@ public class Player extends Sprite {
                 orientation = 2;
                 dy = -1;
                 dx = 0;
+
                 // Wysłanie informacji serwerowi o ruchu konkretnego klienta
                 sendYourMove(id, orientation, dx, dy);
             }
@@ -237,6 +236,7 @@ public class Player extends Sprite {
                 orientation = 3;
                 dx = 1;
                 dy = 0;
+
                 // Wysłanie informacji serwerowi o ruchu konkretnego klienta
                 sendYourMove(id, orientation, dx, dy);
             }
@@ -255,11 +255,13 @@ public class Player extends Sprite {
                     // Dodawanie statystyk do bazy danych w momencie jak gracz opuści grę
                     if (database.addStats(id, destroyed, deaths)) {
 
-                        System.out.println("Udalo sie zapisac dane");
+                        log("client", "Assigned stats to: " + yourLogin + " [ " + destroyed + ", " + deaths + " ] ");
+                        System.out.println("Properly assigned stats");
                     }
                     else{
-                        // TODO LOGS writing nie udalo sie zapisac danych
-                        System.out.println("Nie udalo sie zapisac danych");
+
+                        log("client", "Assigning stats to " + yourLogin +  " is failed");
+                        System.out.println("Can't assign stats");
                     }
 
                     esc = keys[KeyEvent.VK_ESCAPE] = false;

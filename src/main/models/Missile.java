@@ -11,7 +11,7 @@ import java.util.Map;
 import static main.client.Client.myPlayer;
 import static main.client.Client.sendDestroyedBy;
 import static main.client.Client.sendYourRespawn;
-import static main.io.LoadImages.*;
+import static main.io.Images.*;
 
 public class Missile extends Sprite{
 

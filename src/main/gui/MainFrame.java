@@ -6,9 +6,7 @@
 package main.gui;
 
 import main.client.Client;
-import main.database.Database;
 import main.regexes.*;
-import main.utilities.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,10 +17,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Date;
+
+import static main.client.Client.database;
+import static main.logs.Logs.log;
+import static main.utilities.Utilities.passwordHashing;
 
 public class MainFrame extends JFrame implements ActionListener{
 
@@ -35,9 +34,6 @@ public class MainFrame extends JFrame implements ActionListener{
 
     private Client client = null;
 
-    // Baza danych
-
-    public static Database database = null;
     public static String yourLogin;
 
     // Panele 1) menu główne + poboczne 2) właściwa gra
@@ -129,7 +125,7 @@ public class MainFrame extends JFrame implements ActionListener{
         // Ustawienie ikonki aplikacji
 
         try {
-            setIconImage(ImageIO.read(new File("res\\tank_icon.png")));
+            setIconImage(ImageIO.read(getClass().getResource("/tank_icon.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -156,7 +152,7 @@ public class MainFrame extends JFrame implements ActionListener{
         goToRegistration.addActionListener(this);
         backBtn1.addActionListener(this);
 
-        // Dodanie document listenera do nasłuchiwania zmian w password fieldzie
+        // Dodanie document listenera do nasłuchiwania zmian w password fieldzie (DocumentCheck - klasa wewnętrzna)
         passwordReg.getDocument().addDocumentListener(new DocumentCheck());
 
         createAccountBtn.addActionListener(this);
@@ -180,30 +176,6 @@ public class MainFrame extends JFrame implements ActionListener{
         // Rozpoczęcie (menu główne)
 
         add(menuPanel);
-
-        // Stworzenie instancji bazy danych
-
-        database = new Database();
-
-        // Połączenie z bazą danych
-
-        try {
-            database.connectToDatabase();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-        }
-
-        // Zczytanie informacji z bazy danych (zapisanie do mapy userów z bazy)
-
-        try {
-            database.fillMapFromDatabase();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-        }
     }
 
     // Ta metoda ustawia wygląd przycisków oraz innych elementów
@@ -217,7 +189,8 @@ public class MainFrame extends JFrame implements ActionListener{
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log("client", e.getMessage());
+            System.exit(0);
         }
     }
 
@@ -238,6 +211,7 @@ public class MainFrame extends JFrame implements ActionListener{
     }
 
     private Box createMenu() {
+
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalStrut(20)); // przerwa między elementami w boxie
 
@@ -296,7 +270,7 @@ public class MainFrame extends JFrame implements ActionListener{
                 "<br>Everything based on main.client-main.server structure and with the databases connections." +
                 "<br><br><br><br><br>Have fun!," +
                 "<br>@gklimek</html>");
-        creditsInfo.setFont(new Font("Courier New", Font.BOLD, 26));
+        creditsInfo.setFont(new Font("Courier New", Font.BOLD, 24));
         creditsInfo.setForeground(Color.WHITE);
         box.add(creditsInfo);
 
@@ -366,7 +340,6 @@ public class MainFrame extends JFrame implements ActionListener{
         box.add(backBtn1);
 
         return box;
-
     }
 
     private Box createSignUpMenu(){
@@ -527,7 +500,10 @@ public class MainFrame extends JFrame implements ActionListener{
         prepareStatsTable();
 
         // Dodanie paska przewijającego do tabeli oraz do boxa
-        box.add(new JScrollPane(rankTable));
+
+        if (rankTable != null){
+            box.add(new JScrollPane(rankTable));
+        }
 
         box.add(Box.createVerticalStrut(6));
         backBtn3 = backButton();
@@ -548,6 +524,7 @@ public class MainFrame extends JFrame implements ActionListener{
                 "<br><br>3) Now you can join to the game<br><br>Your stats are remembered.<br><br>To move use:" +
                 "<br><br>W - up<br>A - left" +
                 "<br>S - down<br>D - right" + "<br><br>L - Attack<br><br>Gl and Hf</html>");
+
         helpText.setFont(new Font("Courier New", Font.BOLD, 26));
         helpText.setForeground(Color.WHITE);
         box.add(helpText);
@@ -561,6 +538,7 @@ public class MainFrame extends JFrame implements ActionListener{
     }
 
     private JButton backButton(){
+
         JButton backBtn = new JButton("Back");
         backBtn.setForeground(Color.WHITE);
         backBtn.setBackground(Color.BLACK);
@@ -630,11 +608,8 @@ public class MainFrame extends JFrame implements ActionListener{
 
     private boolean checkFieldsCorrectness(){
 
-        if (checkLoginCorrectness() && checkPasswordCorrectness() && checkFirstNameCorrectness() &&
-                checkLastNameCorrectness() && checkEmailCorrectness())
-            return true;
-        else
-            return false;
+        return checkLoginCorrectness() && checkPasswordCorrectness() && checkFirstNameCorrectness() &&
+                checkLastNameCorrectness() && checkEmailCorrectness();
     }
 
     private void prepareStatsTable(){
@@ -647,47 +622,51 @@ public class MainFrame extends JFrame implements ActionListener{
         // Dane do tabeli z bazy danych (tablica 2-wymiarowa - wiersz, kolumna)
         Object[][] data = database.enterDataToTable();
 
-        final Class[] columnClass = new Class[] {
-                String.class, Integer.class, Integer.class, Integer.class
-        };
+        if (data != null){
 
-        // Stworzenie modelu z danymi
-        DefaultTableModel model = new DefaultTableModel(data, columns) {
+            final Class[] columnClass = new Class[] {
+                    String.class, Integer.class, Integer.class, Integer.class
+            };
 
-            @Override
-            public boolean isCellEditable(int row, int column)
-            {
-                return false;
-            }
+            // Stworzenie modelu z danymi
+            DefaultTableModel model = new DefaultTableModel(data, columns) {
 
-            @Override
-            public Class<?> getColumnClass(int columnIndex)
-            {
-                return columnClass[columnIndex];
-            }
+                @Override
+                public boolean isCellEditable(int row, int column)
+                {
+                    return false;
+                }
 
-        };
+                @Override
+                public Class<?> getColumnClass(int columnIndex)
+                {
+                    return columnClass[columnIndex];
+                }
 
-        // Stworzenie tabeli na podstawie modelu (początkowo pusta)
-        rankTable = new JTable(model);
+            };
 
-        // Wyśrodkowanie nazw kolum (headerów)
-        ((DefaultTableCellRenderer)rankTable.getTableHeader().getDefaultRenderer())
-                .setHorizontalAlignment(SwingConstants.CENTER);
+            // Stworzenie tabeli na podstawie modelu (początkowo pusta)
+            rankTable = new JTable(model);
 
-        // Ustawienie wyśrodkowania danych gromadzonych w tabeli
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        rankTable.setDefaultRenderer(String.class, centerRenderer);
-        rankTable.setDefaultRenderer(Integer.class, centerRenderer);
+            // Wyśrodkowanie nazw kolum (headerów)
+            ((DefaultTableCellRenderer)rankTable.getTableHeader().getDefaultRenderer())
+                    .setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Umożliwienie sortowania wierszy w.g odpowiednich kryteriów
-        rankTable.setAutoCreateRowSorter(true);
+            // Ustawienie wyśrodkowania danych gromadzonych w tabeli
+            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+            centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+            rankTable.setDefaultRenderer(String.class, centerRenderer);
+            rankTable.setDefaultRenderer(Integer.class, centerRenderer);
 
-        // Podświetlenie wybranego wiersza
-        rankTable.addColumnSelectionInterval(0,3);
-        rankTable.setSelectionBackground(new Color(225, 226, 16));
-        rankTable.setSelectionForeground(new Color(0,0,0));
+            // Umożliwienie sortowania wierszy w.g odpowiednich kryteriów
+            rankTable.setAutoCreateRowSorter(true);
+
+            // Podświetlenie wybranego wiersza
+            rankTable.addColumnSelectionInterval(0,3);
+            rankTable.setSelectionBackground(new Color(225, 226, 16));
+            rankTable.setSelectionForeground(new Color(0,0,0));
+
+        }
     }
 
     @Override
@@ -717,15 +696,16 @@ public class MainFrame extends JFrame implements ActionListener{
 
             // Haszowanie aby porównać hasła, z tym z bazy danych
             String nonHashedPassword = String.valueOf(passwordLog.getPassword());
-            String hashedPassword = Utilities.passwordHashing(nonHashedPassword);
+            String hashedPassword = passwordHashing(nonHashedPassword);
 
             if (database.loginUser(loginLog.getText(), hashedPassword)){
 
-                JOptionPane.showMessageDialog(null, "You are successfully logged in",
-                        "", JOptionPane.INFORMATION_MESSAGE);
-
                 yourLogin = loginLog.getText();
                 setTitle("Client logged as: " + yourLogin);
+                log("client", yourLogin + " logged in");
+
+                JOptionPane.showMessageDialog(null, "You are successfully logged in",
+                        "Logged In", JOptionPane.INFORMATION_MESSAGE);
 
                 boxLogIn.setVisible(false);
                 menuPanel.remove(boxLogIn);
@@ -739,6 +719,7 @@ public class MainFrame extends JFrame implements ActionListener{
                 JOptionPane.showMessageDialog(null, "Incorrect login or password or you haven't yet a free account. " +
                         "Go to registration to create account or try to log in with proper data",
                         "Log in failed", JOptionPane.ERROR_MESSAGE);
+                log("client", "Failed login attempt to: " + yourLogin);
         }
 
         if (e.getSource() == goToRegistration){
@@ -771,10 +752,12 @@ public class MainFrame extends JFrame implements ActionListener{
 
                 // Haszowanie hasła
                 String nonHashedPassword = String.valueOf(passwordReg.getPassword());
-                String hashedPassword = Utilities.passwordHashing(nonHashedPassword);
+                String hashedPassword = passwordHashing(nonHashedPassword);
 
                 if (database.registerUser(loginReg.getText(), hashedPassword, firstNameReg.getText(),
                         lastNameReg.getText(), emailReg.getText())){
+
+                    log("client", "Registered new user: " + "[ " + yourLogin + " ]");
 
                     JOptionPane.showMessageDialog(null, "Account successfully created! You can now log in",
                             "ACCOUNT CREATED", JOptionPane.INFORMATION_MESSAGE);
@@ -791,8 +774,8 @@ public class MainFrame extends JFrame implements ActionListener{
                     emailReg.setText("");
                 }
                 else
-                    JOptionPane.showMessageDialog(null, "User with this login has already exists!" +
-                            " Change login to create account",
+                    JOptionPane.showMessageDialog(null, "User with this login or with this e-mail has already exists!" +
+                            " Change login or e-mail to create account",
                             "Registration failed", JOptionPane.ERROR_MESSAGE);
             }
             else
@@ -830,22 +813,23 @@ public class MainFrame extends JFrame implements ActionListener{
             final String HOST = "localhost";
             final int PORT = 8080;
 
-            System.out.println("Wchodze poczatek");
+            //HOST = JOptionPane.showInputDialog(null, "Server address of game: ", "Address", JOptionPane.PLAIN_MESSAGE);
 
             try {
 
                 client.connect(HOST, PORT);
-                System.out.println("Wchodze srodek");
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log("client", ex.getMessage());
+                System.err.println(ex.getMessage());
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
             }
 
             if (client.isConnected()){
 
-                System.out.println("Wchodze koniec");
+                log("client", "Client: " + yourLogin + " is connected to server");
+
                 boxLoggedUser.setVisible(false);
                 menuPanel.remove(boxLoggedUser);
                 menuPanel.setVisible(false);
@@ -882,9 +866,11 @@ public class MainFrame extends JFrame implements ActionListener{
 
         if (e.getSource() == logOutBtn){
 
-            JOptionPane.showMessageDialog(null, "You are succesfully logged out. I hope we will see you soon ;)",
-                    "", JOptionPane.INFORMATION_MESSAGE);
+            log("client", yourLogin + " logged out");
             setTitle("Client not logged now");
+
+            JOptionPane.showMessageDialog(null, "You are succesfully logged out. I hope we will see you soon ;)",
+                    "Logged out", JOptionPane.INFORMATION_MESSAGE);
 
             boxLoggedUser.setVisible(false);
             menuPanel.remove(boxLoggedUser);

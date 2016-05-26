@@ -5,13 +5,15 @@
 
 package main.database;
 
-import main.utilities.Utilities;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import static main.gui.MainFrame.yourLogin;
+import static main.logs.Logs.log;
+import static main.utilities.Utilities.closingStatementsInDatabases;
 
 public class Database {
 
@@ -21,16 +23,42 @@ public class Database {
 
     private Connection connection = null;
     private Statement statement = null;
-    public static Map<String, User> registeredUsers = null; // zarejestrowani użytkownicy w bazie danych < login, User >
 
     public void connectToDatabase() throws SQLException {
 
         try {
 
-            String host = "jdbc:mysql://localhost:3306/tanks?autoReconnect=true&useSSL=false";
-            String user = "root";
-            String passwd = "welcomeYou1.";
-            connection = DriverManager.getConnection(host, user, passwd);
+            String address, url;
+            String user = null, password = null;
+
+            //address = JOptionPane.showInputDialog(null, "Server address of database: ", "Address", JOptionPane.PLAIN_MESSAGE);
+
+            try (
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                            this.getClass().getResourceAsStream("/MySQL-Account.txt")))
+            ) {
+
+                String[] lines = new String[2];
+                int i = 0;
+
+                while (bufferedReader.ready()){
+
+                    lines[i++] = bufferedReader.readLine();
+                }
+
+                user = lines[0];
+                password = lines[1];
+
+            } catch (IOException e) {
+                System.err.println("IOException: " + e.getMessage());
+                System.exit(0);
+            }
+
+            //url = "jdbc:mysql://" + address + ":3306/tanks?autoReconnect=true&useSSL=false";
+
+            url = "jdbc:mysql://localhost:3306/tanks?autoReconnect=true&useSSL=false";
+
+            connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
 
         } catch (SQLException e) {
@@ -38,32 +66,39 @@ public class Database {
         }
     }
 
-    public void fillMapFromDatabase() throws SQLException {
+    public int takeID(String login){
 
-        registeredUsers = new HashMap<>();
+        try {
 
-        ResultSet result = statement.executeQuery("SELECT * FROM tanks.user");
-        int id;
-        String login, password, firstName, lastName, email;
+            ResultSet result = statement.executeQuery("SELECT user_id FROM tanks.user WHERE login = '" + login + "'");
+            if (result.next()){
+                return result.getInt("user_id");
+            }
 
-        while (result.next()) {
-
-            id = result.getInt("user_id");
-            login = result.getString("login");
-            password = result.getString("password");
-            firstName = result.getString("first_name");
-            lastName = result.getString("last_name");
-            email = result.getString("email");
-
-            registeredUsers.put(login, new User(id, login, password, firstName, lastName, email));
+        } catch (SQLException e) {
+            System.err.println("Player's id hadn't taken");
         }
+        return 0;
     }
 
     public boolean registerUser(String login, String password, String firstName, String lastName, String email) {
 
-        if (registeredUsers.size() != 0) {
-            if (registeredUsers.containsKey(login))
+        // Sprawdzanie czy istnieje gracz o tym samym loginie albo e-mailu
+        try {
+
+            ResultSet result = statement.executeQuery("SELECT login FROM tanks.user WHERE login = '" + login + "'");
+            if (result.next()){
                 return false;
+            }
+
+            result = statement.executeQuery("SELECT email FROM tanks.user WHERE email = '" + email + "'");
+            if (result.next()){
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Invalid sql command in registration");
+            return false;
         }
 
         PreparedStatement preparedStatement = null;
@@ -92,7 +127,6 @@ public class Database {
             int id = 0;
             if (result.next()) {
                 id = result.getInt("user_id");
-                registeredUsers.put(login, new User(id, login, password, firstName, lastName, email));
             }
 
             // Dodanie usera do tabeli stats z zerowymi statystykami
@@ -104,13 +138,14 @@ public class Database {
 
         } catch (SQLException e) {
 
-            System.err.println("Can't insert new user to main.database");
+            log("client", "Register new user is failed");
+            System.err.println("Can't insert new user to database");
             return false;
 
         } finally {
 
             if (preparedStatement != null)
-                Utilities.closingStatementsInDatabases(preparedStatement);
+                closingStatementsInDatabases(preparedStatement);
         }
 
         return true;
@@ -118,19 +153,25 @@ public class Database {
 
     public boolean loginUser(String login, String password) {
 
-        if (registeredUsers.size() == 0) {
+        // Sprawdzanie czy istnieje dany gracz o danym loginie i danym haśle
+        try {
+
+            ResultSet result = statement.executeQuery("SELECT login, password FROM tanks.user WHERE login = '" + login + "'");
+            if (result.next()){
+
+                String passwd;
+                passwd = result.getString("password");
+
+                return passwd.equals(password);
+            }
+            else
+                return false;
+
+        } catch (SQLException e) {
+            System.err.println("Invalid sql command in logging");
             return false;
         }
-
-        if (registeredUsers.containsKey(login)) {
-            if (registeredUsers.get(login).getPassword().equals(password)) {
-                return true;
-            } else
-                return false;
-        } else
-            return false;
     }
-
 
     public boolean addStats(int id, int destroyed, int deaths) {
 
@@ -172,7 +213,7 @@ public class Database {
         } finally {
 
             if (preparedStatement != null)
-                Utilities.closingStatementsInDatabases(preparedStatement);
+                closingStatementsInDatabases(preparedStatement);
         }
 
         return true;
@@ -197,8 +238,8 @@ public class Database {
 
             data = new Object[numberOfPlayers][4];
 
-            ResultSet result = statement.executeQuery("SELECT u.login, s.destroyed, s.deaths, s.difference " +
-                    "FROM tanks.user as u" +
+            ResultSet result = statement.executeQuery("SELECT u.login, s.destroyed, s.deaths, s.difference" +
+                    " FROM tanks.user as u" +
                     " INNER JOIN tanks.stats as s" +
                     " WHERE u.user_id = s.user_id");
 
@@ -224,6 +265,8 @@ public class Database {
             }
 
         } catch (SQLException e) {
+
+            log("client", "Enter data to table is failed");
             e.printStackTrace();
             return null;
         }

@@ -6,8 +6,11 @@
 package main.client;
 
 import main.gui.MainFrame;
+import main.io.Images;
 
 import javax.swing.*;
+
+import java.io.IOException;
 
 import static main.gui.MainFrame.sizeX;
 import static main.gui.MainFrame.sizeY;
@@ -15,6 +18,17 @@ import static main.gui.MainFrame.sizeY;
 public class Main {
 
     public static void main( String[] args ) {
+
+        /*
+        Załadowanie obrazków dla clienta
+         */
+
+        Images images = new Images();
+        try {
+            images.loadAllImages();
+        } catch (IOException e) {
+            System.err.println("Loaded the images is failed");
+        }
 
         final MainFrame frame = new MainFrame(); // Stworzenie okna dla klienta (nie jest jeszcze widoczne)
         Client client = new Client(frame, frame.getGamePanel()); // stworzenie klienta do komunikacji -
