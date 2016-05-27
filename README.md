@@ -65,7 +65,7 @@ połączą sie z serwerem i wejdą do gry).
 		
 [2.3] ~~Plik z logami klienta i serwera~~ [ 31.05.16 ]
 
-[2.4] Zapis stanu gry na żądanie użytkownika (czołgi które zniszczyłem, ile respawnów itp.) + dżwięk strzałów
+[2.4] ~~Zapis stanu gry na żądanie użytkownika (czołgi które zniszczyłem, ile respawnów itp.) + dżwięk strzałów~~ [ 31.05.16 ]
 
 ---------------------------------------------------------------------------------------------------------------------
 

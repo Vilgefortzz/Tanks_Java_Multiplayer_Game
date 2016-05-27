@@ -19,7 +19,7 @@ import java.util.List;
 
 import static main.client.Client.myPlayer;
 import static main.client.Client.sendYourCollisionTankWithWall;
-import static main.gui.MainFrame.yourLogin;
+import static main.client.Client.yourLogin;
 import static main.io.Images.*;
 
 public class GamePanel extends JPanel{

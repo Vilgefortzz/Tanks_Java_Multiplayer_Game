@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 
-import static main.gui.MainFrame.yourLogin;
 import static main.io.Configuration.clientConfg;
 import static main.logs.Logs.log;
 import static main.utilities.Utilities.closingSocketsAndStreams;
@@ -76,6 +75,8 @@ public class Client {
      */
 
     public static Player myPlayer = null;
+    public static String yourLogin;
+    public static int yourID;
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
@@ -133,18 +134,18 @@ public class Client {
         }
 
         // Stworzenie playera o unikalnym id przynależnym do niego z bazy danych
-        int loggedUserID = database.takeID(yourLogin);
+        yourID = database.takeID(yourLogin);
 
-        if (loggedUserID != 0){
+        if (yourID != 0){
 
-            myPlayer = new Player(loggedUserID);
+            myPlayer = new Player(yourID);
             System.out.println("Player id: " + myPlayer.getId());
             myPlayer.setClient(this);
         }
         else
             System.exit(0);
 
-        sendYourId(myPlayer.getId()); // wysłanie do serwera id, który go zapamięta (WAŻNE!!)
+        sendYourId(yourID); // wysłanie do serwera id, który go zapamięta (WAŻNE!!)
         sendYourLogin(yourLogin); // wysłanie do serwera loginu, który go zapamięta (WAŻNE!!)
 
         this.clientThread = new Thread(() -> {

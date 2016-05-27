@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
 
-import static main.gui.MainFrame.yourLogin;
+import static main.client.Client.yourLogin;
 import static main.logs.Logs.log;
 import static main.utilities.Utilities.closingStatementsInDatabases;
 
@@ -271,5 +271,28 @@ public class Database {
             return null;
         }
             return data;
+    }
+
+    public int[] takeStats(int id){
+
+        int[] variables = new int[3];
+
+        // Sprawdzanie statystyk konkretnego gracza
+        try {
+
+            ResultSet result = statement.executeQuery("SELECT * FROM tanks.stats WHERE user_id = '" + id + "'");
+            if (result.next()){
+
+                variables[0] = result.getInt("destroyed");
+                variables[1] = result.getInt("deaths");
+                variables[2] = result.getInt("difference");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Invalid sql command in taking the stats");
+            return null;
+        }
+
+        return variables;
     }
 }

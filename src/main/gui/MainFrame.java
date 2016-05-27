@@ -19,10 +19,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import static main.client.Client.HOST;
-import static main.client.Client.PORT;
-import static main.client.Client.database;
+import static main.client.Client.*;
 import static main.io.Configuration.clientConfg;
+import static main.io.SaveStats.saveStatistics;
 import static main.logs.Logs.log;
 import static main.utilities.Utilities.passwordHashing;
 
@@ -36,8 +35,6 @@ public class MainFrame extends JFrame implements ActionListener{
     // Klient, który posiada to okno
 
     private Client client = null;
-
-    public static String yourLogin;
 
     // Panele 1) menu główne + poboczne 2) właściwa gra
 
@@ -98,6 +95,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
     private JLabel rank;
     private JTable rankTable;
+    private JButton saveStats;
     private JButton backBtn3;
 
     // przyciski do menu pobocznego (sterowanie)
@@ -270,7 +268,7 @@ public class MainFrame extends JFrame implements ActionListener{
 
         creditsInfo = new JLabel("<html>This is a project for java.<br><br>The goal is to create a game" +
                 "Tanks with the possibility of playing by many players,<br>gathering stats and much more." +
-                "<br>Everything based on main.client-main.server structure and with the databases connections." +
+                "<br>Everything based on client-server structure and with the databases connections." +
                 "<br><br><br><br><br>Have fun!," +
                 "<br>@gklimek</html>");
         creditsInfo.setFont(new Font("Courier New", Font.BOLD, 24));
@@ -325,17 +323,17 @@ public class MainFrame extends JFrame implements ActionListener{
         box.add(loginBtn);
 
         box.add(Box.createVerticalStrut(50));
-        registrationInfo = new JLabel("<html>You don't have an account yet?" +
-                "<br> Don't think twice,<br>click the button below -></html>");
-        registrationInfo.setForeground(new Color(225, 226, 16));
-        registrationInfo.setFont(new Font("Arial", Font.ITALIC, 18));
+        registrationInfo = new JLabel("<html>You don't have an<br>account yet?" +
+                "<br>Don't think twice,<br>click the button<br>below -> -> -></html>");
+        registrationInfo.setForeground(new Color(255, 213, 116));
+        registrationInfo.setFont(new Font("Arial", Font.ITALIC, 33));
         box.add(registrationInfo);
 
         box.add(Box.createVerticalStrut(12));
         goToRegistration = new JButton("Create an account for FREE");
         goToRegistration.setForeground(Color.WHITE);
         goToRegistration.setBackground(Color.BLACK);
-        goToRegistration.setFont(new Font("Arial", Font.BOLD, 15));
+        goToRegistration.setFont(new Font("Arial", Font.BOLD, 14));
         box.add(goToRegistration);
 
         box.add(Box.createVerticalStrut(70));
@@ -508,7 +506,17 @@ public class MainFrame extends JFrame implements ActionListener{
             box.add(new JScrollPane(rankTable));
         }
 
-        box.add(Box.createVerticalStrut(6));
+        box.add(Box.createVerticalStrut(10));
+
+        // Przycisk do tworzenia pliku ze statystykami
+        saveStats = new JButton("Save your statistics to file");
+        saveStats.setForeground(Color.WHITE);
+        saveStats.setBackground(Color.BLACK);
+        saveStats.setFont(new Font("Arial", Font.PLAIN, 10));
+        saveStats.addActionListener(this);
+        box.add(saveStats);
+
+        box.add(Box.createVerticalStrut(10));
         backBtn3 = backButton();
         // Dodanie akcji za każdym razem do przycisku wstecz
         backBtn3.addActionListener(this);
@@ -880,6 +888,17 @@ public class MainFrame extends JFrame implements ActionListener{
             menuPanel.remove(boxLoggedUser);
             menuPanel.add(boxMenu);
             boxMenu.setVisible(true);
+        }
+
+        if (e.getSource() == saveStats){
+
+            if (saveStatistics())
+                JOptionPane.showMessageDialog(null, "The file with stats are succesfully saved.",
+                        "File is saved", JOptionPane.INFORMATION_MESSAGE);
+            else
+                JOptionPane.showMessageDialog(null, "The file was not created.",
+                        "File not saved", JOptionPane.ERROR_MESSAGE);
+
         }
 
         if (e.getSource() == backBtn3){

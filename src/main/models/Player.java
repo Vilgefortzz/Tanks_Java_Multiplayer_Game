@@ -17,7 +17,7 @@ import static main.client.Client.database;
 import static main.client.Client.sendYourFire;
 import static main.client.Client.sendYourMove;
 import static main.gui.GamePanel.walls;
-import static main.gui.MainFrame.yourLogin;
+import static main.client.Client.yourLogin;
 import static main.io.KeyInput.*;
 import static main.io.Images.*;
 import static main.logs.Logs.log;
