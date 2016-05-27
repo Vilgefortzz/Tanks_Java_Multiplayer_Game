@@ -34,7 +34,7 @@ public class Player extends Sprite {
     private int orientation;
 
     /*
-    Basic things like hp, array with missiles etc.
+    Basic things like hp, array with bullets etc.
      */
 
     private int hp = 100;
@@ -42,7 +42,7 @@ public class Player extends Sprite {
     private int deaths = 0;
     private int dx;
     private int dy;
-    private List<Missile> missiles = null;
+    private List<Bullet> bullets = null;
 
     private Client client = null;
 
@@ -52,7 +52,7 @@ public class Player extends Sprite {
         super();
 
         this.id = id;
-        this.missiles = new ArrayList<>();
+        this.bullets = new ArrayList<>();
 
         orientation = 3;
         mainImage = tankRight;
@@ -67,7 +67,7 @@ public class Player extends Sprite {
         super(x, y);
 
         this.id = id;
-        this.missiles = new ArrayList<>();
+        this.bullets = new ArrayList<>();
         randomCreated = true;
 
         this.orientation = orientation;
@@ -102,8 +102,8 @@ public class Player extends Sprite {
 
     public int getDy() {return dy;}
 
-    public List<Missile> getMissiles() {
-        return missiles;
+    public List<Bullet> getBullets() {
+        return bullets;
     }
 
     private boolean isRandomCreated() {
@@ -171,32 +171,32 @@ public class Player extends Sprite {
         y += dy;
     }
 
-    public void updateMissiles() {
+    public void updateBullets() {
 
-        for (int i = 0; i < missiles.size(); i++) {
+        for (int i = 0; i < bullets.size(); i++) {
 
-            if (missiles.get(i).isVisible()) {
+            if (bullets.get(i).isVisible()) {
 
-                missiles.get(i).move();
+                bullets.get(i).move();
             } else
-                missiles.remove(i);
+                bullets.remove(i);
         }
     }
 
     public void shootUP(){
-        missiles.add(new Missile(2, x + width/2 - 5, y - 11, id));
+        bullets.add(new Bullet(2, x + width/2 - 5, y - 11, id));
     }
 
     public void shootDown(){
-        missiles.add(new Missile(4, x + width/2 - 5, y + height + 2, id));
+        bullets.add(new Bullet(4, x + width/2 - 5, y + height + 2, id));
     }
 
     public void shootRight() {
-        missiles.add(new Missile(3, x + width, y + height/2 - 5, id));
+        bullets.add(new Bullet(3, x + width, y + height/2 - 5, id));
     }
 
     public void shootLeft(){
-        missiles.add(new Missile(1, x - 11, y + height/2 - 5, id));
+        bullets.add(new Bullet(1, x - 11, y + height/2 - 5, id));
     }
 
     public void tankMovement() {

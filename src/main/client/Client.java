@@ -18,11 +18,19 @@ import java.net.Socket;
 import java.sql.SQLException;
 
 import static main.gui.MainFrame.yourLogin;
+import static main.io.Configuration.clientConfg;
 import static main.logs.Logs.log;
 import static main.utilities.Utilities.closingSocketsAndStreams;
 import static main.utilities.Utilities.join;
 
 public class Client {
+
+    /*
+    Host oraz port do jakiego będzie się łaczył
+     */
+
+    public static String HOST;
+    public static int PORT;
 
     /*
     Informacje o stanie klienta
@@ -168,6 +176,7 @@ public class Client {
                     frame.getMenuPanel().setVisible(true);
 
                     frame.setTitle("Client logged as: " + yourLogin);
+                    clientConfg(HOST, PORT, "NO", yourLogin);
                 }
         });
 
@@ -271,7 +280,6 @@ public class Client {
             out.writeInt(id);
             out.flush();
         } catch (IOException e) {
-            // TODO LOGS writing
             e.printStackTrace();
         }
     }
@@ -286,7 +294,6 @@ public class Client {
             out.writeInt(dy);
             out.flush();
         } catch (IOException e) {
-            // TODO LOGS writing
             e.printStackTrace();
         }
     }
@@ -298,7 +305,7 @@ public class Client {
             out.writeInt(id);
             out.writeInt(orientation);
         } catch (IOException e) {
-            // TODO LOGS writing
+            e.printStackTrace();
         }
     }
 
@@ -308,7 +315,6 @@ public class Client {
             out.writeInt(5);
             out.writeInt(id);
         } catch (IOException e) {
-            // TODO LOGS writing
             e.printStackTrace();
         }
     }
@@ -321,18 +327,16 @@ public class Client {
             out.writeInt(x);
             out.writeInt(y);
         } catch (IOException e) {
-            // TODO LOGS writing
             e.printStackTrace();
         }
     }
 
-    public static void sendDestroyedBy(int id){
+    public static void sendDestroyedByYou(int id){
 
         try {
             out.writeInt(7);
             out.writeInt(id);
         } catch (IOException e) {
-            // TODO LOGS writing
             e.printStackTrace();
         }
     }

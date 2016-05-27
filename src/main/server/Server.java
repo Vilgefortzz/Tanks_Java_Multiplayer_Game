@@ -13,7 +13,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +22,12 @@ import static main.utilities.Utilities.closingSocketsAndStreams;
 import static main.utilities.Utilities.join;
 
 public class Server {
+
+    /*
+    Port na jakim będzie uruchomiony serwer
+     */
+
+    public static int PORT;
 
     /*
     Informacje o stanie serwera
@@ -96,7 +101,7 @@ public class Server {
         dataInputStreams = new HashMap<>();
 
         createTankOrientationMap(); // stworzenie mapy z klasy pomocniczej ( mam teraz tankOrientationMap )
-        createMissileOrientationMap(); // stworzenie mapy z klasy pomocniczej ( mam teraz missileOrientationMap )
+        createBulletOrientationMap(); // stworzenie mapy z klasy pomocniczej ( mam teraz bulletOrientationMap )
 
         serverThread = new Thread(() -> {
 
@@ -113,7 +118,6 @@ public class Server {
                     dataInputStreams.put(clientID, instream);
                     clientSockets.put(clientID, clientSocket);
 
-                    log("server", "Server connected with the new client");
                     //System.out.println("Connect with client");
 
                     createAndRunClientThread(clientID, dataInputStreams.get(clientID), dataOutputStreams.get(clientID));
@@ -151,6 +155,9 @@ public class Server {
                 createdProperly = false;
             }
 
+            log("server", "Server connected with the new client: " + playerLogin);
+            log("server", "Current amount of players(tanks) in game: " + clientSockets.size());
+
             if (createdProperly){
 
                 try {
@@ -172,6 +179,8 @@ public class Server {
                     clientSockets.remove(clientID);
 
                     registeredClients.remove(playerID);
+
+                    log("server", "Current amount of players(tanks) in game: " + clientSockets.size());
 
                     // Powiadomienie pozostałych klientów o odejściu konkretnego klienta
                     try {

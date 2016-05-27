@@ -20,10 +20,10 @@ połączą sie z serwerem i wejdą do gry).
 
 [1] Okienka tworzone przy pomocy biblioteki graficznej Swing
 
-[1.1] ~~Stworzenie klasy obsługującej główne okno programu (klasa GUI)~~ [ 08.03.16 ]
+[1.1] ~~Stworzenie klasy obsługującej główne okno programu (klasa MainFrame)~~ [ 08.03.16 ]
 
 	-> stworzenie okna, odpowiednie ustawienie go na ekranie, nazwanie itp.
-	-> stworzenie panelu odpowiedzialnego za ustawienie tła aplikacji (klasa MyPanel)
+	-> stworzenie panelu odpowiedzialnego za ustawienie tła aplikacji (klasa MenuPanel)
 	-> ustawienie icona okna aplikacji
 
 [1.2] ~~Tworzenie GUI + oprogramowanie przycisków~~ [ 08.03.16 ]
@@ -31,11 +31,11 @@ połączą sie z serwerem i wejdą do gry).
 	-> utworzenie menu głównego aplikacji wraz z menu pobocznymi
 	-> stworzenie buttonów, napisów, buttonów wyboru, textfieldów
 	-> działanie bez konieczności otwierania nowych okien - wszystko w jednym oknie
-	-> dodanie akcji do przycisków po kliknięciu myszą
+	-> dodanie akcji do przycisków + obsłużenie ich
 
 [1.3] ~~Wygenerowanie mapy oraz stworzenie modelu czołgu + oprogramowanie go~~ [ 15.03.16 ]
 
-	-> stworzenie mapy (tylko tło) przy pomocy odpowiedniej klasy (klasa MapPanel)
+	-> stworzenie mapy (tylko tło) przy pomocy odpowiedniej klasy (klasa GamePanel)
 	-> dodanie belki na górze mapy z informacją o aktualnym życiu, ilości zniszczonych czołgów i bycia zniszczonym
 	-> stworzenie czołgu przy pomocy odpowiedniej klasy (klasa Player)
 	-> sterowanie czołgiem - reakcja na klawisze
@@ -56,7 +56,7 @@ połączą sie z serwerem i wejdą do gry).
 
 [2] Zapis i odczyt plików
 
-[2.1] Zapisywanie i odpisywanie konfiguracji
+[2.1] ~~Zapisywanie i odpisywanie konfiguracji~~ [ 31.05.16 ]
 
     -> na jakim porcie jest rozgrywka, ile czołgów, użytkownik który łączy się na serwerze
     -> konfiguracja serwera i klienta
@@ -65,7 +65,7 @@ połączą sie z serwerem i wejdą do gry).
 		
 [2.3] ~~Plik z logami klienta i serwera~~ [ 31.05.16 ]
 
-[2.4] Zapis i wczytywanie stanu gry (punktacja, czas, ilość graczy, czołgi które zniszczyłem, ile respawnów itp.)
+[2.4] Zapis stanu gry na żądanie użytkownika (czołgi które zniszczyłem, ile respawnów itp.) + dżwięk strzałów
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ połączą sie z serwerem i wejdą do gry).
 
 [6] Zaproponowane przez studenta
 
-[6.1] ~~Logika rozgrywki, kolizje, wątek aktualizujący obiekty na mapie(rysowanie)~~ [ 19.04.16 ]
+[6.1] ~~Logika rozgrywki, kolizje, wątek główny gry (aktualizujący obiekty na mapie)~~ [ 19.04.16 ]
 
 [6.2] ~~Obsługa pocisków~~ [ 19.04.16 ]
 
@@ -133,7 +133,7 @@ połączą sie z serwerem i wejdą do gry).
 	-> utworzenie przejrzystego menu głównego aplikacji
 	-> zmiana stylu buttonów na przyjemny dla wzroku
 	
-[6.4] ~~Stworzenie tabeli ze statystykami użytkowników (sortowanie wyników itp.)~~ [ 17.05.16 ]
+[6.4] ~~Stworzenie tabeli ze statystykami użytkowników w menu (sortowanie wyników itp.)~~ [ 17.05.16 ]
 
 ---------------------------------------------------------------------------------------------------------------------
 

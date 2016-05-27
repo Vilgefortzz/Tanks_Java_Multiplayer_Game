@@ -7,6 +7,7 @@ package main.gui;
 
 import main.io.KeyInput;
 import main.io.MapReader;
+import main.io.Sounds;
 import main.models.Player;
 import main.models.Wall;
 
@@ -36,10 +37,12 @@ public class GamePanel extends JPanel{
 
     private KeyInput keyboard = null;
     private MainFrame frame = null;
+    private Sounds sounds = null;
 
     public GamePanel(MainFrame frame) {
 
         this.frame = frame;
+        this.sounds = new Sounds();
 
         keyboard = new KeyInput();
         addKeyListener(keyboard);
@@ -51,7 +54,7 @@ public class GamePanel extends JPanel{
         players = new HashMap<>();
 
         createTankOrientationMap();
-        createMissileOrientationMap();
+        createBulletOrientationMap();
     }
 
     public KeyInput getKeyboard() {
@@ -107,7 +110,7 @@ public class GamePanel extends JPanel{
         myPlayer.tankMovement();
 
         // Ruch pocisków
-        players.values().forEach(Player::updateMissiles);
+        players.values().forEach(Player::updateBullets);
     }
 
     private void checkCollisions(){
@@ -120,16 +123,16 @@ public class GamePanel extends JPanel{
         // Sprawdzanie kolizji pocisków ze ścianami
         for (Wall wall : walls){
             for (Player player : players.values()){
-                for (int i = 0; i < player.getMissiles().size(); i++) {
-                    player.getMissiles().get(i).hitWall(wall);
+                for (int i = 0; i < player.getBullets().size(); i++) {
+                    player.getBullets().get(i).hitWall(wall);
                 }
             }
         }
 
         // Sprawdzanie kolizji pocisków z czołgami oraz zadawanie obrażeń jeżeli jest kolizja
         for (Player player : players.values()) {
-            for (int i = 0; i < player.getMissiles().size(); i++) {
-                player.getMissiles().get(i).hitPlayers(players);
+            for (int i = 0; i < player.getBullets().size(); i++) {
+                player.getBullets().get(i).hitPlayers(players);
             }
         }
     }
@@ -155,10 +158,8 @@ public class GamePanel extends JPanel{
 
         // Rysowanie pocisków
         for (Player player : players.values()) {
-            for (int i = 0; i < player.getMissiles().size(); i++) {
-                if (player.getMissiles().get(i).isVisible()) {
-                    player.getMissiles().get(i).draw(g2d);
-                }
+            for (int i = 0; i < player.getBullets().size(); i++) {
+                    player.getBullets().get(i).draw(g2d);
             }
         }
 
@@ -266,6 +267,7 @@ public class GamePanel extends JPanel{
 
     public void firePlayer(int id, int orientation){
 
+        sounds.playFireSound();
         if (orientation == 1)
             players.get(id).shootLeft();
         if (orientation == 2)

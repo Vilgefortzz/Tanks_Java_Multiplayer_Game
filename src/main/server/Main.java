@@ -10,7 +10,10 @@ import main.io.Images;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static main.io.Configuration.serverConfg;
 import static main.logs.Logs.log;
+import static main.server.Server.PORT;
+import static main.server.Server.started;
 
 public class Main {
 
@@ -30,14 +33,14 @@ public class Main {
             System.exit(0);
         }
 
-        final int PORT = 8080;
-
+        PORT = 8080;
         Server server = new Server();
 
         try {
 
             server.start(PORT); // start servera // Uruchamia wątek akceptujący servera oraz wątki dla każdego klienta
             log("server", "Server started on port: " + PORT);
+            serverConfg(PORT, "ON");
             System.out.println("Server started on port: " + PORT + "\n" + "Waiting for events...");
 
         } catch (IOException ex) {
@@ -45,7 +48,7 @@ public class Main {
             System.out.println(ex.getMessage());
         }
 
-        if (server.isStarted()){
+        if (started){
 
             String choice;
 
@@ -58,6 +61,7 @@ public class Main {
             if ("yes".equals(choice)) {
                 server.stop();
                 log("server", "Server was disconnected");
+                serverConfg(PORT, "OFF");
             }
         }
     }

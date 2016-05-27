@@ -28,6 +28,7 @@ public class Main {
             images.loadAllImages();
         } catch (IOException e) {
             System.err.println("Loaded the images is failed");
+            System.exit(0);
         }
 
         final MainFrame frame = new MainFrame(); // Stworzenie okna dla klienta (nie jest jeszcze widoczne)

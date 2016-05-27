@@ -19,7 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import static main.client.Client.HOST;
+import static main.client.Client.PORT;
 import static main.client.Client.database;
+import static main.io.Configuration.clientConfg;
 import static main.logs.Logs.log;
 import static main.utilities.Utilities.passwordHashing;
 
@@ -810,8 +813,8 @@ public class MainFrame extends JFrame implements ActionListener{
 
             // Stworzenie klienta - socketa do komunikacji
 
-            final String HOST = "localhost";
-            final int PORT = 8080;
+            HOST = "localhost";
+            PORT = 8080;
 
             //HOST = JOptionPane.showInputDialog(null, "Server address of game: ", "Address", JOptionPane.PLAIN_MESSAGE);
 
@@ -829,6 +832,7 @@ public class MainFrame extends JFrame implements ActionListener{
             if (client.isConnected()){
 
                 log("client", "Client: " + yourLogin + " is connected to server");
+                clientConfg(HOST, PORT, "YES", yourLogin);
 
                 boxLoggedUser.setVisible(false);
                 menuPanel.remove(boxLoggedUser);

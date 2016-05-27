@@ -33,15 +33,15 @@ public class Images {
     public static Map<Integer, BufferedImage> tankOrientationMap; // Mapa < orientacja czołgu, obrazek odpowiedni >
 
     /*
-    Missiles directions
+    Bullets directions
      */
 
-    private static BufferedImage missileUp;
-    private static BufferedImage missileDown;
-    private static BufferedImage missileRight;
-    private static BufferedImage missileLeft;
+    private static BufferedImage bulletUp;
+    private static BufferedImage bulletDown;
+    private static BufferedImage bulletRight;
+    private static BufferedImage bulletLeft;
 
-    public static Map<Integer, BufferedImage> missileOrientationMap; // Mapa < orientacja czołgu, obrazek odpowiedni >
+    public static Map<Integer, BufferedImage> bulletOrientationMap; // Mapa < orientacja czołgu, obrazek odpowiedni >
 
     /*
     Wall
@@ -68,10 +68,10 @@ public class Images {
         tankRight = ImageIO.read(getClass().getResource("/sprites/tanks/team_grey/Tank_Right.png"));
         tankLeft = ImageIO.read(getClass().getResource("/sprites/tanks/team_grey/Tank_Left.png"));
 
-        missileUp = ImageIO.read(getClass().getResource("/sprites/missiles/Missile_Up.gif"));
-        missileDown = ImageIO.read(getClass().getResource("/sprites/missiles/Missile_Down.gif"));
-        missileRight = ImageIO.read(getClass().getResource("/sprites/missiles/Missile_Right.gif"));
-        missileLeft = ImageIO.read(getClass().getResource("/sprites/missiles/Missile_Left.gif"));
+        bulletUp = ImageIO.read(getClass().getResource("/sprites/bullets/Bullet_Up.gif"));
+        bulletDown = ImageIO.read(getClass().getResource("/sprites/bullets/Bullet_Down.gif"));
+        bulletRight = ImageIO.read(getClass().getResource("/sprites/bullets/Bullet_Right.gif"));
+        bulletLeft = ImageIO.read(getClass().getResource("/sprites/bullets/Bullet_Left.gif"));
 
         wall = ImageIO.read(getClass().getResource("/sprites/walls/brick.png"));
 
@@ -88,13 +88,13 @@ public class Images {
         tankOrientationMap.put(4, tankDown);
     }
 
-    public static void createMissileOrientationMap(){
+    public static void createBulletOrientationMap(){
 
-        missileOrientationMap = new HashMap<>(); // Mapa < orientacja czołgu, obrazek odpowiedni >
+        bulletOrientationMap = new HashMap<>(); // Mapa < orientacja czołgu, obrazek odpowiedni >
 
-        missileOrientationMap.put(1, missileLeft);
-        missileOrientationMap.put(2, missileUp);
-        missileOrientationMap.put(3, missileRight);
-        missileOrientationMap.put(4, missileDown);
+        bulletOrientationMap.put(1, bulletLeft);
+        bulletOrientationMap.put(2, bulletUp);
+        bulletOrientationMap.put(3, bulletRight);
+        bulletOrientationMap.put(4, bulletDown);
     }
 }
