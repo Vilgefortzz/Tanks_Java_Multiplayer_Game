@@ -75,6 +75,11 @@ public class Client {
      */
 
     public static Player myPlayer = null;
+
+    /*
+    Identyfikatory - login gracza oraz id playera przypisany do loginu
+     */
+
     public static String yourLogin;
     public static int yourID;
 
@@ -87,7 +92,7 @@ public class Client {
         this.game = game;
         database = new Database();
 
-        // Połączenie z bazą danych
+        // Połączenie z bazą danych - jeżeli nie połaczono z bazą danych to aplikacja jest zamykana
 
         try {
             database.connectToDatabase();

@@ -5,18 +5,15 @@
 
 package main.io;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 import static main.client.Client.database;
 import static main.client.Client.yourID;
 import static main.client.Client.yourLogin;
 
-public class SaveStats {
+public class SaveGlobalStats {
 
-    public static boolean saveStatistics(){
+    public static boolean saveGlobalStatistics(){
 
         // Zczytanie id danego gracza z bazy danych
         yourID = database.takeID(yourLogin);
@@ -26,7 +23,8 @@ public class SaveStats {
         variables = database.takeStats(yourID);
 
         try (
-                FileWriter fileWriter = new FileWriter("statistics/" + yourLogin + "_stats.txt", false);
+                FileWriter fileWriter = new FileWriter("src/main/resources/statistics/global/" +
+                        yourLogin + "_stats.txt", false);
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
                 PrintWriter out = new PrintWriter(bufferedWriter)
         ) {
@@ -34,7 +32,7 @@ public class SaveStats {
                     "Tanks destroyed: " + variables[0] +  "\n" +
                     "The number of deaths: " + variables[1] + "\n" +
                     "Difference between tanks destroyed and the number of deaths: " + variables[2];
-            out.println(addToFile);
+            out.print(addToFile);
 
         } catch (IOException ex) {
             System.err.println("IOException: " + ex.getMessage());

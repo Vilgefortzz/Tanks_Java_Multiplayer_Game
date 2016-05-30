@@ -44,6 +44,7 @@ public class Main {
             System.out.println("Server started on port: " + PORT + "\n" + "Waiting for events...");
 
         } catch (IOException ex) {
+
             log("server", ex.getMessage());
             System.out.println(ex.getMessage());
         }

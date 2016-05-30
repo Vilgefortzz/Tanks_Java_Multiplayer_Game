@@ -20,6 +20,7 @@ import static main.gui.GamePanel.walls;
 import static main.client.Client.yourLogin;
 import static main.io.KeyInput.*;
 import static main.io.Images.*;
+import static main.io.SavingStats.saving;
 import static main.logs.Logs.log;
 
 public class Player extends Sprite {
@@ -253,19 +254,24 @@ public class Player extends Sprite {
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 
                     // Dodawanie statystyk do bazy danych w momencie jak gracz opuści grę
-                    if (database.addStats(id, destroyed, deaths)) {
+                    if (destroyed != 0 || deaths != 0){
 
-                        log("client", "Assigned stats to: " + yourLogin + " [ " + destroyed + ", " + deaths + " ] ");
-                        System.out.println("Properly assigned stats");
-                    }
-                    else{
+                        if (database.addStats(id, destroyed, deaths)) {
 
-                        log("client", "Assigning stats to " + yourLogin +  " is failed");
-                        System.out.println("Can't assign stats");
+                            saving(destroyed, deaths);
+                            log("client", "Assigned stats to: " + yourLogin + " [ " + destroyed + ", " + deaths + " ]");
+                            System.out.println("Properly assigned stats");
+                        }
+                        else{
+
+                            log("client", "Assigning stats to " + yourLogin +  " is failed");
+                            System.out.println("Can't assign stats");
+                        }
                     }
 
                     esc = keys[KeyEvent.VK_ESCAPE] = false;
                     client.disconnect();
+                    log("client", "Client: " + yourLogin + " is disconnected from server");
                 }
                 else
                     esc = keys[KeyEvent.VK_ESCAPE] = false;

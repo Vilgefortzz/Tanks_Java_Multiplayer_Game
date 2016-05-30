@@ -22,7 +22,7 @@ public class Configuration {
             String addToFile = "SERVER CONFIGURATION:\n" +
                     "PORT: " + port + "\n" +
                     "SERVER STATUS: " + started;
-            out.println(addToFile);
+            out.print(addToFile);
 
         } catch (IOException ex) {
             System.err.println("IOException: " + ex.getMessage());
@@ -32,7 +32,7 @@ public class Configuration {
     public static void clientConfg(String host, int port, String connected, String user){
 
         try (
-                FileWriter fileWriter = new FileWriter("configurations/" + user + ".txt", false);
+                FileWriter fileWriter = new FileWriter("configurations/" + user + "Confg.txt", false);
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
                 PrintWriter out = new PrintWriter(bufferedWriter)
         ) {
@@ -41,7 +41,7 @@ public class Configuration {
                     "PORT: " + port + "\n" +
                     "CONNECTED: " + connected + "\n" +
                     "USER: " + user;
-            out.println(addToFile);
+            out.print(addToFile);
 
         } catch (IOException ex) {
             System.err.println("IOException: " + ex.getMessage());

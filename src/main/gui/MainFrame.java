@@ -6,6 +6,7 @@
 package main.gui;
 
 import main.client.Client;
+import main.io.StatsHandling;
 import main.regexes.*;
 
 import javax.imageio.ImageIO;
@@ -21,7 +22,7 @@ import java.io.IOException;
 
 import static main.client.Client.*;
 import static main.io.Configuration.clientConfg;
-import static main.io.SaveStats.saveStatistics;
+import static main.io.SaveGlobalStats.saveGlobalStatistics;
 import static main.logs.Logs.log;
 import static main.utilities.Utilities.passwordHashing;
 
@@ -40,6 +41,10 @@ public class MainFrame extends JFrame implements ActionListener{
 
     private MenuPanel menuPanel;
     private GamePanel gamePanel;
+
+    // Obiekt do obsługi statystyk
+
+    private StatsHandling statsHandling;
 
     // przyciski do menu głównego (widok dla niezalogowanego użytkownika)
 
@@ -95,7 +100,10 @@ public class MainFrame extends JFrame implements ActionListener{
 
     private JLabel rank;
     private JTable rankTable;
-    private JButton saveStats;
+    private JButton saveGlobalStats;
+    private JButton saveYourThisMonthStats;
+    private JButton saveYourLastMonthStats;
+    private JButton saveYour2LastMonthStats;
     private JButton backBtn3;
 
     // przyciski do menu pobocznego (sterowanie)
@@ -506,19 +514,48 @@ public class MainFrame extends JFrame implements ActionListener{
             box.add(new JScrollPane(rankTable));
         }
 
+        box.add(Box.createVerticalStrut(15));
+
+        // Przycisk do tworzenia pliku ze statystykami ( globalnymi )
+        saveGlobalStats = new JButton("Save your global statistics");
+        saveGlobalStats.setForeground(Color.WHITE);
+        saveGlobalStats.setBackground(Color.BLACK);
+        saveGlobalStats.setFont(new Font("Arial", Font.PLAIN, 12));
+        saveGlobalStats.addActionListener(this);
+        box.add(saveGlobalStats);
+
         box.add(Box.createVerticalStrut(10));
 
-        // Przycisk do tworzenia pliku ze statystykami
-        saveStats = new JButton("Save your statistics to file");
-        saveStats.setForeground(Color.WHITE);
-        saveStats.setBackground(Color.BLACK);
-        saveStats.setFont(new Font("Arial", Font.PLAIN, 10));
-        saveStats.addActionListener(this);
-        box.add(saveStats);
+        // Przycisk do tworzenia pliku ze statystykami ( z tego miesiąca )
+        saveYourThisMonthStats = new JButton("Save your statistics from this month");
+        saveYourThisMonthStats.setForeground(Color.WHITE);
+        saveYourThisMonthStats.setBackground(Color.BLACK);
+        saveYourThisMonthStats.setFont(new Font("Arial", Font.PLAIN, 12));
+        saveYourThisMonthStats.addActionListener(this);
+        box.add(saveYourThisMonthStats);
+
+        box.add(Box.createVerticalStrut(10));
+
+        // Przycisk do tworzenia pliku ze statystykami ( z zeszłego miesiąca )
+        saveYourLastMonthStats = new JButton("Save your statistics from last month");
+        saveYourLastMonthStats.setForeground(Color.WHITE);
+        saveYourLastMonthStats.setBackground(Color.BLACK);
+        saveYourLastMonthStats.setFont(new Font("Arial", Font.PLAIN, 12));
+        saveYourLastMonthStats.addActionListener(this);
+        box.add(saveYourLastMonthStats);
+
+        box.add(Box.createVerticalStrut(10));
+
+        // Przycisk do tworzenia pliku ze statystykami ( z 2 zeszłych miesięcy )
+        saveYour2LastMonthStats = new JButton("Save your statistics from 2 last months");
+        saveYour2LastMonthStats.setForeground(Color.WHITE);
+        saveYour2LastMonthStats.setBackground(Color.BLACK);
+        saveYour2LastMonthStats.setFont(new Font("Arial", Font.PLAIN, 12));
+        saveYour2LastMonthStats.addActionListener(this);
+        box.add(saveYour2LastMonthStats);
 
         box.add(Box.createVerticalStrut(10));
         backBtn3 = backButton();
-        // Dodanie akcji za każdym razem do przycisku wstecz
         backBtn3.addActionListener(this);
         box.add(backBtn3);
 
@@ -631,7 +668,7 @@ public class MainFrame extends JFrame implements ActionListener{
         };
 
         // Dane do tabeli z bazy danych (tablica 2-wymiarowa - wiersz, kolumna)
-        Object[][] data = database.enterDataToTable();
+        Object[][] data = database.loadDataToTable();
 
         if (data != null){
 
@@ -676,7 +713,9 @@ public class MainFrame extends JFrame implements ActionListener{
             rankTable.addColumnSelectionInterval(0,3);
             rankTable.setSelectionBackground(new Color(225, 226, 16));
             rankTable.setSelectionForeground(new Color(0,0,0));
-
+            
+            rankTable.setPreferredScrollableViewportSize(rankTable.getPreferredSize());
+            rankTable.setFillsViewportHeight(true);
         }
     }
 
@@ -712,25 +751,47 @@ public class MainFrame extends JFrame implements ActionListener{
             if (database.loginUser(loginLog.getText(), hashedPassword)){
 
                 yourLogin = loginLog.getText();
-                setTitle("Client logged as: " + yourLogin);
-                log("client", yourLogin + " logged in");
 
-                JOptionPane.showMessageDialog(null, "You are successfully logged in",
-                        "Logged In", JOptionPane.INFORMATION_MESSAGE);
+                // Obsługa statystyk - zapis do odpowiednich plików oraz odczyt z plików
+                    // w celu obsługi np. statystyk z miesiąca, z zeszłego miesiąca lub 2 miesięcy
 
-                boxLogIn.setVisible(false);
-                menuPanel.remove(boxLogIn);
-                menuPanel.add(boxLoggedUser);
-                boxLoggedUser.setVisible(true);
+                statsHandling = new StatsHandling();
 
-                loginLog.setText("");
-                passwordLog.setText("");
+                if (statsHandling.isFileExists() && !statsHandling.isCreated()){
+
+                    setTitle("Client logged as: " + yourLogin);
+                    log("client", yourLogin + " logged in");
+
+                    JOptionPane.showMessageDialog(null, "You are successfully logged in",
+                            "Logged In", JOptionPane.INFORMATION_MESSAGE);
+
+                    boxLogIn.setVisible(false);
+                    menuPanel.remove(boxLogIn);
+                    menuPanel.add(boxLoggedUser);
+                    boxLoggedUser.setVisible(true);
+
+                    loginLog.setText("");
+                    passwordLog.setText("");
+
+                }
+                else if (statsHandling.isCreated()){
+
+                    System.out.println("The empty file was created, the application will be close to make changes" +
+                            " Log in again and enter properly to the game");
+                    JOptionPane.showMessageDialog(null, "The empty file was created, the application will be close " +
+                                    "to make changes. Log in again and enter properly to the game",
+                            "Application closing ", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
+                }
             }
-            else
+            else{
+
                 JOptionPane.showMessageDialog(null, "Incorrect login or password or you haven't yet a free account. " +
-                        "Go to registration to create account or try to log in with proper data",
-                        "Log in failed", JOptionPane.ERROR_MESSAGE);
-                log("client", "Failed login attempt to: " + yourLogin);
+                                "Go to registration to create account or " +
+                                "try to log in with proper data or invalid sql command",
+                                "Log in failed", JOptionPane.ERROR_MESSAGE);
+                log("client", "Failed login attempt to: " + loginLog.getText());
+            }
         }
 
         if (e.getSource() == goToRegistration){
@@ -786,7 +847,7 @@ public class MainFrame extends JFrame implements ActionListener{
                 }
                 else
                     JOptionPane.showMessageDialog(null, "User with this login or with this e-mail has already exists!" +
-                            " Change login or e-mail to create account",
+                            " Change login or e-mail to create account or sql command is invalid",
                             "Registration failed", JOptionPane.ERROR_MESSAGE);
             }
             else
@@ -821,10 +882,10 @@ public class MainFrame extends JFrame implements ActionListener{
 
             // Stworzenie klienta - socketa do komunikacji
 
-            HOST = "localhost";
+            //HOST = "localhost";
             PORT = 8080;
 
-            //HOST = JOptionPane.showInputDialog(null, "Server address of game: ", "Address", JOptionPane.PLAIN_MESSAGE);
+            HOST = JOptionPane.showInputDialog(null, "Server address of game: ", "Address", JOptionPane.PLAIN_MESSAGE);
 
             try {
 
@@ -890,15 +951,45 @@ public class MainFrame extends JFrame implements ActionListener{
             boxMenu.setVisible(true);
         }
 
-        if (e.getSource() == saveStats){
+        // Obsługa statystyk
+        if (e.getSource() == saveGlobalStats){
 
-            if (saveStatistics())
-                JOptionPane.showMessageDialog(null, "The file with stats are succesfully saved.",
+            if (saveGlobalStatistics())
+                JOptionPane.showMessageDialog(null, "The file with global stats is succesfully saved.",
                         "File is saved", JOptionPane.INFORMATION_MESSAGE);
             else
                 JOptionPane.showMessageDialog(null, "The file was not created.",
                         "File not saved", JOptionPane.ERROR_MESSAGE);
+        }
 
+        if (e.getSource() == saveYourThisMonthStats){
+
+            if (statsHandling.getStatsFromThisMonth())
+                JOptionPane.showMessageDialog(null, "The file with stats from this month is succesfully saved.",
+                        "File is saved", JOptionPane.INFORMATION_MESSAGE);
+            else
+                JOptionPane.showMessageDialog(null, "The file was not created.",
+                        "File not saved", JOptionPane.ERROR_MESSAGE);
+        }
+
+        if (e.getSource() == saveYourLastMonthStats){
+
+            if (statsHandling.getStatsFromLastMonth())
+                JOptionPane.showMessageDialog(null, "The file with stats from last month is succesfully saved.",
+                        "File is saved", JOptionPane.INFORMATION_MESSAGE);
+            else
+                JOptionPane.showMessageDialog(null, "The file was not created.",
+                        "File not saved", JOptionPane.ERROR_MESSAGE);
+        }
+
+        if (e.getSource() == saveYour2LastMonthStats){
+
+            if (statsHandling.getStatsFrom2LastMonths())
+                JOptionPane.showMessageDialog(null, "The file with stats from 2 last months is succesfully saved.",
+                        "File is saved", JOptionPane.INFORMATION_MESSAGE);
+            else
+                JOptionPane.showMessageDialog(null, "The file was not created.",
+                        "File not saved", JOptionPane.ERROR_MESSAGE);
         }
 
         if (e.getSource() == backBtn3){

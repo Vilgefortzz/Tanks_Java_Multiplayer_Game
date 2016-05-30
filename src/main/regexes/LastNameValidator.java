@@ -14,7 +14,7 @@ public class LastNameValidator {
     private Matcher matcher;
 
     private final String LASTNAME_PATTERN =
-            "^[A-Z]([a-z\\+]){1,36}$";
+            "^[A-ZŻŹĆĄŚĘŁÓŃ]([a-zżźćńółęąś\\+]){1,36}$";
 
     public LastNameValidator() {
         pattern = Pattern.compile(LASTNAME_PATTERN);

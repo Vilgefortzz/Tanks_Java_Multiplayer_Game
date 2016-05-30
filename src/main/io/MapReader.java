@@ -17,7 +17,7 @@ public class MapReader {
         try {
             readFile(mapFile);
         } catch (IOException | NullPointerException e) {
-            System.err.println("Loaded the map is failed!!");
+            System.err.println("Loading the map is failed!!");
             System.exit(0);
         }
     }
@@ -32,11 +32,12 @@ public class MapReader {
 
         try (
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                        this.getClass().getResourceAsStream("/maps/" + fileName)))
+                        getClass().getResourceAsStream("/maps/" + fileName)))
         ) {
             while (bufferedReader.ready()){
                 lines.add(bufferedReader.readLine());
             }
+            bufferedReader.close();
         }
     }
 }

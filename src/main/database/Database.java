@@ -6,6 +6,7 @@
 package main.database;
 
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,14 +25,15 @@ public class Database {
     private Connection connection = null;
     private Statement statement = null;
 
-    public void connectToDatabase() throws SQLException {
+    public synchronized void connectToDatabase() throws SQLException {
 
         try {
 
             String address, url;
             String user = null, password = null;
 
-            //address = JOptionPane.showInputDialog(null, "Server address of database: ", "Address", JOptionPane.PLAIN_MESSAGE);
+            address = JOptionPane.showInputDialog(null, "Server address of database: ", "Address",
+                    JOptionPane.PLAIN_MESSAGE);
 
             try (
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
@@ -54,9 +56,8 @@ public class Database {
                 System.exit(0);
             }
 
-            //url = "jdbc:mysql://" + address + ":3306/tanks?autoReconnect=true&useSSL=false";
-
-            url = "jdbc:mysql://localhost:3306/tanks?autoReconnect=true&useSSL=false";
+            url = "jdbc:mysql://" + address + ":3306/tanks?autoReconnect=true&useSSL=false";
+            //url = "jdbc:mysql://localhost:3306/tanks?autoReconnect=true&useSSL=false";
 
             connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
@@ -66,7 +67,7 @@ public class Database {
         }
     }
 
-    public int takeID(String login){
+    public synchronized int takeID(String login){
 
         try {
 
@@ -81,7 +82,7 @@ public class Database {
         return 0;
     }
 
-    public boolean registerUser(String login, String password, String firstName, String lastName, String email) {
+    public synchronized boolean registerUser(String login, String password, String firstName, String lastName, String email) {
 
         // Sprawdzanie czy istnieje gracz o tym samym loginie albo e-mailu
         try {
@@ -151,7 +152,7 @@ public class Database {
         return true;
     }
 
-    public boolean loginUser(String login, String password) {
+    public synchronized boolean loginUser(String login, String password) {
 
         // Sprawdzanie czy istnieje dany gracz o danym loginie i danym haśle
         try {
@@ -173,7 +174,7 @@ public class Database {
         }
     }
 
-    public boolean addStats(int id, int destroyed, int deaths) {
+    public synchronized boolean addStats(int id, int destroyed, int deaths) {
 
         PreparedStatement preparedStatement = null;
         String sqlCommand = "UPDATE tanks.stats SET destroyed = ? , deaths = ? , difference = ? WHERE user_id = ?";
@@ -207,7 +208,7 @@ public class Database {
 
         } catch (SQLException e) {
 
-            System.err.println("Not assigned stats to user");
+            System.err.println("Not assigned stats to user" + " " + e.getMessage());
             return false;
 
         } finally {
@@ -219,7 +220,7 @@ public class Database {
         return true;
     }
 
-    public Object[][] enterDataToTable() {
+    public synchronized Object[][] loadDataToTable() {
 
         int numberOfPlayers = 0;
         int indexRow = 0;
@@ -273,7 +274,7 @@ public class Database {
             return data;
     }
 
-    public int[] takeStats(int id){
+    public synchronized int[] takeStats(int id){
 
         int[] variables = new int[3];
 

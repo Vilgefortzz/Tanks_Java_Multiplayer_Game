@@ -7,7 +7,6 @@ package main.gui;
 
 import main.io.KeyInput;
 import main.io.MapReader;
-import main.io.Sounds;
 import main.models.Player;
 import main.models.Wall;
 
@@ -37,12 +36,10 @@ public class GamePanel extends JPanel{
 
     private KeyInput keyboard = null;
     private MainFrame frame = null;
-    private Sounds sounds = null;
 
     public GamePanel(MainFrame frame) {
 
         this.frame = frame;
-        this.sounds = new Sounds();
 
         keyboard = new KeyInput();
         addKeyListener(keyboard);
@@ -267,7 +264,6 @@ public class GamePanel extends JPanel{
 
     public void firePlayer(int id, int orientation){
 
-        sounds.playFireSound();
         if (orientation == 1)
             players.get(id).shootLeft();
         if (orientation == 2)

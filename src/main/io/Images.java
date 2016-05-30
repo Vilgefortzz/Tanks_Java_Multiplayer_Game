@@ -58,7 +58,6 @@ public class Images {
 
     public void loadAllImages() throws IOException {
 
-
         heart = ImageIO.read(getClass().getResource("/heart.png"));
         explosion = ImageIO.read(getClass().getResource("/explosion.png"));
         skull = ImageIO.read(getClass().getResource("/skull.png"));
