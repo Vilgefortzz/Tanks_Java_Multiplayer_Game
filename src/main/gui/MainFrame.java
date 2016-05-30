@@ -713,9 +713,6 @@ public class MainFrame extends JFrame implements ActionListener{
             rankTable.addColumnSelectionInterval(0,3);
             rankTable.setSelectionBackground(new Color(225, 226, 16));
             rankTable.setSelectionForeground(new Color(0,0,0));
-            
-            rankTable.setPreferredScrollableViewportSize(rankTable.getPreferredSize());
-            rankTable.setFillsViewportHeight(true);
         }
     }
 

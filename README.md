@@ -97,7 +97,7 @@ połączą sie z serwerem i wejdą do gry).
     -> logowanie
     -> rejestracja
 
-[4.4] Mechanizm obsługi statystyk (raport - w ciągu ostatniego miesiąca jakiś tam użytkownik miał jakieś tam statystyki)
+[4.4] ~~Mechanizm obsługi statystyk (raport - w ciągu ostatniego miesiąca jakiś tam użytkownik miał jakieś tam statystyki)~~ [ 31.05.16 ]
 
 ---------------------------------------------------------------------------------------------------------------------
 
