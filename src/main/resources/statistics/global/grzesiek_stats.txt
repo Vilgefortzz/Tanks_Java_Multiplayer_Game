@@ -1,0 +1,4 @@
+STATS FROM USER 'GRZESIEK'
+Tanks destroyed: 2
+The number of deaths: 3
+Difference between tanks destroyed and the number of deaths: -1

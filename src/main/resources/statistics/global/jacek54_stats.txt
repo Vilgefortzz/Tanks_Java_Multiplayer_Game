@@ -1,0 +1,4 @@
+STATS FROM USER 'JACEK54'
+Tanks destroyed: 8
+The number of deaths: 4
+Difference between tanks destroyed and the number of deaths: 4

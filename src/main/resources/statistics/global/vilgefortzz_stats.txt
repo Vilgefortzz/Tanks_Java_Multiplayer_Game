@@ -1,0 +1,4 @@
+STATS FROM USER 'VILGEFORTZZ'
+Tanks destroyed: 3
+The number of deaths: 1
+Difference between tanks destroyed and the number of deaths: 2

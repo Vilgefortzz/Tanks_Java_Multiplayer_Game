@@ -1,0 +1,5 @@
+CLIENT CONFIGURATION:
+HOST: localhost
+PORT: 8080
+CONNECTED: NO
+USER: vilgefortzz
